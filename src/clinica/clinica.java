@@ -5,17 +5,17 @@
  */
 package clinica;
 
+import Vistas.Login;
+
 /**
  *
  * @author Carlos
  */
-public class Clinica {
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
+public class clinica {
+    public static void main(String args[]) {
+        Login login = new Login();
+        login.setVisible(true);
+        login.setLocationRelativeTo(null);
     }
     
 }
