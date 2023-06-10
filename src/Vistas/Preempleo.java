@@ -160,15 +160,19 @@ public class Preempleo extends javax.swing.JFrame {
                 break;
             case 1:
                 rbtn1_1.setSelected(true);
+                grbtn_empresa1.setSelected(rbtn1_1.getModel(), emp1);
                 break;
             case 2:
                 rbtn2_1.setSelected(true);
+                grbtn_empresa1.setSelected(rbtn2_1.getModel(), emp1);
                 break;
             case 3:
                 rbtn3_1.setSelected(true);
+                grbtn_empresa1.setSelected(rbtn3_1.getModel(), emp1);
                 break;
             case 4:
                 rbtn4_1.setSelected(true);
+                grbtn_empresa1.setSelected(rbtn4_1.getModel(), emp1);
                 break;
             default:
                 grbtn_empresa1.clearSelection();
@@ -180,15 +184,19 @@ public class Preempleo extends javax.swing.JFrame {
                 break;
             case 1: 
                 rbtn1_2.setSelected(true);
+                grbtn_empresa2.setSelected(rbtn1_2.getModel(), emp2);
                 break;
             case 2:
                 rbtn2_2.setSelected(true);
+                grbtn_empresa2.setSelected(rbtn2_2.getModel(), emp2);
                 break;
             case 3:
                 rbtn3_2.setSelected(true);
+                grbtn_empresa2.setSelected(rbtn3_2.getModel(), emp2);
                 break;
             case 4:
                 rbtn4_2.setSelected(true);
+                grbtn_empresa2.setSelected(rbtn4_2.getModel(), emp2);
                 break;
             default:
                 grbtn_empresa2.clearSelection();
@@ -200,19 +208,42 @@ public class Preempleo extends javax.swing.JFrame {
                 break;
             case 1: 
                 rbtn1_3.setSelected(true);
+                grbtn_empresa3.setSelected(rbtn1_3.getModel(), emp3);
                 break;
             case 2:
                 rbtn2_3.setSelected(true);
+                grbtn_empresa3.setSelected(rbtn2_3.getModel(), emp3);
                 break;
             case 3:
                 rbtn3_3.setSelected(true);
+                grbtn_empresa3.setSelected(rbtn3_3.getModel(), emp3);
                 break;
             case 4:
                 rbtn4_3.setSelected(true);
+                grbtn_empresa3.setSelected(rbtn4_3.getModel(), emp3);
                 break;
             default:
                 grbtn_empresa3.clearSelection();
                 break;
+        }
+        if (tiempoLaborado1 > 0){
+            rbtn1_1.setEnabled(true);
+            rbtn2_1.setEnabled(true);
+            rbtn3_1.setEnabled(true);
+            rbtn4_1.setEnabled(true);
+            emp1 = true;
+        }else if (tiempoLaborado2 > 0){
+            rbtn1_2.setEnabled(true);
+            rbtn2_2.setEnabled(true);
+            rbtn3_2.setEnabled(true);
+            rbtn4_2.setEnabled(true);
+            emp2 = true;
+        }else if (tiempoLaborado3 > 0){
+            rbtn4_3.setEnabled(true);
+            rbtn3_3.setEnabled(true);
+            rbtn2_3.setEnabled(true);
+            rbtn1_3.setEnabled(true);
+            emp3 = true;
         }
     }
     
@@ -388,6 +419,7 @@ public class Preempleo extends javax.swing.JFrame {
             if ((res1 > 0) && (res2 > 0)) {
                 JOptionPane.showMessageDialog(this, "REGISTRO ACTUALIZADO CON EXITO", "Inserción de Datos", JOptionPane.INFORMATION_MESSAGE);
                 reset();
+                tpanel_Contenidos.setSelectedIndex(2);
             } else {
                 JOptionPane.showMessageDialog(this, "ERROR AL ACTUALIZAR ANTECEDENTES O FICHA DE PREEMPLEO. COMUNIQUESE CON TI", "Inserción de Datos", JOptionPane.ERROR_MESSAGE);
             }
@@ -409,6 +441,7 @@ public class Preempleo extends javax.swing.JFrame {
             if ((res1 > 0) && (res2 > 0)) {
                 JOptionPane.showMessageDialog(this, "REGISTRO ELIMINADO CON EXITO", "Inserción de Datos", JOptionPane.INFORMATION_MESSAGE);
                 reset();
+                tpanel_Contenidos.setSelectedIndex(2);
             } else {
                 JOptionPane.showMessageDialog(this, "ERROR AL ELIMINAR ANTECEDENTES O FICHA DE PREEMPLEO. COMUNIQUESE CON TI", "Inserción de Datos", JOptionPane.ERROR_MESSAGE);
             }
@@ -1473,7 +1506,7 @@ public class Preempleo extends javax.swing.JFrame {
 
         panelMenu2.add(panelRbtn4_3, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 330, 90, 35));
 
-        txtMPF.setFont(new java.awt.Font("Roboto", 0, 11)); // NOI18N
+        txtMPF.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtMPF.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         panelMenu2.add(txtMPF, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 170, 106, 35));
 
@@ -1581,7 +1614,6 @@ public class Preempleo extends javax.swing.JFrame {
         tpanel_Contenidos.addTab("Combobox", panelCombobox);
 
         cont_Preempleo.add(tpanel_Contenidos, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 90, 1080, 510));
-        tpanel_Contenidos.getAccessibleContext().setAccessibleDescription("");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -1884,6 +1916,7 @@ public class Preempleo extends javax.swing.JFrame {
 
     private void lbl_btnActualizarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btnActualizarMouseClicked
         if (!contenidoActual.equals("Actualizar")){
+            btn_Confirmar.setVisible(false);
             tpanel_Contenidos.setSelectedIndex(2);
             btn_Ingresar.setBackground(new Color(92,92,235));
             lblTituloCombobox.setText("Actualizar");
@@ -1903,6 +1936,7 @@ public class Preempleo extends javax.swing.JFrame {
 
     private void lbl_BtnEliminarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_BtnEliminarMouseClicked
         if (!contenidoActual.equals("Eliminar")){
+            btn_Confirmar.setVisible(false);
             tpanel_Contenidos.setSelectedIndex(2);
             btn_Ingresar.setBackground(new Color(235,91,91));
             lblTituloCombobox.setText("Eliminar");
