@@ -3,6 +3,10 @@ package Vistas;
 import java.awt.Color;
 import Utilitarios.Utilitarios;
 import java.awt.BorderLayout;
+import java.net.ConnectException;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JPanel;
 
 public class MenuPrincipal extends javax.swing.JFrame {
@@ -718,10 +722,19 @@ public class MenuPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_txt_HomeMouseExited
 
     private void txt_PreempleoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt_PreempleoMouseClicked
-        Preempleo preempleo = new Preempleo();
-        if (!preempleo.nombreContenido.equals(contenidoActual)){
-            nuevoContenido = preempleo.getContenido();
-            cambioContenido(nuevoContenido, preempleo.nombreContenido);
+        try {
+            Preempleo preempleo = new Preempleo();
+            if (!preempleo.nombreContenido.equals(contenidoActual)){
+                nuevoContenido = preempleo.getContenido();
+                cambioContenido(nuevoContenido, preempleo.nombreContenido);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ConnectException ex) {
+            Logger.getLogger(MenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }catch (Exception ex) {
+            Logger.getLogger(MenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
         }
     }//GEN-LAST:event_txt_PreempleoMouseClicked
 

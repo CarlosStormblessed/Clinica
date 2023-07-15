@@ -8,33 +8,61 @@ import javax.swing.ButtonModel;
 import javax.swing.table.DefaultTableModel;
 import Controladores.PreempleoCtrl;
 import Controladores.AntecedentesCtrl;
+import Controladores.PaginadorTabla;
 import Modelos.AntecedentesMod;
 import Modelos.PreempleoMod;
+import Utilitarios.DatosPaginacion;
+import Utilitarios.ModeloTabla;
 import java.awt.Color;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.net.ConnectException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.TableModel;
 
-public class Preempleo extends javax.swing.JFrame {
+public class Preempleo extends javax.swing.JFrame implements ActionListener, TableModelListener{
 
     Utilitarios util = new Utilitarios();
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     LocalDateTime now = LocalDateTime.now();
-    String sexo = "", clinicaId = "", contenidoActual;
-    int tiempoLaborado1 = 0, tiempoLaborado2 = 0, tiempoLaborado3 = 0;
-    String antecedentesId = "0";
+    String contenidoActual;
     boolean emp1=false, emp2=false, emp3=false;
     public String nombreContenido = "Preempleo";
-    public Preempleo() {
+    public JComboBox<Integer> filasPermitidas;
+    private PreempleoMod preempleo = new PreempleoMod();
+    private AntecedentesMod antecedentes = new AntecedentesMod();
+    private PreempleoCtrl preempCtrl = new PreempleoCtrl();
+    private AntecedentesCtrl antCtrl = new AntecedentesCtrl();
+    private PaginadorTabla <Preempleo> paginador;
+    public Preempleo() throws SQLException, ConnectException {
         initComponents();
         contenidoActual = "Inicio";
         tpanel_Contenidos.setSelectedIndex(0);
         btn_Confirmar.setVisible(false);
         lbl_btn_Confirmar.setEnabled(false);
+        jtPreempleo.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent Mouse_evt){
+                JTable tabla = (JTable) Mouse_evt.getSource();
+                Point punto = Mouse_evt.getPoint();
+                int fila = tabla.rowAtPoint(punto);
+                if (Mouse_evt.getClickCount() == 1){
+                    lbl_SeleccionPreempleo.setText(jtPreempleo.getValueAt(jtPreempleo.getSelectedRow(), 2).toString());
+                }
+            }
+        });
         reset();
     }
     
@@ -42,14 +70,14 @@ public class Preempleo extends javax.swing.JFrame {
         lblAG.setIcon(util.construirImagen("/Imagenes/AG_logo.png", lblAG.getWidth(), lblAG.getHeight()));
         resetAntecedentes();
         resetPreempleado();
-        construirEtiquetas ();
+        construirEtiquetas();
+        panelPaginacion.removeAll();
     }
     
     private void resetPreempleado(){
         txtPreempleoId.setText("");
         txtNombre.setText("");
-        sexo = "";
-        setSexo(sexo);
+        setSexo("");
         txtIdentificacion.setText("");
         txtEdad.setText("");
         txtEstadoCivil.setText("");
@@ -57,12 +85,23 @@ public class Preempleo extends javax.swing.JFrame {
         txtTelefono.setText("");
         txtNivelAcademico.setText("");
         txtPuestoAplica.setText("");
-        antecedentesId = "";
-        clinicaId = "";
+        preempleo.setClinicaId("");
+        preempleo.setId("");
+        preempleo.setNombre("");
+        preempleo.setSexo("");
+        preempleo.setIdentificacion("");
+        preempleo.setEdad("");
+        preempleo.setEstadoCivil("");
+        preempleo.setDireccion("");
+        preempleo.setTelefono("");
+        preempleo.setNivelAcademico("");
+        preempleo.setPuestoAplica("");
+        preempleo.setAntecedentesId("");
+        preempleo.setEstado("");
+        
     }
     
     private void resetAntecedentes(){
-        antecedentesId = "0";
         txtMenarquia.setText("");
         txtFUR.setText("");
         txtCSTP.setText("");
@@ -95,17 +134,40 @@ public class Preempleo extends javax.swing.JFrame {
         txtPuesto2.setEnabled(false);
         txtEmpresa3.setEnabled(false);
         txtPuesto3.setEnabled(false);
-        tiempoLaborado1 = 0;
-        tiempoLaborado2 = 0;
-        tiempoLaborado3 = 0;
-        setTiempoLaborado();
+        
         txtDiagnostico.setText("");
+        
+        antecedentes.setId("");
+        antecedentes.setMenarquia("");
+        antecedentes.setCstp("");
+        antecedentes.setFur("");
+        antecedentes.setMpf("");
+        antecedentes.setHv("");
+        antecedentes.setHm("");
+        antecedentes.setG("");
+        antecedentes.setP("");
+        antecedentes.setAb("");
+        antecedentes.setFecha("");
+        antecedentes.setEmpresa1("");
+        antecedentes.setEmpresa2("");
+        antecedentes.setEmpresa3("");
+        antecedentes.setPuesto1("");
+        antecedentes.setPuesto2("");
+        antecedentes.setPuesto3("");
+        antecedentes.setTiempolaborado1("0");
+        antecedentes.setTiempolaborado2("0");
+        antecedentes.setTiempolaborado3("0");
+        antecedentes.setDiagnostico("");
+        antecedentes.setEmpleadoId("");
+        antecedentes.setEstado("");
+        setTiempoLaborado();
     }
     
     private void construirEtiquetas(){
         lblTitulos.setText("<html><center>Formato<br><b>FICHA MÉDICA PRE-EMPLEO</b><br>CÓDIGO12345</center></html>");
         lblSeguridad.setText("<html><center>Seguridad Industrial y Salud Ocupacional</center></html>");
         lblFechaMod.setText("<html><center>Fecha de<br>modificacion:<br>"+ util.convertirFechaGUI(now.format(dtf)) + "</center></html>");
+        lbl_SeleccionPreempleo.setText("");
         txtFecha.setText(util.convertirFechaGUI(now.format(dtf)));
     }
     
@@ -150,11 +212,17 @@ public class Preempleo extends javax.swing.JFrame {
     }
     
     public JPanel getContenido(){
-        return cont_Preempleo;
+        try{
+            return cont_Preempleo;
+        }catch (Exception ex) {
+            Logger.getLogger(MenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
+        }
+        return null;
     }
     
     private void setTiempoLaborado(){
-        switch (tiempoLaborado1){
+        switch (Integer.valueOf(antecedentes.getTiempolaborado1())){
             case 0: 
                 grbtn_empresa1.clearSelection();
                 break;
@@ -178,7 +246,7 @@ public class Preempleo extends javax.swing.JFrame {
                 grbtn_empresa1.clearSelection();
                 break;
         }
-        switch (tiempoLaborado2){
+        switch (Integer.valueOf(antecedentes.getTiempolaborado2())){
             case 0: 
                 grbtn_empresa2.clearSelection();
                 break;
@@ -202,7 +270,7 @@ public class Preempleo extends javax.swing.JFrame {
                 grbtn_empresa2.clearSelection();
                 break;
         }
-        switch (tiempoLaborado3){
+        switch (Integer.valueOf(antecedentes.getTiempolaborado3())){
             case 0: 
                 grbtn_empresa3.clearSelection();
                 break;
@@ -226,19 +294,19 @@ public class Preempleo extends javax.swing.JFrame {
                 grbtn_empresa3.clearSelection();
                 break;
         }
-        if (tiempoLaborado1 > 0){
+        if (Integer.valueOf(antecedentes.getTiempolaborado1()) > 0){
             rbtn1_1.setEnabled(true);
             rbtn2_1.setEnabled(true);
             rbtn3_1.setEnabled(true);
             rbtn4_1.setEnabled(true);
             emp1 = true;
-        }else if (tiempoLaborado2 > 0){
+        }else if (Integer.valueOf(antecedentes.getTiempolaborado2()) > 0){
             rbtn1_2.setEnabled(true);
             rbtn2_2.setEnabled(true);
             rbtn3_2.setEnabled(true);
             rbtn4_2.setEnabled(true);
             emp2 = true;
-        }else if (tiempoLaborado3 > 0){
+        }else if (Integer.valueOf(antecedentes.getTiempolaborado3()) > 0){
             rbtn4_3.setEnabled(true);
             rbtn3_3.setEnabled(true);
             rbtn2_3.setEnabled(true);
@@ -258,11 +326,13 @@ public class Preempleo extends javax.swing.JFrame {
             default:
                 grbtn_Sexo.clearSelection();
         }
+        
     }
     
-    private AntecedentesMod getAntecedentes(){
-        AntecedentesMod antecedentes = new AntecedentesMod();
-        antecedentes.setId(antecedentesId);
+    /**
+     * Los antecedentes en pantalla se guardarán en una variable global "antecedentes"
+     */
+    private void getAntecedentes(){
         antecedentes.setMenarquia(txtMenarquia.getText());
         antecedentes.setFur(txtFUR.getText());
         antecedentes.setCstp(txtCSTP.getText());
@@ -280,16 +350,14 @@ public class Preempleo extends javax.swing.JFrame {
         antecedentes.setPuesto1(txtPuesto1.getText());
         antecedentes.setPuesto2(txtPuesto2.getText());
         antecedentes.setPuesto3(txtPuesto3.getText());
-        antecedentes.setTiempolaborado1(String.valueOf(tiempoLaborado1));
-        antecedentes.setTiempolaborado2(String.valueOf(tiempoLaborado2));
-        antecedentes.setTiempolaborado3(String.valueOf(tiempoLaborado3));
         antecedentes.setDiagnostico(txtDiagnostico.getText());
         antecedentes.setEmpleadoId("0");
-        return antecedentes;
     }
     
-    private void setAntecedentes(AntecedentesMod antecedentes){
-        antecedentesId = antecedentes.getId();
+    /**
+     * Los valores dentro de los antecedentes guardados en la variable global "antecedentes" se mostrarán en pantalla
+     */
+    private void setAntecedentes(){
         txtMenarquia.setText(antecedentes.getMenarquia());
         txtFUR.setText(antecedentes.getFur());
         txtCSTP.setText(antecedentes.getCstp());
@@ -306,19 +374,17 @@ public class Preempleo extends javax.swing.JFrame {
         txtPuesto1.setText(antecedentes.getPuesto1());
         txtPuesto2.setText(antecedentes.getPuesto2());
         txtPuesto3.setText(antecedentes.getPuesto3());
-        tiempoLaborado1 = Integer.valueOf(antecedentes.getTiempolaborado1());
-        tiempoLaborado2 = Integer.valueOf(antecedentes.getTiempolaborado2());
-        tiempoLaborado3 = Integer.valueOf(antecedentes.getTiempolaborado3());
         setTiempoLaborado();
         txtDiagnostico.setText(antecedentes.getDiagnostico());
     }
     
-    private PreempleoMod getPreempleo(){
-        PreempleoMod preempleo = new PreempleoMod();
+    /**
+     * Los valores de preempleo en pantalla se guardarán en una variable global "preempleo"
+     */
+    private void getPreempleo(){
         preempleo.setId(txtPreempleoId.getText());
         preempleo.setFecha(util.convertirFechaSQL(txtFecha.getText()));
         preempleo.setNombre(txtNombre.getText());
-        preempleo.setSexo(sexo);
         preempleo.setIdentificacion(txtIdentificacion.getText());
         preempleo.setEdad(txtEdad.getText());
         preempleo.setEstadoCivil(txtEstadoCivil.getText());
@@ -327,17 +393,18 @@ public class Preempleo extends javax.swing.JFrame {
         preempleo.setNivelAcademico(txtNivelAcademico.getText());
         preempleo.setPuestoAplica(txtPuestoAplica.getText());
         preempleo.setClinicaId("1");
-        preempleo.setAntecedentesId(antecedentesId);
+        preempleo.setAntecedentesId(antecedentes.getId());
         
-        return preempleo;
     }
     
-    private void setPreempleo(PreempleoMod preempleo){
+    /**
+     * Los valores dentro del preempleo guardados en la variable global "preempleo" se mostrarán en pantalla
+     */
+    private void setPreempleo(){
         txtPreempleoId.setText(preempleo.getId());
         txtFecha.setText(util.convertirFechaSQL(preempleo.getFecha()));
         txtNombre.setText(preempleo.getNombre());
-        sexo = preempleo.getSexo();
-        setSexo(sexo);
+        setSexo(preempleo.getSexo());
         txtIdentificacion.setText(preempleo.getIdentificacion());
         txtEdad.setText(preempleo.getEdad());
         txtEstadoCivil.setText(preempleo.getEstadoCivil());
@@ -345,55 +412,119 @@ public class Preempleo extends javax.swing.JFrame {
         txtTelefono.setText(preempleo.getTelefono());
         txtNivelAcademico.setText(preempleo.getNivelAcademico());
         txtPuestoAplica.setText(preempleo.getPuestoAplica());
-        antecedentesId = preempleo.getAntecedentesId();
-        clinicaId = preempleo.getClinicaId();
+    }
+    
+    //Todo lo relacionado a la Tabla
+    private TableModel crearModeloTabla() {
+        return new ModeloTabla<PreempleoMod>() {
+            @Override
+            public Object getValueAt(PreempleoMod t, int columna) {
+                switch(columna){
+                    case 0:
+                        return t.getId();
+                    case 1:
+                        return t.getFecha();
+                    case 2:
+                        return t.getNombre();
+                    case 3:
+                        return t.getSexo();
+                    case 4:
+                        return t.getIdentificacion();
+                    case 5:
+                        return t.getNivelAcademico();
+                    case 6:
+                        return t.getPuestoAplica();
+                }
+                return null;
+            }
+
+            @Override
+            public String getColumnName(int columna) {
+                switch(columna){
+                    case 0:
+                        return "Id";
+                    case 1:
+                        return "Fecha";
+                    case 2:
+                        return "Nombre";
+                    case 3:
+                        return "Sexo";
+                    case 4:
+                        return "Identificación";
+                    case 5:
+                        return "Nivel Académico";
+                    case 6:
+                        return "Puesto al que Aplica";
+                }
+                return null;
+            }
+
+            @Override
+            public int getColumnCount() {
+                return 7;
+            }
+        };
     }
     
     private void setTabla() throws SQLException, ConnectException{
-            DefaultTableModel modelo = new DefaultTableModel();
-            int cantidadColumnas = jtPreempleo.getColumnCount();
-            
-            String[] campos = new String[cantidadColumnas];
-            for (int i = 0; i < cantidadColumnas; i++)
-            {
-                campos[i] = jtPreempleo.getColumnName(i);
-            }
-            modelo = util.consultaMixta("SELECT PREEMP_ID, PREEMP_FECHA, PREEMP_NOMBRE, PREEMP_SEXO, PREEMP_IDENTIFICACION, PREEMP_NIVELACADEMICO, PREEMP_PUESTOAPLICA FROM preempleo WHERE PREEMP_ESTADO = 1", campos);
-            jtPreempleo.setModel(modelo);
-            String[] idCombobox = new String[modelo.getRowCount()];
-            for (int i = 0; i < modelo.getRowCount(); i++){
-                idCombobox[i] = String.valueOf(modelo.getValueAt(i, 0));
-            }
-            setCombobox(idCombobox);
+        /*
+        DefaultTableModel modelo = new DefaultTableModel();
+        int cantidadColumnas = jtPreempleo.getColumnCount();
+
+        String[] campos = new String[cantidadColumnas];
+        for (int i = 0; i < cantidadColumnas; i++)
+        {
+            campos[i] = jtPreempleo.getColumnName(i);
+        }
+        modelo = util.consultaMixta("SELECT PREEMP_ID, PREEMP_FECHA, PREEMP_NOMBRE, PREEMP_SEXO, PREEMP_IDENTIFICACION, PREEMP_NIVELACADEMICO, PREEMP_PUESTOAPLICA FROM preempleo WHERE PREEMP_ESTADO = 1", campos);
+        jtPreempleo.setModel(modelo);
+        String[] idCombobox = new String[modelo.getRowCount()];
+        for (int i = 0; i < modelo.getRowCount(); i++){
+            idCombobox[i] = String.valueOf(modelo.getValueAt(i, 0));
+        }
+        setCombobox(idCombobox);
+        */
+        jtPreempleo.setModel(crearModeloTabla());
+        DatosPaginacion<PreempleoMod> datosPaginacion = crearDatosPaginacion();
+        paginador = new PaginadorTabla(jtPreempleo, datosPaginacion, new int[]{5,10,20,25,50,75,100}, 10);
+        paginador.crearListadoFilasPermitidas(panelPaginacion);
+        filasPermitidas = paginador.getComboboxFilasPermitidas();
+        filasPermitidas.addActionListener(this);
+        jtPreempleo.getModel().addTableModelListener(this);
+        filasPermitidas.setSelectedItem(Integer.parseInt("10"));
     }
     
-    private void setCombobox(String[] valores){
-        cbPreempleoId.removeAllItems();
-        for (int i = 0; i < valores.length; i++){
-            cbPreempleoId.addItem(valores[i]);
-        }
+    private DatosPaginacion <PreempleoMod> crearDatosPaginacion() throws SQLException, ConnectException{
+        List <PreempleoMod> lista = preempCtrl.seleccionarTodos();
+        return new DatosPaginacion<PreempleoMod>(){
+            @Override
+            public int getTotalRowCount() {
+                return lista.size();
+            }
+
+            @Override
+            public List<PreempleoMod> getRows(int startIndex, int endIndex) {
+                return lista.subList(startIndex, endIndex);
+            }
+        };
     }
     
     private void setBuscarPreempleoAntecedentes(String valorBuscar) throws SQLException, ConnectException{
-        PreempleoMod preempleo = new PreempleoMod();
         PreempleoCtrl lista1 = new PreempleoCtrl();
-        AntecedentesMod antecedentes = new AntecedentesMod();
         preempleo = lista1.buscarFila(valorBuscar);
-        setPreempleo(preempleo);
+        setPreempleo();
         AntecedentesCtrl lista2 = new AntecedentesCtrl();
         antecedentes = lista2.buscarFila(preempleo.getAntecedentesId());
-        setAntecedentes(antecedentes);
+        setAntecedentes();
     }
     
     private void crear() throws SQLException{
-        AntecedentesCtrl ant = new AntecedentesCtrl();
-        PreempleoCtrl preemp = new PreempleoCtrl();
         try {
             int res1 = 0, res2 = 0;
-            res1 = ant.Crear(getAntecedentes());
+            res1 = antCtrl.Crear(antecedentes);
             if (res1 > 0){
-                antecedentesId = ant.getMaxId();
-                res2 = preemp.Crear(getPreempleo());
+                preempleo.setAntecedentesId(antCtrl.getMaxId());
+                res2 = preempCtrl.Crear(preempleo);
             }
             if ((res1 > 0) && (res2 > 0)) {
                 JOptionPane.showMessageDialog(this, "REGISTRO INGRESADO CON EXITO", "Inserción de Datos", JOptionPane.INFORMATION_MESSAGE);
@@ -409,12 +540,10 @@ public class Preempleo extends javax.swing.JFrame {
     
     private void actualizar() throws SQLException{
         try {
-            AntecedentesCtrl ant = new AntecedentesCtrl();
-            PreempleoCtrl preemp = new PreempleoCtrl();
             int res1 = 0, res2 = 0;
-            res1 = ant.Actualizar(getAntecedentes());
+            res1 = antCtrl.Actualizar(antecedentes);
             if (res1 > 0){
-                res2 = preemp.Actualizar(getPreempleo());
+                res2 = preempCtrl.Actualizar(preempleo);
             }
             if ((res1 > 0) && (res2 > 0)) {
                 JOptionPane.showMessageDialog(this, "REGISTRO ACTUALIZADO CON EXITO", "Inserción de Datos", JOptionPane.INFORMATION_MESSAGE);
@@ -431,12 +560,10 @@ public class Preempleo extends javax.swing.JFrame {
     
     private void eliminar() throws SQLException{
         try {
-            AntecedentesCtrl ant = new AntecedentesCtrl();
-            PreempleoCtrl preemp = new PreempleoCtrl();
             int res1 = 0, res2 = 0;
-            res1 = ant.Eliminar(getAntecedentes());
+            res1 = antCtrl.Eliminar(antecedentes);
             if (res1 > 0){
-                res2 = preemp.Eliminar(getPreempleo());
+                res2 = preempCtrl.Eliminar(preempleo);
             }
             if ((res1 > 0) && (res2 > 0)) {
                 JOptionPane.showMessageDialog(this, "REGISTRO ELIMINADO CON EXITO", "Inserción de Datos", JOptionPane.INFORMATION_MESSAGE);
@@ -575,13 +702,15 @@ public class Preempleo extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         txtDiagnostico = new javax.swing.JTextArea();
         panelCombobox = new javax.swing.JPanel();
-        cbPreempleoId = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
         lblTituloCombobox = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jtPreempleo = new javax.swing.JTable();
         btn_Ingresar = new javax.swing.JPanel();
         lbl_btnIngresar = new javax.swing.JLabel();
+        panelPaginacion = new javax.swing.JPanel();
+        lbl_SeleccionPreempleo = new javax.swing.JLabel();
+        lbl_TituloSeleccion = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -1531,10 +1660,6 @@ public class Preempleo extends javax.swing.JFrame {
         panelCombobox.setBackground(new java.awt.Color(255, 255, 255));
         panelCombobox.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        cbPreempleoId.setFont(new java.awt.Font("Roboto", 0, 11)); // NOI18N
-        cbPreempleoId.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        panelCombobox.add(cbPreempleoId, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 90, 60, -1));
-
         jLabel1.setFont(new java.awt.Font("Roboto", 0, 24)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Seleccione una Ficha de Preempleo");
@@ -1578,7 +1703,7 @@ public class Preempleo extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(jtPreempleo);
 
-        panelCombobox.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 160, 980, 320));
+        panelCombobox.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 160, 980, 170));
 
         btn_Ingresar.setBackground(new java.awt.Color(92, 92, 235));
         btn_Ingresar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
@@ -1610,6 +1735,18 @@ public class Preempleo extends javax.swing.JFrame {
         );
 
         panelCombobox.add(btn_Ingresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(750, 90, 90, 35));
+
+        panelPaginacion.setBackground(new java.awt.Color(255, 255, 255));
+        panelCombobox.add(panelPaginacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 330, 980, 30));
+
+        lbl_SeleccionPreempleo.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        lbl_SeleccionPreempleo.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        lbl_SeleccionPreempleo.setPreferredSize(new java.awt.Dimension(300, 40));
+        panelCombobox.add(lbl_SeleccionPreempleo, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, -1, -1));
+
+        lbl_TituloSeleccion.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        lbl_TituloSeleccion.setText("Registro Seleccionado");
+        panelCombobox.add(lbl_TituloSeleccion, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, -1, -1));
 
         tpanel_Contenidos.addTab("Combobox", panelCombobox);
 
@@ -1645,6 +1782,8 @@ public class Preempleo extends javax.swing.JFrame {
                 if (verificarPreempleado()){
                     if (verificarAntecedentes()){
                         try {
+                            getAntecedentes();
+                            getPreempleo();
                             switch (contenidoActual){
                                 case "Eliminar":
                                     eliminar();
@@ -1683,7 +1822,7 @@ public class Preempleo extends javax.swing.JFrame {
             rbtn3_1.setEnabled(false);
             rbtn4_1.setEnabled(false);
             grbtn_empresa1.clearSelection();
-            tiempoLaborado1 = 0;
+            antecedentes.setTiempolaborado1("0");
             txtEmpresa2.setEnabled(false);
             txtPuesto2.setEnabled(false);
             txtEmpresa2.setText("");
@@ -1705,7 +1844,7 @@ public class Preempleo extends javax.swing.JFrame {
             rbtn3_1.setEnabled(false);
             rbtn4_1.setEnabled(false);
             grbtn_empresa1.clearSelection();
-            tiempoLaborado1 = 0;
+            antecedentes.setTiempolaborado1("0");
             txtEmpresa2.setEnabled(false);
             txtPuesto2.setEnabled(false);
             txtEmpresa2.setText("");
@@ -1727,7 +1866,7 @@ public class Preempleo extends javax.swing.JFrame {
             rbtn3_2.setEnabled(false);
             rbtn4_2.setEnabled(false);
             grbtn_empresa2.clearSelection();
-            tiempoLaborado2 = 0;
+            antecedentes.setTiempolaborado1("0");
             txtEmpresa3.setEnabled(false);
             txtPuesto3.setEnabled(false);
             txtEmpresa3.setText("");
@@ -1749,7 +1888,7 @@ public class Preempleo extends javax.swing.JFrame {
             rbtn3_2.setEnabled(false);
             rbtn4_2.setEnabled(false);
             grbtn_empresa2.clearSelection();
-            tiempoLaborado2 = 0;
+            antecedentes.setTiempolaborado2("0");
             txtEmpresa3.setEnabled(false);
             txtPuesto3.setEnabled(false);
             txtEmpresa3.setText("");
@@ -1771,7 +1910,7 @@ public class Preempleo extends javax.swing.JFrame {
             rbtn3_3.setEnabled(false);
             rbtn4_3.setEnabled(false);
             grbtn_empresa3.clearSelection();
-            tiempoLaborado3 = 0;
+            antecedentes.setTiempolaborado3("0");
             emp3 = false;
         }
     }//GEN-LAST:event_txtEmpresa3KeyTyped
@@ -1789,7 +1928,7 @@ public class Preempleo extends javax.swing.JFrame {
             rbtn3_3.setEnabled(false);
             rbtn4_3.setEnabled(false);
             grbtn_empresa3.clearSelection();
-            tiempoLaborado3 = 0;
+            antecedentes.setTiempolaborado3("0");
             emp3 = false;
         }
     }//GEN-LAST:event_txtPuesto3KeyTyped
@@ -1798,84 +1937,84 @@ public class Preempleo extends javax.swing.JFrame {
         emp1 = true;
         txtEmpresa2.setEnabled(true);
         txtPuesto2.setEnabled(true);
-        tiempoLaborado1 = 1;
+        antecedentes.setTiempolaborado1("1");
     }//GEN-LAST:event_rbtn1_1ActionPerformed
 
     private void rbtn2_1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtn2_1ActionPerformed
         emp1 = true;
         txtEmpresa2.setEnabled(true);
         txtPuesto2.setEnabled(true);
-        tiempoLaborado1 = 2;
+        antecedentes.setTiempolaborado1("2");
     }//GEN-LAST:event_rbtn2_1ActionPerformed
 
     private void rbtn3_1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtn3_1ActionPerformed
         emp1 = true;
         txtEmpresa2.setEnabled(true);
         txtPuesto2.setEnabled(true);
-        tiempoLaborado1 = 3;
+        antecedentes.setTiempolaborado1("3");
     }//GEN-LAST:event_rbtn3_1ActionPerformed
 
     private void rbtn4_1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtn4_1ActionPerformed
         emp1 = true;
         txtEmpresa2.setEnabled(true);
         txtPuesto2.setEnabled(true);
-        tiempoLaborado1 = 4;
+        antecedentes.setTiempolaborado1("4");
     }//GEN-LAST:event_rbtn4_1ActionPerformed
 
     private void rbtn1_2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtn1_2ActionPerformed
         emp2 = true;
         txtEmpresa3.setEnabled(true);
         txtPuesto3.setEnabled(true);
-        tiempoLaborado2 = 1;
+        antecedentes.setTiempolaborado2("1");
     }//GEN-LAST:event_rbtn1_2ActionPerformed
 
     private void rbtn2_2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtn2_2ActionPerformed
         emp2 = true;
         txtEmpresa3.setEnabled(true);
         txtPuesto3.setEnabled(true);
-        tiempoLaborado2 = 2;
+        antecedentes.setTiempolaborado2("2");
     }//GEN-LAST:event_rbtn2_2ActionPerformed
 
     private void rbtn3_2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtn3_2ActionPerformed
         emp2 = true;
         txtEmpresa3.setEnabled(true);
         txtPuesto3.setEnabled(true);
-        tiempoLaborado2 = 3;
+        antecedentes.setTiempolaborado2("3");
     }//GEN-LAST:event_rbtn3_2ActionPerformed
 
     private void rbtn4_2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtn4_2ActionPerformed
         emp2 = true;
         txtEmpresa3.setEnabled(true);
         txtPuesto3.setEnabled(true);
-        tiempoLaborado2 = 4;
+        antecedentes.setTiempolaborado2("4");
     }//GEN-LAST:event_rbtn4_2ActionPerformed
 
     private void rbtn1_3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtn1_3ActionPerformed
         emp3 = true;
-        tiempoLaborado3 = 1;
+        antecedentes.setTiempolaborado3("1");
     }//GEN-LAST:event_rbtn1_3ActionPerformed
 
     private void rbtn2_3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtn2_3ActionPerformed
         emp3 = true;
-        tiempoLaborado3 = 2;
+        antecedentes.setTiempolaborado3("2");
     }//GEN-LAST:event_rbtn2_3ActionPerformed
 
     private void rbtn3_3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtn3_3ActionPerformed
         emp3 = true;
-        tiempoLaborado3 = 3;
+        antecedentes.setTiempolaborado3("3");
     }//GEN-LAST:event_rbtn3_3ActionPerformed
 
     private void rbtn4_3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtn4_3ActionPerformed
         emp3 = true;
-        tiempoLaborado3 = 4;
+        antecedentes.setTiempolaborado3("4");
     }//GEN-LAST:event_rbtn4_3ActionPerformed
 
     private void rbtn_SexoMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtn_SexoMActionPerformed
-        sexo = "M";
+        preempleo.setSexo("M");
     }//GEN-LAST:event_rbtn_SexoMActionPerformed
 
     private void rbtn_SexoFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtn_SexoFActionPerformed
-        sexo = "F";
+        preempleo.setSexo("F");
     }//GEN-LAST:event_rbtn_SexoFActionPerformed
 
     private void lbl_btnCrearMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btnCrearMouseEntered
@@ -1964,18 +2103,21 @@ public class Preempleo extends javax.swing.JFrame {
 
     private void lbl_btnIngresarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btnIngresarMouseClicked
         try {
-            if (contenidoActual.equals("Actualizar")){
-                tpanel_Contenidos.setSelectedIndex(1);
-                btn_Confirmar.setBackground(new Color(92,92,235));
-                
-                btn_Confirmar.setVisible(true);
-            }else if (contenidoActual.equals("Eliminar")){
-                tpanel_Contenidos.setSelectedIndex(1);
-                btn_Confirmar.setBackground(new Color(235,91,91));
-                
-                btn_Confirmar.setVisible(true);            
-            }
-            setBuscarPreempleoAntecedentes(cbPreempleoId.getSelectedItem().toString());
+            if (lbl_SeleccionPreempleo.getText().length() > 0){
+                if (contenidoActual.equals("Actualizar")){
+                    tpanel_Contenidos.setSelectedIndex(1);
+                    btn_Confirmar.setBackground(new Color(92,92,235));
+
+                    btn_Confirmar.setVisible(true);
+                }else if (contenidoActual.equals("Eliminar")){
+                    tpanel_Contenidos.setSelectedIndex(1);
+                    btn_Confirmar.setBackground(new Color(235,91,91));
+
+                    btn_Confirmar.setVisible(true);            
+                }
+                setBuscarPreempleoAntecedentes(jtPreempleo.getValueAt(jtPreempleo.getSelectedRow(), 0).toString());
+            }else
+                JOptionPane.showMessageDialog(null, "Seleccione un registro de la tabla");
         } catch (SQLException ex) {
         Logger.getLogger(Preempleo.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ConnectException ex) {
@@ -1986,127 +2128,142 @@ public class Preempleo extends javax.swing.JFrame {
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel btn_Actualizar;
-    private javax.swing.JPanel btn_Confirmar;
-    private javax.swing.JPanel btn_Crear;
-    private javax.swing.JPanel btn_Eliminar;
-    private javax.swing.JPanel btn_Ingresar;
-    private javax.swing.JComboBox<String> cbPreempleoId;
-    private javax.swing.JPanel cont_Preempleo;
-    private static javax.swing.ButtonGroup grbtn_Sexo;
-    private static javax.swing.ButtonGroup grbtn_empresa1;
-    private static javax.swing.ButtonGroup grbtn_empresa2;
-    private static javax.swing.ButtonGroup grbtn_empresa3;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jtPreempleo;
-    private javax.swing.JLabel lbl11anios;
-    private javax.swing.JLabel lbl1anio;
-    private javax.swing.JLabel lbl2anios;
-    private javax.swing.JLabel lbl5anios;
-    private javax.swing.JLabel lblAB;
-    private javax.swing.JLabel lblAG;
-    private javax.swing.JLabel lblAntecedentesGi;
-    private javax.swing.JLabel lblAntecedentesLaborales;
-    private javax.swing.JLabel lblCSTP;
-    private javax.swing.JLabel lblClinica;
-    private javax.swing.JLabel lblDiagnostico;
-    private javax.swing.JLabel lblEmpresa;
-    private javax.swing.JLabel lblEstadoCivil;
-    private javax.swing.JLabel lblFechaMod;
-    private javax.swing.JLabel lblFur;
-    private javax.swing.JLabel lblG;
-    private javax.swing.JLabel lblHM;
-    private javax.swing.JLabel lblHV;
-    private javax.swing.JLabel lblIdentificacion;
-    private javax.swing.JLabel lblMPF;
-    private javax.swing.JLabel lblMenarquia;
-    private javax.swing.JLabel lblNivelAcademico;
-    private javax.swing.JLabel lblNombre;
-    private javax.swing.JLabel lblP;
-    private javax.swing.JLabel lblPuesto;
-    private javax.swing.JLabel lblPuestoAplica;
-    private javax.swing.JLabel lblSeguridad;
-    private javax.swing.JLabel lblSexo;
-    private javax.swing.JLabel lblTelefono;
-    private javax.swing.JLabel lblTiempoLaborado;
-    private javax.swing.JLabel lblTituloCombobox;
-    private javax.swing.JLabel lblTituloPrincipal;
-    private javax.swing.JLabel lblTitulos;
-    private javax.swing.JLabel lbl_BtnEliminar;
-    private javax.swing.JLabel lbl_InicioInicio;
-    private javax.swing.JLabel lbl_btnActualizar;
-    private javax.swing.JLabel lbl_btnCrear;
-    private javax.swing.JLabel lbl_btnIngresar;
-    private javax.swing.JLabel lbl_btn_Confirmar;
-    private javax.swing.JPanel panelAG;
-    private javax.swing.JPanel panelBotonesCRUD;
-    private javax.swing.JPanel panelCombobox;
-    private javax.swing.JPanel panelEdicion;
-    private javax.swing.JPanel panelFecha;
-    private javax.swing.JPanel panelFormulario;
-    private javax.swing.JPanel panelInicio;
-    private javax.swing.JPanel panelMenu1;
-    private javax.swing.JPanel panelMenu2;
-    private javax.swing.JPanel panelRbtn1_1;
-    private javax.swing.JPanel panelRbtn1_2;
-    private javax.swing.JPanel panelRbtn1_3;
-    private javax.swing.JPanel panelRbtn2_1;
-    private javax.swing.JPanel panelRbtn2_2;
-    private javax.swing.JPanel panelRbtn2_3;
-    private javax.swing.JPanel panelRbtn3_1;
-    private javax.swing.JPanel panelRbtn3_2;
-    private javax.swing.JPanel panelRbtn3_3;
-    private javax.swing.JPanel panelRbtn4_1;
-    private javax.swing.JPanel panelRbtn4_2;
-    private javax.swing.JPanel panelRbtn4_3;
-    private javax.swing.JPanel panelSeguridad;
-    private javax.swing.JPanel panelTitulos;
-    private javax.swing.JRadioButton rbtn1_1;
-    private javax.swing.JRadioButton rbtn1_2;
-    private javax.swing.JRadioButton rbtn1_3;
-    private javax.swing.JRadioButton rbtn2_1;
-    private javax.swing.JRadioButton rbtn2_2;
-    private javax.swing.JRadioButton rbtn2_3;
-    private javax.swing.JRadioButton rbtn3_1;
-    private javax.swing.JRadioButton rbtn3_2;
-    private javax.swing.JRadioButton rbtn3_3;
-    private javax.swing.JRadioButton rbtn4_1;
-    private javax.swing.JRadioButton rbtn4_2;
-    private javax.swing.JRadioButton rbtn4_3;
-    private javax.swing.JRadioButton rbtn_SexoF;
-    private javax.swing.JRadioButton rbtn_SexoM;
-    private javax.swing.JPanel tablaTitulos;
-    private javax.swing.JTabbedPane tpanel_Contenidos;
-    private javax.swing.JTextField txtAB;
-    private javax.swing.JTextField txtCSTP;
-    private javax.swing.JTextArea txtDiagnostico;
-    private javax.swing.JTextField txtDireccion;
-    private javax.swing.JTextField txtEdad;
-    private javax.swing.JTextField txtEmpresa1;
-    private javax.swing.JTextField txtEmpresa2;
-    private javax.swing.JTextField txtEmpresa3;
-    private javax.swing.JTextField txtEstadoCivil;
-    private javax.swing.JTextField txtFUR;
-    private javax.swing.JTextField txtFecha;
-    private javax.swing.JTextField txtG;
-    private javax.swing.JTextField txtHM;
-    private javax.swing.JTextField txtHV;
-    private javax.swing.JTextField txtIdentificacion;
-    private javax.swing.JTextField txtMPF;
-    private javax.swing.JTextField txtMenarquia;
-    private javax.swing.JTextField txtNivelAcademico;
-    private javax.swing.JTextField txtNombre;
-    private javax.swing.JTextField txtP;
-    private javax.swing.JLabel txtPreempleoId;
-    private javax.swing.JTextField txtPuesto1;
-    private javax.swing.JTextField txtPuesto2;
-    private javax.swing.JTextField txtPuesto3;
-    private javax.swing.JTextField txtPuestoAplica;
-    private javax.swing.JTextField txtTelefono;
+    public javax.swing.JPanel btn_Actualizar;
+    public javax.swing.JPanel btn_Confirmar;
+    public javax.swing.JPanel btn_Crear;
+    public javax.swing.JPanel btn_Eliminar;
+    public javax.swing.JPanel btn_Ingresar;
+    public javax.swing.JPanel cont_Preempleo;
+    public static javax.swing.ButtonGroup grbtn_Sexo;
+    public static javax.swing.ButtonGroup grbtn_empresa1;
+    public static javax.swing.ButtonGroup grbtn_empresa2;
+    public static javax.swing.ButtonGroup grbtn_empresa3;
+    public javax.swing.JLabel jLabel1;
+    public javax.swing.JLabel jLabel3;
+    public javax.swing.JLabel jLabel4;
+    public javax.swing.JLabel jLabel5;
+    public javax.swing.JScrollPane jScrollPane1;
+    public javax.swing.JScrollPane jScrollPane2;
+    public javax.swing.JTable jtPreempleo;
+    public javax.swing.JLabel lbl11anios;
+    public javax.swing.JLabel lbl1anio;
+    public javax.swing.JLabel lbl2anios;
+    public javax.swing.JLabel lbl5anios;
+    public javax.swing.JLabel lblAB;
+    public javax.swing.JLabel lblAG;
+    public javax.swing.JLabel lblAntecedentesGi;
+    public javax.swing.JLabel lblAntecedentesLaborales;
+    public javax.swing.JLabel lblCSTP;
+    public javax.swing.JLabel lblClinica;
+    public javax.swing.JLabel lblDiagnostico;
+    public javax.swing.JLabel lblEmpresa;
+    public javax.swing.JLabel lblEstadoCivil;
+    public javax.swing.JLabel lblFechaMod;
+    public javax.swing.JLabel lblFur;
+    public javax.swing.JLabel lblG;
+    public javax.swing.JLabel lblHM;
+    public javax.swing.JLabel lblHV;
+    public javax.swing.JLabel lblIdentificacion;
+    public javax.swing.JLabel lblMPF;
+    public javax.swing.JLabel lblMenarquia;
+    public javax.swing.JLabel lblNivelAcademico;
+    public javax.swing.JLabel lblNombre;
+    public javax.swing.JLabel lblP;
+    public javax.swing.JLabel lblPuesto;
+    public javax.swing.JLabel lblPuestoAplica;
+    public javax.swing.JLabel lblSeguridad;
+    public javax.swing.JLabel lblSexo;
+    public javax.swing.JLabel lblTelefono;
+    public javax.swing.JLabel lblTiempoLaborado;
+    public javax.swing.JLabel lblTituloCombobox;
+    public javax.swing.JLabel lblTituloPrincipal;
+    public javax.swing.JLabel lblTitulos;
+    public javax.swing.JLabel lbl_BtnEliminar;
+    public javax.swing.JLabel lbl_InicioInicio;
+    private javax.swing.JLabel lbl_SeleccionPreempleo;
+    private javax.swing.JLabel lbl_TituloSeleccion;
+    public javax.swing.JLabel lbl_btnActualizar;
+    public javax.swing.JLabel lbl_btnCrear;
+    public javax.swing.JLabel lbl_btnIngresar;
+    public javax.swing.JLabel lbl_btn_Confirmar;
+    public javax.swing.JPanel panelAG;
+    public javax.swing.JPanel panelBotonesCRUD;
+    public javax.swing.JPanel panelCombobox;
+    public javax.swing.JPanel panelEdicion;
+    public javax.swing.JPanel panelFecha;
+    public javax.swing.JPanel panelFormulario;
+    public javax.swing.JPanel panelInicio;
+    public javax.swing.JPanel panelMenu1;
+    public javax.swing.JPanel panelMenu2;
+    private javax.swing.JPanel panelPaginacion;
+    public javax.swing.JPanel panelRbtn1_1;
+    public javax.swing.JPanel panelRbtn1_2;
+    public javax.swing.JPanel panelRbtn1_3;
+    public javax.swing.JPanel panelRbtn2_1;
+    public javax.swing.JPanel panelRbtn2_2;
+    public javax.swing.JPanel panelRbtn2_3;
+    public javax.swing.JPanel panelRbtn3_1;
+    public javax.swing.JPanel panelRbtn3_2;
+    public javax.swing.JPanel panelRbtn3_3;
+    public javax.swing.JPanel panelRbtn4_1;
+    public javax.swing.JPanel panelRbtn4_2;
+    public javax.swing.JPanel panelRbtn4_3;
+    public javax.swing.JPanel panelSeguridad;
+    public javax.swing.JPanel panelTitulos;
+    public javax.swing.JRadioButton rbtn1_1;
+    public javax.swing.JRadioButton rbtn1_2;
+    public javax.swing.JRadioButton rbtn1_3;
+    public javax.swing.JRadioButton rbtn2_1;
+    public javax.swing.JRadioButton rbtn2_2;
+    public javax.swing.JRadioButton rbtn2_3;
+    public javax.swing.JRadioButton rbtn3_1;
+    public javax.swing.JRadioButton rbtn3_2;
+    public javax.swing.JRadioButton rbtn3_3;
+    public javax.swing.JRadioButton rbtn4_1;
+    public javax.swing.JRadioButton rbtn4_2;
+    public javax.swing.JRadioButton rbtn4_3;
+    public javax.swing.JRadioButton rbtn_SexoF;
+    public javax.swing.JRadioButton rbtn_SexoM;
+    public javax.swing.JPanel tablaTitulos;
+    public javax.swing.JTabbedPane tpanel_Contenidos;
+    public javax.swing.JTextField txtAB;
+    public javax.swing.JTextField txtCSTP;
+    public javax.swing.JTextArea txtDiagnostico;
+    public javax.swing.JTextField txtDireccion;
+    public javax.swing.JTextField txtEdad;
+    public javax.swing.JTextField txtEmpresa1;
+    public javax.swing.JTextField txtEmpresa2;
+    public javax.swing.JTextField txtEmpresa3;
+    public javax.swing.JTextField txtEstadoCivil;
+    public javax.swing.JTextField txtFUR;
+    public javax.swing.JTextField txtFecha;
+    public javax.swing.JTextField txtG;
+    public javax.swing.JTextField txtHM;
+    public javax.swing.JTextField txtHV;
+    public javax.swing.JTextField txtIdentificacion;
+    public javax.swing.JTextField txtMPF;
+    public javax.swing.JTextField txtMenarquia;
+    public javax.swing.JTextField txtNivelAcademico;
+    public javax.swing.JTextField txtNombre;
+    public javax.swing.JTextField txtP;
+    public javax.swing.JLabel txtPreempleoId;
+    public javax.swing.JTextField txtPuesto1;
+    public javax.swing.JTextField txtPuesto2;
+    public javax.swing.JTextField txtPuesto3;
+    public javax.swing.JTextField txtPuestoAplica;
+    public javax.swing.JTextField txtTelefono;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Object evt = e.getSource();
+        if (evt.equals(filasPermitidas))
+        paginador.eventComboBox(filasPermitidas);
+    }
+
+    @Override
+    public void tableChanged(TableModelEvent e) {
+        paginador.actualizarBotonesPaginacion();
+    }
+
 }

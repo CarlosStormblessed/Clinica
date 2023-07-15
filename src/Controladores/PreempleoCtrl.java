@@ -145,7 +145,7 @@ public class PreempleoCtrl {
 
         String sql = "";
 
-        sql = "select  * FROM PREEMPLEO ORDER BY PREEMP_ID ASC";
+        sql = "select  * FROM PREEMPLEO WHERE PREEMP_ESTADO = 1 ORDER BY PREEMP_ID ASC";
         //+ filtro;
 
         try {
@@ -202,7 +202,7 @@ public class PreempleoCtrl {
 
         String sql = "";
 
-        sql = "select * FROM PREEMPLEO where PREEMP_ID = ?";
+        sql = "select * FROM PREEMPLEO where PREEMP_ID = ? AND PREEMP_ESTADO = 1";
 
         try {
             smt = conn.prepareStatement(sql);

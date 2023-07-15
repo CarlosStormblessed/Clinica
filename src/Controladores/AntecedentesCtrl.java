@@ -20,7 +20,6 @@ public class AntecedentesCtrl {
         try {
             //String sql = "INSERT INTO ANTECEDENTES VALUES ((SELECT IFNULL(MAX(ANT_ID), 0)+1 FROM ANTECEDENTES a), '?','?','?','?','?','?','?','?',?,'?','?','?','?','?','?',?,?,?,'?',?)";
             String sql = "INSERT INTO ANTECEDENTES VALUES ((SELECT IFNULL(MAX(ANT_ID), 0)+1 FROM ANTECEDENTES a), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 1)";
-            System.out.println(modelo.getDiagnostico());
             conn.setAutoCommit(false);
             smt = conn.prepareStatement(sql);
             smt.setString(1, modelo.getMenarquia());
