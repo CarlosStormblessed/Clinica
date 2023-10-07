@@ -33,14 +33,18 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
+import dateChooser.dateChooser.*;
+import java.awt.CardLayout;
+import javax.swing.JTabbedPane;
+
 public class Preempleo extends javax.swing.JFrame implements ActionListener, TableModelListener{
 
     Utilitarios util = new Utilitarios();
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     LocalDateTime now = LocalDateTime.now();
     String contenidoActual;
-    boolean emp1=false, emp2=false, emp3=false;
-    public String nombreContenido = "Preempleo";
+    boolean emp1=true, emp2=false, emp3=false;
+    public String nombreContenido = "Preempleo", empleadoId;
     public JComboBox<Integer> filasPermitidas;
     private PreempleoMod preempleo = new PreempleoMod();
     private AntecedentesMod antecedentes = new AntecedentesMod();
@@ -111,7 +115,6 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         txtP.setText("");
         txtAB.setText("");
         txtMPF.setText("");
-        txtFecha.setText("");
         txtEmpresa1.setText("");
         txtEmpresa2.setText("");
         txtEmpresa3.setText("");
@@ -158,6 +161,14 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         antecedentes.setTiempolaborado2("0");
         antecedentes.setTiempolaborado3("0");
         antecedentes.setDiagnostico("");
+        antecedentes.setFamiliares("");
+        antecedentes.setMedicos("");
+        antecedentes.setTratamientos("");
+        antecedentes.setLaboratorios("");
+        antecedentes.setQuirurgicos("");
+        antecedentes.setTraumaticos("");
+        antecedentes.setAlergicos("");
+        antecedentes.setVicios("");
         antecedentes.setEmpleadoId("");
         antecedentes.setEstado("");
         setTiempoLaborado();
@@ -198,7 +209,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     
     private boolean verificarPreempleado(){
         boolean valido = false;
-        if ((txtFecha.getText().length()>0) && (txtIdentificacion.getText().length()>0) && (txtNombre.getText().length()>0) && (util.verificarNumero(txtEdad.getText())) && (txtEstadoCivil.getText().length()>0) && (txtDireccion.getText().length()>0) && (txtTelefono.getText().length()>0) && (txtNivelAcademico.getText().length()>0) && (txtPuestoAplica.getText().length()>0) && (verificarSexo()))
+        if ((txtFecha.getText().length()>0) && (txtIdentificacion.getText().length()>0) && (util.verificarNumero(txtIdentificacion.getText())) && (txtNombre.getText().length()>0) && (util.verificarNumero(txtEdad.getText())) && (txtEstadoCivil.getText().length()>0) && (txtDireccion.getText().length()>0) && (txtTelefono.getText().length()>0) && (txtNivelAcademico.getText().length()>0) && (txtPuestoAplica.getText().length()>0) && (verificarSexo()))
             valido = true;
         else valido = false;
         return valido;
@@ -206,7 +217,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     
     private boolean verificarAntecedentes(){
         boolean valido = false;
-        if (util.verificarNumero(txtMenarquia.getText()) && (util.verificarNumero(txtFUR.getText())) && (util.verificarNumero(txtFUR.getText())) && (util.verificarNumero(txtG.getText())) && (util.verificarNumero(txtP.getText())) && (util.verificarNumero(txtCSTP.getText())) && (util.verificarNumero(txtHV.getText())) && (util.verificarNumero(txtHM.getText())) && (util.verificarNumero(txtAB.getText())) && (txtDiagnostico.getText().length()>0))
+        if (((util.verificarNumero(txtG.getText())) || (txtG.getText().length() == 0)) && ((util.verificarNumero(txtP.getText())) || (txtP.getText().length() == 0)) && ((util.verificarNumero(txtHV.getText())) || (txtHV.getText().length() == 0)) && ((util.verificarNumero(txtHM.getText())) || (txtHM.getText().length() == 0)) && (util.verificarNumero(txtAB.getText()) || (txtAB.getText().length() == 0)) && (txtDiagnostico.getText().length()>0))
                 valido = true;
         return valido;
     }
@@ -333,9 +344,9 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
      * Los antecedentes en pantalla se guardarán en una variable global "antecedentes"
      */
     private void getAntecedentes(){
-        antecedentes.setMenarquia(txtMenarquia.getText());
-        antecedentes.setFur(txtFUR.getText());
-        antecedentes.setCstp(txtCSTP.getText());
+        antecedentes.setMenarquia(util.convertirFechaSQL(txtMenarquia.getText()));
+        antecedentes.setFur(util.convertirFechaSQL(txtFUR.getText()));
+        antecedentes.setCstp(util.convertirFechaSQL(txtCSTP.getText()));
         antecedentes.setMpf("");
         antecedentes.setHv(txtHV.getText());
         antecedentes.setHm(txtHM.getText());
@@ -351,16 +362,25 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         antecedentes.setPuesto2(txtPuesto2.getText());
         antecedentes.setPuesto3(txtPuesto3.getText());
         antecedentes.setDiagnostico(txtDiagnostico.getText());
-        antecedentes.setEmpleadoId("0");
+        antecedentes.setFamiliares(txtAreaFamiliares.getText());
+        antecedentes.setMedicos(txtAreaMedicos.getText());
+        antecedentes.setTratamientos(txtAreaTratamientos.getText());
+        antecedentes.setLaboratorios(txtAreaLaboratorios.getText());
+        antecedentes.setQuirurgicos(txtAreaQuirurgicos.getText());
+        antecedentes.setTraumaticos(txtAreaTraumaticos.getText());
+        antecedentes.setAlergicos(txtAreaAlergicos.getText());
+        antecedentes.setVicios(txtAreaVicios.getText());
+        
+        antecedentes.setEmpleadoId(empleadoId);
     }
     
     /**
      * Los valores dentro de los antecedentes guardados en la variable global "antecedentes" se mostrarán en pantalla
      */
     private void setAntecedentes(){
-        txtMenarquia.setText(antecedentes.getMenarquia());
-        txtFUR.setText(antecedentes.getFur());
-        txtCSTP.setText(antecedentes.getCstp());
+        txtMenarquia.setText(util.convertirFechaGUI(antecedentes.getMenarquia()));
+        txtFUR.setText(util.convertirFechaGUI(antecedentes.getFur()));
+        txtCSTP.setText(util.convertirFechaGUI(antecedentes.getCstp()));
         txtHV.setText(antecedentes.getHv());
         txtHM.setText(antecedentes.getHm());
         txtG.setText(antecedentes.getG());
@@ -376,6 +396,14 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         txtPuesto3.setText(antecedentes.getPuesto3());
         setTiempoLaborado();
         txtDiagnostico.setText(antecedentes.getDiagnostico());
+        txtAreaFamiliares.setText(antecedentes.getFamiliares());
+        txtAreaMedicos.setText(antecedentes.getMedicos());
+        txtAreaTratamientos.setText(antecedentes.getTratamientos());
+        txtAreaLaboratorios.setText(antecedentes.getLaboratorios());
+        txtAreaQuirurgicos.setText(antecedentes.getQuirurgicos());
+        txtAreaTraumaticos.setText(antecedentes.getTraumaticos());
+        txtAreaAlergicos.setText(antecedentes.getAlergicos());
+        txtAreaVicios.setText(antecedentes.getVicios());
     }
     
     /**
@@ -591,6 +619,9 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         grbtn_empresa1 = new javax.swing.ButtonGroup();
         grbtn_empresa2 = new javax.swing.ButtonGroup();
         grbtn_empresa3 = new javax.swing.ButtonGroup();
+        fechaMenarquia = new com.raven.datechooser.DateChooser();
+        fechaFUR = new com.raven.datechooser.DateChooser();
+        fechaCSTP = new com.raven.datechooser.DateChooser();
         cont_Preempleo = new javax.swing.JPanel();
         panelBotonesCRUD = new javax.swing.JPanel();
         btn_Crear = new javax.swing.JPanel();
@@ -640,7 +671,9 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         txtPuestoAplica = new javax.swing.JTextField();
         rbtn_SexoM = new javax.swing.JRadioButton();
         rbtn_SexoF = new javax.swing.JRadioButton();
+        panelCartas = new javax.swing.JPanel();
         panelMenu2 = new javax.swing.JPanel();
+        panelAntecedentesGino = new javax.swing.JPanel();
         lblAntecedentesGi = new javax.swing.JLabel();
         lblMenarquia = new javax.swing.JLabel();
         txtMenarquia = new javax.swing.JTextField();
@@ -659,6 +692,10 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         lblAB = new javax.swing.JLabel();
         txtAB = new javax.swing.JTextField();
         lblMPF = new javax.swing.JLabel();
+        txtMPF = new javax.swing.JTextField();
+        btn_Menu3 = new javax.swing.JPanel();
+        lbl_btn_Menu3 = new javax.swing.JLabel();
+        panelAntecedentesLaborales = new javax.swing.JPanel();
         lblAntecedentesLaborales = new javax.swing.JLabel();
         lblEmpresa = new javax.swing.JLabel();
         txtEmpresa1 = new javax.swing.JTextField();
@@ -697,7 +734,35 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         rbtn4_2 = new javax.swing.JRadioButton();
         panelRbtn4_3 = new javax.swing.JPanel();
         rbtn4_3 = new javax.swing.JRadioButton();
-        txtMPF = new javax.swing.JTextField();
+        panelMenu3 = new javax.swing.JPanel();
+        lbl_AntecedentesGenerales = new javax.swing.JLabel();
+        lbl_Familiares = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        txtAreaFamiliares = new javax.swing.JTextArea();
+        lbl_Medicos = new javax.swing.JLabel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        txtAreaMedicos = new javax.swing.JTextArea();
+        lbl_Tratamientos = new javax.swing.JLabel();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        txtAreaTratamientos = new javax.swing.JTextArea();
+        lbl_Laboratorios = new javax.swing.JLabel();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        txtAreaLaboratorios = new javax.swing.JTextArea();
+        lbl_Quirurgicos = new javax.swing.JLabel();
+        jScrollPane7 = new javax.swing.JScrollPane();
+        txtAreaQuirurgicos = new javax.swing.JTextArea();
+        lbl_Traumaticos = new javax.swing.JLabel();
+        jScrollPane8 = new javax.swing.JScrollPane();
+        txtAreaTraumaticos = new javax.swing.JTextArea();
+        lbl_Alergicos = new javax.swing.JLabel();
+        jScrollPane9 = new javax.swing.JScrollPane();
+        txtAreaAlergicos = new javax.swing.JTextArea();
+        lbl_Vicios = new javax.swing.JLabel();
+        jScrollPane10 = new javax.swing.JScrollPane();
+        txtAreaVicios = new javax.swing.JTextArea();
+        btn_Menu2 = new javax.swing.JPanel();
+        lbl_btn_Menu2 = new javax.swing.JLabel();
+        panel_Diagnostico = new javax.swing.JPanel();
         lblDiagnostico = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtDiagnostico = new javax.swing.JTextArea();
@@ -712,7 +777,18 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         lbl_SeleccionPreempleo = new javax.swing.JLabel();
         lbl_TituloSeleccion = new javax.swing.JLabel();
 
+        fechaMenarquia.setForeground(new java.awt.Color(87, 87, 238));
+        fechaMenarquia.setDateFormat("dd/MM/yyyy");
+        fechaMenarquia.setTextRefernce(txtMenarquia);
+
+        fechaFUR.setForeground(new java.awt.Color(87, 87, 238));
+        fechaFUR.setTextRefernce(txtFUR);
+
+        fechaCSTP.setForeground(new java.awt.Color(87, 87, 238));
+        fechaCSTP.setTextRefernce(txtCSTP);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(255, 255, 255));
 
         cont_Preempleo.setBackground(new java.awt.Color(255, 255, 255));
         cont_Preempleo.setPreferredSize(new java.awt.Dimension(1080, 600));
@@ -727,6 +803,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         lbl_btnCrear.setFont(new java.awt.Font("Roboto", 0, 11)); // NOI18N
         lbl_btnCrear.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbl_btnCrear.setText("Crear");
+        lbl_btnCrear.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbl_btnCrear.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 lbl_btnCrearMouseClicked(evt);
@@ -747,7 +824,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         );
         btn_CrearLayout.setVerticalGroup(
             btn_CrearLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lbl_btnCrear, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)
+            .addComponent(lbl_btnCrear, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         panelBotonesCRUD.add(btn_Crear, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 30, 90, 35));
@@ -758,6 +835,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         lbl_btnActualizar.setFont(new java.awt.Font("Roboto", 0, 11)); // NOI18N
         lbl_btnActualizar.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbl_btnActualizar.setText("Actualizar");
+        lbl_btnActualizar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbl_btnActualizar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 lbl_btnActualizarMouseClicked(evt);
@@ -789,6 +867,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         lbl_BtnEliminar.setFont(new java.awt.Font("Roboto", 0, 11)); // NOI18N
         lbl_BtnEliminar.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbl_BtnEliminar.setText("Eliminar");
+        lbl_BtnEliminar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbl_BtnEliminar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 lbl_BtnEliminarMouseClicked(evt);
@@ -965,6 +1044,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
 
         cont_Preempleo.add(btn_Confirmar, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 540, 90, 35));
 
+        tpanel_Contenidos.setBackground(new java.awt.Color(255, 255, 255));
         tpanel_Contenidos.setToolTipText("");
 
         panelInicio.setBackground(new java.awt.Color(255, 255, 255));
@@ -985,83 +1065,93 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
 
         txtNombre.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtNombre.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelMenu1.add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 140, 450, 35));
+        txtNombre.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        panelMenu1.add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, 450, 35));
 
         lblNombre.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblNombre.setText("Nombre");
-        panelMenu1.add(lblNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 120, -1, 20));
+        panelMenu1.add(lblNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, -1, 20));
 
         lblClinica.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblClinica.setText("Clínica de Atención: Sidegua");
-        panelMenu1.add(lblClinica, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 10, 268, 38));
+        panelMenu1.add(lblClinica, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 268, 38));
 
         txtFecha.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtFecha.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelMenu1.add(txtFecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, 147, 35));
+        txtFecha.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        txtFecha.setEnabled(false);
+        panelMenu1.add(txtFecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, 147, 35));
 
         jLabel3.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         jLabel3.setText("Fecha");
-        panelMenu1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 60, -1, 20));
+        panelMenu1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, -1, 20));
 
         lblSexo.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblSexo.setText("Sexo");
-        panelMenu1.add(lblSexo, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 180, -1, 20));
+        panelMenu1.add(lblSexo, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 180, -1, 20));
 
         jLabel4.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         jLabel4.setText("Edad");
-        panelMenu1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 180, -1, 20));
+        panelMenu1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 180, -1, 20));
 
         txtEdad.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtEdad.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelMenu1.add(txtEdad, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 200, 67, 35));
+        txtEdad.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        panelMenu1.add(txtEdad, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 200, 67, 35));
 
         lblIdentificacion.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblIdentificacion.setText("No. de Identificación");
-        panelMenu1.add(lblIdentificacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 60, -1, 20));
+        panelMenu1.add(lblIdentificacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 60, -1, 20));
 
         txtIdentificacion.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtIdentificacion.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelMenu1.add(txtIdentificacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 80, 300, 35));
+        txtIdentificacion.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        panelMenu1.add(txtIdentificacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 80, 300, 35));
 
         lblEstadoCivil.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblEstadoCivil.setText("Estado Civil");
-        panelMenu1.add(lblEstadoCivil, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 180, -1, 20));
+        panelMenu1.add(lblEstadoCivil, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 180, -1, 20));
 
         txtEstadoCivil.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtEstadoCivil.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelMenu1.add(txtEstadoCivil, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 200, 290, 35));
+        txtEstadoCivil.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        panelMenu1.add(txtEstadoCivil, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 200, 290, 35));
 
         jLabel5.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         jLabel5.setText("Dirección");
-        panelMenu1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 240, -1, 20));
+        panelMenu1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 240, -1, 20));
 
         txtDireccion.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtDireccion.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelMenu1.add(txtDireccion, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 260, 357, 35));
+        txtDireccion.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        panelMenu1.add(txtDireccion, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 260, 357, 35));
 
         txtTelefono.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtTelefono.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelMenu1.add(txtTelefono, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 260, 90, 35));
+        txtTelefono.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        panelMenu1.add(txtTelefono, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 260, 90, 35));
 
         lblTelefono.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblTelefono.setText("Teléfono");
-        panelMenu1.add(lblTelefono, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 240, -1, 20));
+        panelMenu1.add(lblTelefono, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 240, -1, 20));
 
         lblNivelAcademico.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblNivelAcademico.setText("Nivel Académico");
-        panelMenu1.add(lblNivelAcademico, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 300, -1, -1));
+        panelMenu1.add(lblNivelAcademico, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 300, -1, -1));
 
         txtNivelAcademico.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtNivelAcademico.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelMenu1.add(txtNivelAcademico, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 320, 207, 35));
+        txtNivelAcademico.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        panelMenu1.add(txtNivelAcademico, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 320, 207, 35));
 
         lblPuestoAplica.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblPuestoAplica.setText("Puesto al que aplica");
-        panelMenu1.add(lblPuestoAplica, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 300, -1, 20));
+        panelMenu1.add(lblPuestoAplica, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 300, -1, 20));
 
         txtPuestoAplica.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtPuestoAplica.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelMenu1.add(txtPuestoAplica, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 320, 240, 35));
+        txtPuestoAplica.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        panelMenu1.add(txtPuestoAplica, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 320, 240, 35));
 
         rbtn_SexoM.setBackground(new java.awt.Color(255, 255, 255));
         grbtn_Sexo.add(rbtn_SexoM);
@@ -1072,7 +1162,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
                 rbtn_SexoMActionPerformed(evt);
             }
         });
-        panelMenu1.add(rbtn_SexoM, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 200, -1, -1));
+        panelMenu1.add(rbtn_SexoM, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, -1, -1));
 
         rbtn_SexoF.setBackground(new java.awt.Color(255, 255, 255));
         grbtn_Sexo.add(rbtn_SexoF);
@@ -1083,173 +1173,226 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
                 rbtn_SexoFActionPerformed(evt);
             }
         });
-        panelMenu1.add(rbtn_SexoF, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 200, -1, -1));
+        panelMenu1.add(rbtn_SexoF, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 200, -1, -1));
 
         panelFormulario.add(panelMenu1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 490, 370));
+
+        panelCartas.setLayout(new java.awt.CardLayout());
 
         panelMenu2.setBackground(new java.awt.Color(255, 255, 255));
         panelMenu2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        panelAntecedentesGino.setBackground(new java.awt.Color(255, 255, 255));
+        panelAntecedentesGino.setMinimumSize(new java.awt.Dimension(566, 0));
+        panelAntecedentesGino.setPreferredSize(new java.awt.Dimension(556, 100));
+        panelAntecedentesGino.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
         lblAntecedentesGi.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblAntecedentesGi.setForeground(new java.awt.Color(31, 78, 121));
         lblAntecedentesGi.setText("ANTECEDENTES GINOCOBSTÉTRICOS");
-        panelMenu2.add(lblAntecedentesGi, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 10, -1, -1));
+        panelAntecedentesGino.add(lblAntecedentesGi, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, -1, -1));
 
         lblMenarquia.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblMenarquia.setText("Menarquia");
-        panelMenu2.add(lblMenarquia, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 30, -1, 20));
+        panelAntecedentesGino.add(lblMenarquia, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, -1, 20));
 
         txtMenarquia.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtMenarquia.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelMenu2.add(txtMenarquia, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 50, 209, 35));
+        txtMenarquia.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        panelAntecedentesGino.add(txtMenarquia, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 209, 35));
 
         lblFur.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblFur.setText("FUR");
-        panelMenu2.add(lblFur, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 30, -1, 20));
+        panelAntecedentesGino.add(lblFur, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 20, -1, 20));
 
         txtFUR.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtFUR.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelMenu2.add(txtFUR, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 50, 103, 35));
+        txtFUR.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        panelAntecedentesGino.add(txtFUR, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 40, 103, 35));
 
         lblG.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblG.setText("G");
-        panelMenu2.add(lblG, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 30, -1, 20));
+        panelAntecedentesGino.add(lblG, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 20, -1, 20));
 
         txtG.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtG.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelMenu2.add(txtG, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 50, 103, 35));
+        txtG.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        panelAntecedentesGino.add(txtG, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 40, 103, 35));
 
         lblP.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblP.setText("P");
-        panelMenu2.add(lblP, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 30, -1, 20));
+        panelAntecedentesGino.add(lblP, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 20, -1, 20));
 
         txtP.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtP.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelMenu2.add(txtP, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 50, 106, 35));
+        txtP.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        panelAntecedentesGino.add(txtP, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 40, 106, 35));
 
         lblCSTP.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblCSTP.setText("CSTP");
-        panelMenu2.add(lblCSTP, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 90, -1, 20));
+        panelAntecedentesGino.add(lblCSTP, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, -1, 20));
 
         txtCSTP.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtCSTP.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelMenu2.add(txtCSTP, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 110, 209, 35));
+        txtCSTP.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        panelAntecedentesGino.add(txtCSTP, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 100, 209, 35));
 
         lblHV.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblHV.setText("HV");
-        panelMenu2.add(lblHV, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 90, -1, 20));
+        panelAntecedentesGino.add(lblHV, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 80, -1, 20));
 
         txtHV.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtHV.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelMenu2.add(txtHV, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 110, 103, 35));
+        txtHV.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        panelAntecedentesGino.add(txtHV, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 100, 103, 35));
 
         lblHM.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblHM.setText("HM");
-        panelMenu2.add(lblHM, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 90, -1, 20));
+        panelAntecedentesGino.add(lblHM, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 80, -1, 20));
 
         txtHM.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtHM.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelMenu2.add(txtHM, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 110, 103, 35));
+        txtHM.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        panelAntecedentesGino.add(txtHM, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 100, 103, 35));
 
         lblAB.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblAB.setText("AB");
-        panelMenu2.add(lblAB, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 90, -1, 20));
+        panelAntecedentesGino.add(lblAB, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 80, -1, 20));
 
         txtAB.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtAB.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelMenu2.add(txtAB, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 110, 106, 35));
+        txtAB.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        panelAntecedentesGino.add(txtAB, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 100, 106, 35));
 
         lblMPF.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblMPF.setText("MPF");
-        panelMenu2.add(lblMPF, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 150, -1, 20));
+        panelAntecedentesGino.add(lblMPF, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, -1, 20));
+
+        txtMPF.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtMPF.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtMPF.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        panelAntecedentesGino.add(txtMPF, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 160, 423, 35));
+
+        btn_Menu3.setBackground(new java.awt.Color(204, 204, 235));
+        btn_Menu3.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        btn_Menu3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lbl_btn_Menu3.setFont(new java.awt.Font("Roboto", 1, 11)); // NOI18N
+        lbl_btn_Menu3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbl_btn_Menu3.setText("Página 2 ->");
+        lbl_btn_Menu3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbl_btn_Menu3MouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lbl_btn_Menu3MouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lbl_btn_Menu3MouseExited(evt);
+            }
+        });
+        btn_Menu3.add(lbl_btn_Menu3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 106, 35));
+
+        panelAntecedentesGino.add(btn_Menu3, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 160, 106, 35));
+
+        panelMenu2.add(panelAntecedentesGino, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 566, 205));
+
+        panelAntecedentesLaborales.setBackground(new java.awt.Color(255, 255, 255));
+        panelAntecedentesLaborales.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblAntecedentesLaborales.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblAntecedentesLaborales.setForeground(new java.awt.Color(31, 78, 121));
         lblAntecedentesLaborales.setText("ANTECEDENTES LABORALES");
-        panelMenu2.add(lblAntecedentesLaborales, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 210, -1, -1));
+        panelAntecedentesLaborales.add(lblAntecedentesLaborales, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, -1, -1));
 
         lblEmpresa.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblEmpresa.setText("Empresa");
-        panelMenu2.add(lblEmpresa, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 240, -1, -1));
+        panelAntecedentesLaborales.add(lblEmpresa, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, -1, -1));
 
         txtEmpresa1.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtEmpresa1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtEmpresa1.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         txtEmpresa1.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtEmpresa1KeyTyped(evt);
             }
         });
-        panelMenu2.add(txtEmpresa1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 260, 120, 35));
+        panelAntecedentesLaborales.add(txtEmpresa1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 120, 35));
 
         txtEmpresa2.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtEmpresa2.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 1, 1, 1, new java.awt.Color(0, 0, 0)));
+        txtEmpresa2.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         txtEmpresa2.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtEmpresa2KeyTyped(evt);
             }
         });
-        panelMenu2.add(txtEmpresa2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 295, 120, 35));
+        panelAntecedentesLaborales.add(txtEmpresa2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 85, 120, 35));
 
         txtEmpresa3.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtEmpresa3.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 1, 1, 1, new java.awt.Color(0, 0, 0)));
+        txtEmpresa3.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         txtEmpresa3.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtEmpresa3KeyTyped(evt);
             }
         });
-        panelMenu2.add(txtEmpresa3, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 330, 120, 35));
+        panelAntecedentesLaborales.add(txtEmpresa3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, 120, 35));
 
         lblPuesto.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblPuesto.setText("Puesto");
-        panelMenu2.add(lblPuesto, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 240, -1, -1));
+        panelAntecedentesLaborales.add(lblPuesto, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 30, -1, -1));
 
         txtPuesto1.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtPuesto1.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 0, 1, 1, new java.awt.Color(0, 0, 0)));
+        txtPuesto1.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         txtPuesto1.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtPuesto1KeyTyped(evt);
             }
         });
-        panelMenu2.add(txtPuesto1, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 260, 120, 35));
+        panelAntecedentesLaborales.add(txtPuesto1, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 50, 120, 35));
 
         txtPuesto2.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtPuesto2.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 1, new java.awt.Color(0, 0, 0)));
+        txtPuesto2.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         txtPuesto2.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtPuesto2KeyTyped(evt);
             }
         });
-        panelMenu2.add(txtPuesto2, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 295, 120, 35));
+        panelAntecedentesLaborales.add(txtPuesto2, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 85, 120, 35));
 
         txtPuesto3.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtPuesto3.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 1, new java.awt.Color(0, 0, 0)));
+        txtPuesto3.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         txtPuesto3.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtPuesto3KeyTyped(evt);
             }
         });
-        panelMenu2.add(txtPuesto3, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 330, 120, 35));
+        panelAntecedentesLaborales.add(txtPuesto3, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 120, 120, 35));
 
         lblTiempoLaborado.setFont(new java.awt.Font("Roboto", 0, 11)); // NOI18N
         lblTiempoLaborado.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblTiempoLaborado.setText("Tiempo laborado en la empresa");
-        panelMenu2.add(lblTiempoLaborado, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 220, 295, 20));
+        panelAntecedentesLaborales.add(lblTiempoLaborado, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 10, 295, 20));
 
         lbl1anio.setFont(new java.awt.Font("Roboto", 0, 11)); // NOI18N
         lbl1anio.setText("1 año o menos");
-        panelMenu2.add(lbl1anio, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 240, -1, -1));
+        panelAntecedentesLaborales.add(lbl1anio, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 30, -1, -1));
 
         lbl2anios.setFont(new java.awt.Font("Roboto", 0, 11)); // NOI18N
         lbl2anios.setText("2 a 4 años");
-        panelMenu2.add(lbl2anios, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 240, -1, -1));
+        panelAntecedentesLaborales.add(lbl2anios, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 30, -1, -1));
 
         lbl5anios.setFont(new java.awt.Font("Roboto", 0, 11)); // NOI18N
         lbl5anios.setText("5 a 10 años");
-        panelMenu2.add(lbl5anios, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 240, -1, -1));
+        panelAntecedentesLaborales.add(lbl5anios, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 30, -1, -1));
 
         lbl11anios.setFont(new java.awt.Font("Roboto", 0, 11)); // NOI18N
         lbl11anios.setText("Más de 10 años");
-        panelMenu2.add(lbl11anios, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 240, -1, -1));
+        panelAntecedentesLaborales.add(lbl11anios, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 30, -1, -1));
 
         panelRbtn1_1.setBackground(new java.awt.Color(255, 255, 255));
         panelRbtn1_1.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 0, 1, 1, new java.awt.Color(0, 0, 0)));
@@ -1281,7 +1424,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        panelMenu2.add(panelRbtn1_1, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 260, 75, 35));
+        panelAntecedentesLaborales.add(panelRbtn1_1, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 50, 75, 35));
 
         panelRbtn1_2.setBackground(new java.awt.Color(255, 255, 255));
         panelRbtn1_2.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 1, new java.awt.Color(0, 0, 0)));
@@ -1313,7 +1456,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        panelMenu2.add(panelRbtn1_2, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 295, 75, 35));
+        panelAntecedentesLaborales.add(panelRbtn1_2, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 85, 75, 35));
 
         panelRbtn1_3.setBackground(new java.awt.Color(255, 255, 255));
         panelRbtn1_3.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 1, new java.awt.Color(0, 0, 0)));
@@ -1345,7 +1488,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        panelMenu2.add(panelRbtn1_3, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 330, 75, 35));
+        panelAntecedentesLaborales.add(panelRbtn1_3, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 120, 75, 35));
 
         panelRbtn2_1.setBackground(new java.awt.Color(255, 255, 255));
         panelRbtn2_1.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 0, 1, 1, new java.awt.Color(0, 0, 0)));
@@ -1377,7 +1520,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        panelMenu2.add(panelRbtn2_1, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 260, 60, 35));
+        panelAntecedentesLaborales.add(panelRbtn2_1, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 50, 60, 35));
 
         panelRbtn2_2.setBackground(new java.awt.Color(255, 255, 255));
         panelRbtn2_2.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 1, new java.awt.Color(0, 0, 0)));
@@ -1409,7 +1552,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        panelMenu2.add(panelRbtn2_2, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 295, 60, 35));
+        panelAntecedentesLaborales.add(panelRbtn2_2, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 85, 60, 35));
 
         panelRbtn2_3.setBackground(new java.awt.Color(255, 255, 255));
         panelRbtn2_3.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 1, new java.awt.Color(0, 0, 0)));
@@ -1441,7 +1584,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        panelMenu2.add(panelRbtn2_3, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 330, 60, 35));
+        panelAntecedentesLaborales.add(panelRbtn2_3, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 120, 60, 35));
 
         panelRbtn3_1.setBackground(new java.awt.Color(255, 255, 255));
         panelRbtn3_1.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 0, 1, 1, new java.awt.Color(0, 0, 0)));
@@ -1473,7 +1616,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
                 .addContainerGap())
         );
 
-        panelMenu2.add(panelRbtn3_1, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 260, 70, 35));
+        panelAntecedentesLaborales.add(panelRbtn3_1, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 50, 70, 35));
 
         panelRbtn3_2.setBackground(new java.awt.Color(255, 255, 255));
         panelRbtn3_2.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 1, new java.awt.Color(0, 0, 0)));
@@ -1505,7 +1648,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
                 .addContainerGap())
         );
 
-        panelMenu2.add(panelRbtn3_2, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 295, 70, 35));
+        panelAntecedentesLaborales.add(panelRbtn3_2, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 85, 70, 35));
 
         panelRbtn3_3.setBackground(new java.awt.Color(255, 255, 255));
         panelRbtn3_3.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 1, new java.awt.Color(0, 0, 0)));
@@ -1537,7 +1680,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        panelMenu2.add(panelRbtn3_3, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 330, 70, 35));
+        panelAntecedentesLaborales.add(panelRbtn3_3, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 120, 70, 35));
 
         panelRbtn4_1.setBackground(new java.awt.Color(255, 255, 255));
         panelRbtn4_1.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 0, 1, 1, new java.awt.Color(0, 0, 0)));
@@ -1569,7 +1712,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        panelMenu2.add(panelRbtn4_1, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 260, 90, 35));
+        panelAntecedentesLaborales.add(panelRbtn4_1, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 50, 90, 35));
 
         panelRbtn4_2.setBackground(new java.awt.Color(255, 255, 255));
         panelRbtn4_2.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 1, new java.awt.Color(0, 0, 0)));
@@ -1601,7 +1744,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        panelMenu2.add(panelRbtn4_2, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 295, 90, 35));
+        panelAntecedentesLaborales.add(panelRbtn4_2, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 85, 90, 35));
 
         panelRbtn4_3.setBackground(new java.awt.Color(255, 255, 255));
         panelRbtn4_3.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 1, new java.awt.Color(0, 0, 0)));
@@ -1633,20 +1776,138 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        panelMenu2.add(panelRbtn4_3, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 330, 90, 35));
+        panelAntecedentesLaborales.add(panelRbtn4_3, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 120, 90, 35));
 
-        txtMPF.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtMPF.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelMenu2.add(txtMPF, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 170, 106, 35));
+        panelMenu2.add(panelAntecedentesLaborales, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 205, 566, 160));
 
-        panelFormulario.add(panelMenu2, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 0, 590, 370));
+        panelCartas.add(panelMenu2, "card2");
+
+        panelMenu3.setBackground(new java.awt.Color(255, 255, 255));
+        panelMenu3.setMinimumSize(new java.awt.Dimension(566, 365));
+        panelMenu3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lbl_AntecedentesGenerales.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lbl_AntecedentesGenerales.setForeground(new java.awt.Color(31, 78, 121));
+        lbl_AntecedentesGenerales.setText("ANTECEDENTES GENERALES");
+        panelMenu3.add(lbl_AntecedentesGenerales, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, -1, -1));
+
+        lbl_Familiares.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lbl_Familiares.setText("Familiares");
+        panelMenu3.add(lbl_Familiares, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, -1, 20));
+
+        txtAreaFamiliares.setColumns(20);
+        txtAreaFamiliares.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        txtAreaFamiliares.setRows(5);
+        jScrollPane3.setViewportView(txtAreaFamiliares);
+
+        panelMenu3.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 260, 40));
+
+        lbl_Medicos.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lbl_Medicos.setText("Médicos");
+        panelMenu3.add(lbl_Medicos, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 100, -1, 20));
+
+        txtAreaMedicos.setColumns(20);
+        txtAreaMedicos.setRows(5);
+        jScrollPane4.setViewportView(txtAreaMedicos);
+
+        panelMenu3.add(jScrollPane4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, 260, 40));
+
+        lbl_Tratamientos.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lbl_Tratamientos.setText("Tratamientos o medicamentos actuales");
+        panelMenu3.add(lbl_Tratamientos, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, -1, 20));
+
+        txtAreaTratamientos.setColumns(20);
+        txtAreaTratamientos.setRows(5);
+        jScrollPane5.setViewportView(txtAreaTratamientos);
+
+        panelMenu3.add(jScrollPane5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, 260, 40));
+
+        lbl_Laboratorios.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lbl_Laboratorios.setText("Laboratorios o estudios recientes");
+        panelMenu3.add(lbl_Laboratorios, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 240, -1, 20));
+
+        txtAreaLaboratorios.setColumns(20);
+        txtAreaLaboratorios.setRows(5);
+        jScrollPane6.setViewportView(txtAreaLaboratorios);
+
+        panelMenu3.add(jScrollPane6, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 260, 260, 40));
+
+        lbl_Quirurgicos.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lbl_Quirurgicos.setText("Quirúrgicos");
+        panelMenu3.add(lbl_Quirurgicos, new org.netbeans.lib.awtextra.AbsoluteConstraints(283, 30, -1, 20));
+
+        txtAreaQuirurgicos.setColumns(20);
+        txtAreaQuirurgicos.setRows(5);
+        jScrollPane7.setViewportView(txtAreaQuirurgicos);
+
+        panelMenu3.add(jScrollPane7, new org.netbeans.lib.awtextra.AbsoluteConstraints(283, 50, 260, 40));
+
+        lbl_Traumaticos.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lbl_Traumaticos.setText("Traumáticos");
+        panelMenu3.add(lbl_Traumaticos, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 100, -1, 20));
+
+        txtAreaTraumaticos.setColumns(20);
+        txtAreaTraumaticos.setRows(5);
+        jScrollPane8.setViewportView(txtAreaTraumaticos);
+
+        panelMenu3.add(jScrollPane8, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 120, 260, 40));
+
+        lbl_Alergicos.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lbl_Alergicos.setText("Alérgicos");
+        panelMenu3.add(lbl_Alergicos, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 170, -1, 20));
+
+        txtAreaAlergicos.setColumns(20);
+        txtAreaAlergicos.setRows(5);
+        jScrollPane9.setViewportView(txtAreaAlergicos);
+
+        panelMenu3.add(jScrollPane9, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 190, 260, 40));
+
+        lbl_Vicios.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lbl_Vicios.setText("Vicios y manías");
+        panelMenu3.add(lbl_Vicios, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 240, -1, 20));
+
+        txtAreaVicios.setColumns(20);
+        txtAreaVicios.setRows(5);
+        jScrollPane10.setViewportView(txtAreaVicios);
+
+        panelMenu3.add(jScrollPane10, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 260, 260, 40));
+
+        btn_Menu2.setBackground(new java.awt.Color(204, 204, 235));
+        btn_Menu2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        btn_Menu2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lbl_btn_Menu2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbl_btn_Menu2.setText("<- Página 1");
+        lbl_btn_Menu2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbl_btn_Menu2MouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lbl_btn_Menu2MouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lbl_btn_Menu2MouseExited(evt);
+            }
+        });
+        btn_Menu2.add(lbl_btn_Menu2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 106, 35));
+
+        panelMenu3.add(btn_Menu2, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 320, 106, 35));
+
+        panelCartas.add(panelMenu3, "card3");
+
+        panelFormulario.add(panelCartas, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 10, 566, 365));
+
+        panel_Diagnostico.setBackground(new java.awt.Color(255, 255, 255));
+        panel_Diagnostico.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblDiagnostico.setBackground(new java.awt.Color(255, 255, 255));
         lblDiagnostico.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblDiagnostico.setForeground(new java.awt.Color(31, 78, 121));
         lblDiagnostico.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblDiagnostico.setText("¿Previamente ha tenido diagnóstico de alguna enfermedad relacionada al trabajo?");
-        panelFormulario.add(lblDiagnostico, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 380, 1080, -1));
+        panel_Diagnostico.add(lblDiagnostico, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1080, 25));
+
+        panelFormulario.add(panel_Diagnostico, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 380, 1080, 25));
 
         txtDiagnostico.setColumns(20);
         txtDiagnostico.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
@@ -1711,6 +1972,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         lbl_btnIngresar.setFont(new java.awt.Font("Roboto", 0, 11)); // NOI18N
         lbl_btnIngresar.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbl_btnIngresar.setText("Ingresar");
+        lbl_btnIngresar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbl_btnIngresar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 lbl_btnIngresarMouseClicked(evt);
@@ -1815,7 +2077,8 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
             rbtn2_1.setEnabled(true);
             rbtn3_1.setEnabled(true);
             rbtn4_1.setEnabled(true);
-        }
+        } else if ((txtEmpresa1.getText().length() >= 0) && (txtPuesto1.getText().length() >= 0) && !(rbtn1_1.isSelected() || rbtn2_1.isSelected() || rbtn3_1.isSelected() || rbtn4_1.isSelected()))
+            emp1 = true;
         else {
             rbtn1_1.setEnabled(false);
             rbtn2_1.setEnabled(false);
@@ -2125,6 +2388,38 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         }
     }//GEN-LAST:event_lbl_btnIngresarMouseClicked
 
+    private void lbl_btn_Menu3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btn_Menu3MouseClicked
+        panelCartas.removeAll();
+        panelCartas.add(panelMenu3);
+        panelCartas.repaint();
+        panelCartas.revalidate();
+        btn_Menu3.setBackground(util.colorCursorSale(btn_Menu3.getBackground()));
+    }//GEN-LAST:event_lbl_btn_Menu3MouseClicked
+
+    private void lbl_btn_Menu3MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btn_Menu3MouseEntered
+        btn_Menu3.setBackground(util.colorCursorEntra(btn_Menu3.getBackground()));
+    }//GEN-LAST:event_lbl_btn_Menu3MouseEntered
+
+    private void lbl_btn_Menu3MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btn_Menu3MouseExited
+        btn_Menu3.setBackground(util.colorCursorSale(btn_Menu3.getBackground()));
+    }//GEN-LAST:event_lbl_btn_Menu3MouseExited
+
+    private void lbl_btn_Menu2MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btn_Menu2MouseEntered
+        btn_Menu2.setBackground(util.colorCursorEntra(btn_Menu2.getBackground()));
+    }//GEN-LAST:event_lbl_btn_Menu2MouseEntered
+
+    private void lbl_btn_Menu2MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btn_Menu2MouseExited
+        btn_Menu2.setBackground(util.colorCursorSale(btn_Menu2.getBackground()));
+    }//GEN-LAST:event_lbl_btn_Menu2MouseExited
+
+    private void lbl_btn_Menu2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btn_Menu2MouseClicked
+        panelCartas.removeAll();
+        panelCartas.add(panelMenu2);
+        panelCartas.repaint();
+        panelCartas.revalidate();
+        btn_Menu2.setBackground(util.colorCursorSale(btn_Menu2.getBackground()));
+    }//GEN-LAST:event_lbl_btn_Menu2MouseClicked
+
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -2133,7 +2428,12 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     public javax.swing.JPanel btn_Crear;
     public javax.swing.JPanel btn_Eliminar;
     public javax.swing.JPanel btn_Ingresar;
+    private javax.swing.JPanel btn_Menu2;
+    private javax.swing.JPanel btn_Menu3;
     public javax.swing.JPanel cont_Preempleo;
+    private com.raven.datechooser.DateChooser fechaCSTP;
+    private com.raven.datechooser.DateChooser fechaFUR;
+    private com.raven.datechooser.DateChooser fechaMenarquia;
     public static javax.swing.ButtonGroup grbtn_Sexo;
     public static javax.swing.ButtonGroup grbtn_empresa1;
     public static javax.swing.ButtonGroup grbtn_empresa2;
@@ -2143,7 +2443,15 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     public javax.swing.JLabel jLabel4;
     public javax.swing.JLabel jLabel5;
     public javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane10;
     public javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JScrollPane jScrollPane7;
+    private javax.swing.JScrollPane jScrollPane8;
+    private javax.swing.JScrollPane jScrollPane9;
     public javax.swing.JTable jtPreempleo;
     public javax.swing.JLabel lbl11anios;
     public javax.swing.JLabel lbl1anio;
@@ -2178,16 +2486,30 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     public javax.swing.JLabel lblTituloCombobox;
     public javax.swing.JLabel lblTituloPrincipal;
     public javax.swing.JLabel lblTitulos;
+    private javax.swing.JLabel lbl_Alergicos;
+    private javax.swing.JLabel lbl_AntecedentesGenerales;
     public javax.swing.JLabel lbl_BtnEliminar;
+    private javax.swing.JLabel lbl_Familiares;
     public javax.swing.JLabel lbl_InicioInicio;
+    private javax.swing.JLabel lbl_Laboratorios;
+    private javax.swing.JLabel lbl_Medicos;
+    private javax.swing.JLabel lbl_Quirurgicos;
     private javax.swing.JLabel lbl_SeleccionPreempleo;
     private javax.swing.JLabel lbl_TituloSeleccion;
+    private javax.swing.JLabel lbl_Tratamientos;
+    private javax.swing.JLabel lbl_Traumaticos;
+    private javax.swing.JLabel lbl_Vicios;
     public javax.swing.JLabel lbl_btnActualizar;
     public javax.swing.JLabel lbl_btnCrear;
     public javax.swing.JLabel lbl_btnIngresar;
     public javax.swing.JLabel lbl_btn_Confirmar;
+    private javax.swing.JLabel lbl_btn_Menu2;
+    private javax.swing.JLabel lbl_btn_Menu3;
     public javax.swing.JPanel panelAG;
+    private javax.swing.JPanel panelAntecedentesGino;
+    private javax.swing.JPanel panelAntecedentesLaborales;
     public javax.swing.JPanel panelBotonesCRUD;
+    private javax.swing.JPanel panelCartas;
     public javax.swing.JPanel panelCombobox;
     public javax.swing.JPanel panelEdicion;
     public javax.swing.JPanel panelFecha;
@@ -2195,6 +2517,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     public javax.swing.JPanel panelInicio;
     public javax.swing.JPanel panelMenu1;
     public javax.swing.JPanel panelMenu2;
+    private javax.swing.JPanel panelMenu3;
     private javax.swing.JPanel panelPaginacion;
     public javax.swing.JPanel panelRbtn1_1;
     public javax.swing.JPanel panelRbtn1_2;
@@ -2210,6 +2533,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     public javax.swing.JPanel panelRbtn4_3;
     public javax.swing.JPanel panelSeguridad;
     public javax.swing.JPanel panelTitulos;
+    private javax.swing.JPanel panel_Diagnostico;
     public javax.swing.JRadioButton rbtn1_1;
     public javax.swing.JRadioButton rbtn1_2;
     public javax.swing.JRadioButton rbtn1_3;
@@ -2227,6 +2551,14 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     public javax.swing.JPanel tablaTitulos;
     public javax.swing.JTabbedPane tpanel_Contenidos;
     public javax.swing.JTextField txtAB;
+    private javax.swing.JTextArea txtAreaAlergicos;
+    private javax.swing.JTextArea txtAreaFamiliares;
+    private javax.swing.JTextArea txtAreaLaboratorios;
+    private javax.swing.JTextArea txtAreaMedicos;
+    private javax.swing.JTextArea txtAreaQuirurgicos;
+    private javax.swing.JTextArea txtAreaTratamientos;
+    private javax.swing.JTextArea txtAreaTraumaticos;
+    private javax.swing.JTextArea txtAreaVicios;
     public javax.swing.JTextField txtCSTP;
     public javax.swing.JTextArea txtDiagnostico;
     public javax.swing.JTextField txtDireccion;

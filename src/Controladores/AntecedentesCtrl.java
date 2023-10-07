@@ -19,7 +19,7 @@ public class AntecedentesCtrl {
         conn = conex.connect();
         try {
             //String sql = "INSERT INTO ANTECEDENTES VALUES ((SELECT IFNULL(MAX(ANT_ID), 0)+1 FROM ANTECEDENTES a), '?','?','?','?','?','?','?','?',?,'?','?','?','?','?','?',?,?,?,'?',?)";
-            String sql = "INSERT INTO ANTECEDENTES VALUES ((SELECT IFNULL(MAX(ANT_ID), 0)+1 FROM ANTECEDENTES a), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 1)";
+            String sql = "INSERT INTO ANTECEDENTES VALUES ((SELECT IFNULL(MAX(ANT_ID), 0)+1 FROM ANTECEDENTES a), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)";
             conn.setAutoCommit(false);
             smt = conn.prepareStatement(sql);
             smt.setString(1, modelo.getMenarquia());
@@ -42,6 +42,15 @@ public class AntecedentesCtrl {
             smt.setString(18, modelo.getTiempolaborado2());
             smt.setString(19, modelo.getTiempolaborado3());
             smt.setString(20, modelo.getDiagnostico());
+            smt.setString(21, modelo.getFamiliares());
+            smt.setString(22, modelo.getMedicos());
+            smt.setString(23, modelo.getTratamientos());
+            smt.setString(24, modelo.getLaboratorios());
+            smt.setString(25, modelo.getQuirurgicos());
+            smt.setString(26, modelo.getTraumaticos());
+            smt.setString(27, modelo.getAlergicos());
+            smt.setString(28, modelo.getVicios());
+            smt.setString(29, modelo.getEmpleadoId());
 
             smt.executeUpdate();
 
@@ -111,33 +120,42 @@ public class AntecedentesCtrl {
         conn = conex.connect();
          int result = 0;
         try {
-            String sql = "UPDATE ANTECEDENTES SET ANT_MENARQUIA = ?, ANT_CSTP = ?, ANT_MPF = ?, ANT_HV = ?, ANT_HM = ?, ANT_G = ?, ANT_P = ?, ANT_AB = ?, ANT_FECHA = ?, ANT_EMPRESA1 = ?, ANT_EMPRESA2 = ?, ANT_EMPRESA3 = ?, ANT_PUESTO1 = ?, ANT_PUESTO2 = ?, ANT_PUESTO3 = ?, ANT_TIEMPOLABORADO1 = ?, ANT_TIEMPOLABORADO2 = ?, ANT_TIEMPOLABORADO3 = ?, ANT_DIAGNOSTICO = ?, ANT_EMP_ID = ? WHERE ANT_ID = ?";
+            String sql = "UPDATE ANTECEDENTES SET ANT_MENARQUIA = ?, ANT_FUR = ?, ANT_CSTP = ?, ANT_MPF = ?, ANT_HV = ?, ANT_HM = ?, ANT_G = ?, ANT_P = ?, ANT_AB = ?, ANT_FECHA = ?, ANT_EMPRESA1 = ?, ANT_EMPRESA2 = ?, ANT_EMPRESA3 = ?, ANT_PUESTO1 = ?, ANT_PUESTO2 = ?, ANT_PUESTO3 = ?, ANT_TIEMPOLABORADO1 = ?, ANT_TIEMPOLABORADO2 = ?, ANT_TIEMPOLABORADO3 = ?, ANT_DIAGNOSTICO = ?, ANT_FAMILIARES = ?, ANT_MEDICOS = ?, ANT_TRATAMIENTOS = ?, ANT_LABORATORIOS = ?, ANT_QUIRURGICOS = ?, ANT_TRAUMATICOS = ?, ANT_ALERGICOS = ?, ANT_VICIOS = ?, ANT_USR_ID = ? WHERE ANT_ID = ?";
             conn.setAutoCommit(false);
 
             smt = conn.prepareStatement(sql);
 
             smt = conn.prepareStatement(sql);
             smt.setString(1, modelo.getMenarquia());
-            smt.setString(2, modelo.getCstp());
-            smt.setString(3, modelo.getMpf());
-            smt.setString(4, modelo.getHv());
-            smt.setString(5, modelo.getHm());
-            smt.setString(6, modelo.getG());
-            smt.setString(7, modelo.getP());
-            smt.setString(8, modelo.getAb());
-            smt.setString(9, modelo.getFecha());
-            smt.setString(10, modelo.getEmpresa1());
-            smt.setString(11, modelo.getEmpresa2());
-            smt.setString(12, modelo.getEmpresa3());
-            smt.setString(13, modelo.getPuesto1());
-            smt.setString(14, modelo.getPuesto2());
-            smt.setString(15, modelo.getPuesto3());
-            smt.setString(16, modelo.getTiempolaborado1());
-            smt.setString(17, modelo.getTiempolaborado2());
-            smt.setString(18, modelo.getTiempolaborado3());
-            smt.setString(19, modelo.getDiagnostico());
-            smt.setString(20, modelo.getEmpleadoId());
-            smt.setString(21, modelo.getId());
+            smt.setString(2, modelo.getFur());
+            smt.setString(3, modelo.getCstp());
+            smt.setString(4, modelo.getMpf());
+            smt.setString(5, modelo.getHv());
+            smt.setString(6, modelo.getHm());
+            smt.setString(7, modelo.getG());
+            smt.setString(8, modelo.getP());
+            smt.setString(9, modelo.getAb());
+            smt.setString(10, modelo.getFecha());
+            smt.setString(11, modelo.getEmpresa1());
+            smt.setString(12, modelo.getEmpresa2());
+            smt.setString(13, modelo.getEmpresa3());
+            smt.setString(14, modelo.getPuesto1());
+            smt.setString(15, modelo.getPuesto2());
+            smt.setString(16, modelo.getPuesto3());
+            smt.setString(17, modelo.getTiempolaborado1());
+            smt.setString(18, modelo.getTiempolaborado2());
+            smt.setString(19, modelo.getTiempolaborado3());
+            smt.setString(20, modelo.getDiagnostico());
+            smt.setString(21, modelo.getFamiliares());
+            smt.setString(22, modelo.getMedicos());
+            smt.setString(23, modelo.getTratamientos());
+            smt.setString(24, modelo.getLaboratorios());
+            smt.setString(25, modelo.getQuirurgicos());
+            smt.setString(26, modelo.getTraumaticos());
+            smt.setString(27, modelo.getAlergicos());
+            smt.setString(28, modelo.getVicios());
+            smt.setString(29, modelo.getEmpleadoId());
+            smt.setString(30, modelo.getId());
             smt.executeUpdate();
             conn.commit();
 
@@ -238,8 +256,16 @@ public class AntecedentesCtrl {
                 modeloBuscar.setTiempolaborado2(result.getString(19));
                 modeloBuscar.setTiempolaborado3(result.getString(20));
                 modeloBuscar.setDiagnostico(result.getString(21));
-                modeloBuscar.setEmpleadoId(result.getString(22));
-                modeloBuscar.setEstado(result.getString(23));
+                modeloBuscar.setFamiliares(result.getString(22));
+                modeloBuscar.setMedicos(result.getString(23));
+                modeloBuscar.setTratamientos(result.getString(24));
+                modeloBuscar.setLaboratorios(result.getString(25));
+                modeloBuscar.setQuirurgicos(result.getString(26));
+                modeloBuscar.setTraumaticos(result.getString(27));
+                modeloBuscar.setAlergicos(result.getString(28));
+                modeloBuscar.setVicios(result.getString(29));
+                modeloBuscar.setEmpleadoId(result.getString(30));
+                modeloBuscar.setEstado(result.getString(31));
                 lista.add(modeloBuscar);
             }
         } catch (Exception e) {
@@ -303,8 +329,16 @@ public class AntecedentesCtrl {
                 modeloBuscar.setTiempolaborado2(result.getString(19));
                 modeloBuscar.setTiempolaborado3(result.getString(20));
                 modeloBuscar.setDiagnostico(result.getString(21));
-                modeloBuscar.setEmpleadoId(result.getString(22));
-                modeloBuscar.setEmpleadoId(result.getString(23));
+                modeloBuscar.setFamiliares(result.getString(22));
+                modeloBuscar.setMedicos(result.getString(23));
+                modeloBuscar.setTratamientos(result.getString(24));
+                modeloBuscar.setLaboratorios(result.getString(25));
+                modeloBuscar.setQuirurgicos(result.getString(26));
+                modeloBuscar.setTraumaticos(result.getString(27));
+                modeloBuscar.setAlergicos(result.getString(28));
+                modeloBuscar.setVicios(result.getString(29));
+                modeloBuscar.setEmpleadoId(result.getString(30));
+                modeloBuscar.setEstado(result.getString(31));
             }
         } catch (Exception e) {
         } finally {

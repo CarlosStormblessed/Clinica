@@ -22,6 +22,14 @@ public class AntecedentesMod {
     private String tiempolaborado2;
     private String tiempolaborado3;
     private String diagnostico;
+    private String familiares;
+    private String medicos;
+    private String tratamientos;
+    private String laboratorios;
+    private String quirurgicos;
+    private String traumaticos;
+    private String alergicos;
+    private String vicios;
     private String empleadoId;
     private String estado;
     
@@ -40,16 +48,16 @@ public class AntecedentesMod {
         return menarquia;
     }
 
+    public void setMenarquia(String menarquia) {
+        this.menarquia = menarquia;
+    }
+
     public String getFur() {
         return fur;
     }
 
     public void setFur(String fur) {
         this.fur = fur;
-    }
-    
-    public void setMenarquia(String menarquia) {
-        this.menarquia = menarquia;
     }
 
     public String getCstp() {
@@ -195,7 +203,71 @@ public class AntecedentesMod {
     public void setDiagnostico(String diagnostico) {
         this.diagnostico = diagnostico;
     }
-       
+
+    public String getFamiliares() {
+        return familiares;
+    }
+
+    public void setFamiliares(String familiares) {
+        this.familiares = familiares;
+    }
+
+    public String getMedicos() {
+        return medicos;
+    }
+
+    public void setMedicos(String medicos) {
+        this.medicos = medicos;
+    }
+
+    public String getTratamientos() {
+        return tratamientos;
+    }
+
+    public void setTratamientos(String tratamientos) {
+        this.tratamientos = tratamientos;
+    }
+
+    public String getLaboratorios() {
+        return laboratorios;
+    }
+
+    public void setLaboratorios(String laboratorios) {
+        this.laboratorios = laboratorios;
+    }
+
+    public String getQuirurgicos() {
+        return quirurgicos;
+    }
+
+    public void setQuirurgicos(String quirurgicos) {
+        this.quirurgicos = quirurgicos;
+    }
+
+    public String getTraumaticos() {
+        return traumaticos;
+    }
+
+    public void setTraumaticos(String traumaticos) {
+        this.traumaticos = traumaticos;
+    }
+
+    public String getAlergicos() {
+        return alergicos;
+    }
+
+    public void setAlergicos(String alergicos) {
+        this.alergicos = alergicos;
+    }
+
+    public String getVicios() {
+        return vicios;
+    }
+
+    public void setVicios(String vicios) {
+        this.vicios = vicios;
+    }
+
     public String getEmpleadoId() {
         return empleadoId;
     }
@@ -211,5 +283,6 @@ public class AntecedentesMod {
     public void setEstado(String estado) {
         this.estado = estado;
     }
-        
+    
+    
 }

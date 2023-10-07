@@ -21,6 +21,7 @@ import java.sql.Statement;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import Utilitarios.Utilitarios;
+import java.sql.PreparedStatement;
 
 /**
  *
@@ -44,13 +45,19 @@ public class Login extends javax.swing.JFrame {
         else
         {
             try{
-                Conexion conexion = new Conexion();
-                Connection conn = conexion.connect();
+                PreparedStatement smt = null;
+                Connection conn;
+                Conexion conex = new Conexion();
+                conn = conex.connect();
+                ResultSet resultado = null;
                 String sql = "select * from clinica.usuario where USR_USUARIO = '" + txt_Usuario.getText() + "' AND USR_PASSWORD ='" + String.valueOf(txt_Contrasena.getPassword()) + "'";
-                Statement transaccion = conn.createStatement();
-                ResultSet resultado = transaccion.executeQuery(sql);
+                smt = conn.prepareStatement(sql);
+                resultado = smt.executeQuery(sql);
                 if (resultado.next()) {
+                    String id;
+                    id = resultado.getString(1);
                     MenuPrincipal menu = new MenuPrincipal();
+                    menu.usuario_id = id;
                     menu.setVisible(true);
                     menu.setLocationRelativeTo(null);
                     this.setVisible(false);

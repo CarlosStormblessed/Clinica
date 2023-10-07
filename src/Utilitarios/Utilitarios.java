@@ -15,6 +15,8 @@ import Conexion.Conexion;
 import java.net.ConnectException;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import javax.swing.ComboBoxModel;
+import javax.swing.event.ListDataListener;
 
 import javax.swing.table.DefaultTableModel;
 
