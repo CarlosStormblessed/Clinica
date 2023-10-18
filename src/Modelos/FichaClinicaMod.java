@@ -2,31 +2,20 @@ package Modelos;
 
 public class FichaClinicaMod {
     private String id;
-    private String clinica_id;
-    private String empleado_id; 
     private String fecha;
-    private String hora;       
+    private String hora;
     private String edad;
     private String area;
     private String puesto;
-    private String temperatura;
-    private String pulso;
-    private String spo2;
-    private String fr;
-    private String pa;
-    private String glicemia;
-    private String peso;
-    private String talla;
-    private String imc;
     private String motivo;
-    private String historiaActual;
-    private String examenHallazgos;
-    private String impresionClinica;
+    private String historia;
     private String tratamiento;
     private String referencia;
     private String traslado;
     private String patologia;
-    private String observaciones;
+    private String clinicaId;
+    private String empleadoId;
+    private String revisionSistemasId;
     private String responsable;
     private String realizado;
     private String revisado;
@@ -39,22 +28,6 @@ public class FichaClinicaMod {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getClinica_id() {
-        return clinica_id;
-    }
-
-    public void setClinica_id(String clinica_id) {
-        this.clinica_id = clinica_id;
-    }
-
-    public String getEmpleado_id() {
-        return empleado_id;
-    }
-
-    public void setEmpleado_id(String empleado_id) {
-        this.empleado_id = empleado_id;
     }
 
     public String getFecha() {
@@ -97,78 +70,6 @@ public class FichaClinicaMod {
         this.puesto = puesto;
     }
 
-    public String getTemperatura() {
-        return temperatura;
-    }
-
-    public void setTemperatura(String temperatura) {
-        this.temperatura = temperatura;
-    }
-
-    public String getPulso() {
-        return pulso;
-    }
-
-    public void setPulso(String pulso) {
-        this.pulso = pulso;
-    }
-
-    public String getSpo2() {
-        return spo2;
-    }
-
-    public void setSpo2(String spo2) {
-        this.spo2 = spo2;
-    }
-
-    public String getFr() {
-        return fr;
-    }
-
-    public void setFr(String fr) {
-        this.fr = fr;
-    }
-
-    public String getPa() {
-        return pa;
-    }
-
-    public void setPa(String pa) {
-        this.pa = pa;
-    }
-
-    public String getGlicemia() {
-        return glicemia;
-    }
-
-    public void setGlicemia(String glicemia) {
-        this.glicemia = glicemia;
-    }
-
-    public String getPeso() {
-        return peso;
-    }
-
-    public void setPeso(String peso) {
-        this.peso = peso;
-    }
-
-    public String getTalla() {
-        return talla;
-    }
-
-    public void setTalla(String talla) {
-        this.talla = talla;
-    }
-
-    public String getImc() {
-        return imc;
-    }
-
-    public void setImc(String imc) {
-        this.imc = imc;
-    }
-
     public String getMotivo() {
         return motivo;
     }
@@ -177,28 +78,12 @@ public class FichaClinicaMod {
         this.motivo = motivo;
     }
 
-    public String getHistoriaActual() {
-        return historiaActual;
+    public String getHistoria() {
+        return historia;
     }
 
-    public void setHistoriaActual(String historiaActual) {
-        this.historiaActual = historiaActual;
-    }
-
-    public String getExamenHallazgos() {
-        return examenHallazgos;
-    }
-
-    public void setExamenHallazgos(String examenHallazgos) {
-        this.examenHallazgos = examenHallazgos;
-    }
-
-    public String getImpresionClinica() {
-        return impresionClinica;
-    }
-
-    public void setImpresionClinica(String impresionClinica) {
-        this.impresionClinica = impresionClinica;
+    public void setHistoria(String historia) {
+        this.historia = historia;
     }
 
     public String getTratamiento() {
@@ -233,12 +118,28 @@ public class FichaClinicaMod {
         this.patologia = patologia;
     }
 
-    public String getObservaciones() {
-        return observaciones;
+    public String getClinicaId() {
+        return clinicaId;
     }
 
-    public void setObservaciones(String observaciones) {
-        this.observaciones = observaciones;
+    public void setClinicaId(String clinicaId) {
+        this.clinicaId = clinicaId;
+    }
+
+    public String getEmpleadoId() {
+        return empleadoId;
+    }
+
+    public void setEmpleadoId(String empleadoId) {
+        this.empleadoId = empleadoId;
+    }
+
+    public String getRevisionSistemasId() {
+        return revisionSistemasId;
+    }
+
+    public void setRevisionSistemasId(String revisionSistemasId) {
+        this.revisionSistemasId = revisionSistemasId;
     }
 
     public String getResponsable() {
@@ -280,4 +181,6 @@ public class FichaClinicaMod {
     public void setEstado(String estado) {
         this.estado = estado;
     }
+    
+    
 }

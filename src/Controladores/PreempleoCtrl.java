@@ -20,7 +20,7 @@ public class PreempleoCtrl {
         conn = conex.connect();
         try {
 
-            String sql = "INSERT INTO PREEMPLEO VALUES ((SELECT IFNULL(MAX(PREEMP_ID), 0)+1 FROM PREEMPLEO p), ?,?,?,?,?,?,?,?,?,?,(SELECT CLI_ID FROM CLINICA WHERE CLI_ID = ?), (SELECT ANT_ID FROM ANTECEDENTES WHERE ANT_ID = ?), 1)";
+            String sql = "INSERT INTO PREEMPLEO VALUES ((SELECT IFNULL(MAX(PREEMP_ID), 0)+1 FROM PREEMPLEO p), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, (SELECT CLI_ID FROM CLINICA WHERE CLI_ID = ?), (SELECT ANT_ID FROM ANTECEDENTES WHERE ANT_ID = ?), (SELECT REVSIS_ID FROM REVISION_SISTEMAS WHERE REVSIS_ID = ?), ?, ?, ?, ?, ?)";
             conn.setAutoCommit(false);
             smt = conn.prepareStatement(sql);
             smt.setString(1, modelo.getFecha());
@@ -33,8 +33,24 @@ public class PreempleoCtrl {
             smt.setString(8, modelo.getTelefono());
             smt.setString(9, modelo.getNivelAcademico());
             smt.setString(10, modelo.getPuestoAplica());
-            smt.setString(11, modelo.getClinicaId());
-            smt.setString(12, modelo.getAntecedentesId());
+            smt.setString(11, modelo.getEmpresa1());
+            smt.setString(12, modelo.getEmpresa2());
+            smt.setString(13, modelo.getEmpresa3());
+            smt.setString(14, modelo.getPuesto1());
+            smt.setString(15, modelo.getPuesto2());
+            smt.setString(16, modelo.getPuesto3());
+            smt.setString(17, modelo.getTiempoLaborado1());
+            smt.setString(18, modelo.getTiempoLaborado2());
+            smt.setString(19, modelo.getTiempoLaborado3());
+            smt.setString(20, modelo.getAptitud());
+            smt.setString(21, modelo.getClinicaId());
+            smt.setString(22, modelo.getAntecedentesId());
+            smt.setString(23, modelo.getRevisionSistemasId());
+            smt.setString(24, modelo.getResponsable());
+            smt.setString(25, modelo.getRealizado());
+            smt.setString(26, modelo.getRevisado());
+            smt.setString(27, modelo.getAutorizado());
+            smt.setString(28, modelo.getEstado());
             smt.executeUpdate();
 
             conn.commit();
@@ -56,6 +72,44 @@ public class PreempleoCtrl {
         }
     }
     
+    public String getMaxId() throws SQLException, ConnectException{
+        String id = "";
+        PreparedStatement smt = null;
+        Connection conn;
+        Conexion conex = new Conexion();
+        conn = conex.connect();
+        ResultSet result = null;
+
+        PreempleoMod modeloBuscar = null;
+
+        String sql = "SELECT IFNULL(MAX(PREEMP_ID), 0) FROM PREEMPLEO";
+        try {
+            smt = conn.prepareStatement(sql);
+            result = smt.executeQuery();
+
+            while (result.next()) {
+                modeloBuscar = new PreempleoMod();
+
+                id = result.getString(1);
+                
+            }
+        } catch (Exception e) {
+        } finally {
+            if (smt != null) {
+                smt.close();
+            }
+            if (result != null) {
+                smt.close();
+            }
+            if (conn != null) {
+                conex.disconnect(conn);
+                conn.close();
+                conn = null;
+            }
+        }
+        return id;
+    }
+    
     public int Actualizar(PreempleoMod modelo) throws SQLException, ConnectException{
         
         PreparedStatement smt = null;
@@ -64,7 +118,7 @@ public class PreempleoCtrl {
         conn = conex.connect();
          int result = 0;
         try {
-            String sql = "UPDATE PREEMPLEO SET PREEMP_FECHA = ?, PREEMP_NOMBRE = ?, PREEMP_SEXO = ?, PREEMP_IDENTIFICACION = ?, PREEMP_EDAD = ?, PREEMP_CIVIL = ?, PREEMP_DIRECCION = ?, PREEMP_TELEFONO = ?, PREEMP_NIVELACADEMICO = ?, PREEMP_PUESTOAPLICA = ? WHERE PREEMP_ID = ?";
+            String sql = "UPDATE PREEMPLEO SET PREEMP_FECHA = ?, PREEMP_NOMBRE = ?, PREEMP_SEXO = ?, PREEMP_IDENTIFICACION = ?, PREEMP_EDAD = ?, PREEMP_CIVIL = ?, PREEMP_DIRECCION = ?, PREEMP_TELEFONO = ?, PREEMP_NIVELACADEMICO = ?, PREEMP_PUESTOAPLICA = ?, PREEMP_EMPRESA1 = ?, PREEMP_EMPRESA2 = ?, PREEMP_EMPRESA3 = ?, PREEMP_PUESTO1 = ?, PREEMP_PUESTO2 = ?, PREEMP_PUESTO3 = ?, PREEMP_TIEMPOLABORADO1 = ?, PREEMP_TIEMPOLABORADO2 = ?, PREEMP_TIEMPOLABORADO3 = ?, PREEMP_APTITUD = ? WHERE PREEMP_ID = ?";
             conn.setAutoCommit(false);
 
             smt = conn.prepareStatement(sql);
@@ -79,7 +133,17 @@ public class PreempleoCtrl {
             smt.setString(8, modelo.getTelefono());
             smt.setString(9, modelo.getNivelAcademico());
             smt.setString(10, modelo.getPuestoAplica());
-            smt.setString(11, modelo.getId());
+            smt.setString(11, modelo.getEmpresa1());
+            smt.setString(12, modelo.getEmpresa2());
+            smt.setString(13, modelo.getEmpresa3());
+            smt.setString(14, modelo.getPuesto1());
+            smt.setString(15, modelo.getPuesto2());
+            smt.setString(16, modelo.getPuesto3());
+            smt.setString(17, modelo.getTiempoLaborado1());
+            smt.setString(18, modelo.getTiempoLaborado2());
+            smt.setString(19, modelo.getTiempoLaborado3());
+            smt.setString(20, modelo.getAptitud());
+            smt.setString(21, modelo.getId());
             smt.executeUpdate();
             conn.commit();
 
@@ -168,9 +232,24 @@ public class PreempleoCtrl {
                 modeloBuscar.setTelefono(result.getString(9));
                 modeloBuscar.setNivelAcademico(result.getString(10));
                 modeloBuscar.setPuestoAplica(result.getString(11));
-                modeloBuscar.setClinicaId(result.getString(12));
-                modeloBuscar.setAntecedentesId(result.getString(13));
-                modeloBuscar.setEstado(result.getString(14));
+                modeloBuscar.setEmpresa1(result.getString(12));
+                modeloBuscar.setEmpresa2(result.getString(13));
+                modeloBuscar.setEmpresa3(result.getString(14));
+                modeloBuscar.setPuesto1(result.getString(15));
+                modeloBuscar.setPuesto2(result.getString(16));
+                modeloBuscar.setPuesto3(result.getString(16));
+                modeloBuscar.setTiempoLaborado1(result.getString(18));
+                modeloBuscar.setTiempoLaborado2(result.getString(19));
+                modeloBuscar.setTiempoLaborado3(result.getString(20));
+                modeloBuscar.setAptitud(result.getString(21));
+                modeloBuscar.setClinicaId(result.getString(22));
+                modeloBuscar.setAntecedentesId(result.getString(23));
+                modeloBuscar.setRevisionSistemasId(result.getString(24));
+                modeloBuscar.setResponsable(result.getString(25));
+                modeloBuscar.setRealizado(result.getString(26));
+                modeloBuscar.setRevisado(result.getString(27));
+                modeloBuscar.setAutorizado(result.getString(28));
+                modeloBuscar.setEstado(result.getString(29));
                 lista.add(modeloBuscar);
             }
         } catch (Exception e) {
@@ -224,9 +303,24 @@ public class PreempleoCtrl {
                 modeloBuscar.setTelefono(result.getString(9));
                 modeloBuscar.setNivelAcademico(result.getString(10));
                 modeloBuscar.setPuestoAplica(result.getString(11));
-                modeloBuscar.setClinicaId(result.getString(12));
-                modeloBuscar.setAntecedentesId(result.getString(13));
-                modeloBuscar.setEstado(result.getString(14));
+                modeloBuscar.setEmpresa1(result.getString(12));
+                modeloBuscar.setEmpresa2(result.getString(13));
+                modeloBuscar.setEmpresa3(result.getString(14));
+                modeloBuscar.setPuesto1(result.getString(15));
+                modeloBuscar.setPuesto2(result.getString(16));
+                modeloBuscar.setPuesto3(result.getString(16));
+                modeloBuscar.setTiempoLaborado1(result.getString(18));
+                modeloBuscar.setTiempoLaborado2(result.getString(19));
+                modeloBuscar.setTiempoLaborado3(result.getString(20));
+                modeloBuscar.setAptitud(result.getString(21));
+                modeloBuscar.setClinicaId(result.getString(22));
+                modeloBuscar.setAntecedentesId(result.getString(23));
+                modeloBuscar.setRevisionSistemasId(result.getString(24));
+                modeloBuscar.setResponsable(result.getString(25));
+                modeloBuscar.setRealizado(result.getString(26));
+                modeloBuscar.setRevisado(result.getString(27));
+                modeloBuscar.setAutorizado(result.getString(28));
+                modeloBuscar.setEstado(result.getString(29));
             }
         } catch (Exception e) {
         } finally {

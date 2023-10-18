@@ -50,6 +50,44 @@ public class EmpleadoCtrl {
         }
     }
     
+    public String getMaxId() throws SQLException, ConnectException{
+        String id = "";
+        PreparedStatement smt = null;
+        Connection conn;
+        Conexion conex = new Conexion();
+        conn = conex.connect();
+        ResultSet result = null;
+
+        EmpleadoMod modeloBuscar = null;
+
+        String sql = "SELECT IFNULL(MAX(EMP_ID), 0) FROM EMPLEADO";
+        try {
+            smt = conn.prepareStatement(sql);
+            result = smt.executeQuery();
+
+            while (result.next()) {
+                modeloBuscar = new EmpleadoMod();
+
+                id = result.getString(1);
+                
+            }
+        } catch (Exception e) {
+        } finally {
+            if (smt != null) {
+                smt.close();
+            }
+            if (result != null) {
+                smt.close();
+            }
+            if (conn != null) {
+                conex.disconnect(conn);
+                conn.close();
+                conn = null;
+            }
+        }
+        return id;
+    }
+    
     public int Actualizar(EmpleadoMod modelo) throws SQLException, ConnectException{
         
         PreparedStatement smt = null;

@@ -19,37 +19,27 @@ public class FichaClinicaCtrl {
         conn = conex.connect();
         try {
 
-            String sql = "INSERT INTO CONSULTA_GENERAL VALUES ((SELECT IFNULL(MAX(CONGEN_ID), 0)+1 FROM CONSULTA_GENERAL c), ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,1)";
+            String sql = "INSERT INTO CONSULTA_GENERAL VALUES ((SELECT IFNULL(MAX(CONGEN_ID), 0)+1 FROM CONSULTA_GENERAL c), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             conn.setAutoCommit(false);
             smt = conn.prepareStatement(sql);
-            smt.setString(1, modelo.getClinica_id());
-            smt.setString(2, modelo.getEmpleado_id());
-            smt.setString(3, modelo.getFecha() + " " + modelo.getHora());
-            smt.setString(4, modelo.getEdad());
-            smt.setString(5, modelo.getArea());
-            smt.setString(6, modelo.getPuesto());
-            smt.setString(7, modelo.getTemperatura());
-            smt.setString(8, modelo.getPulso());
-            smt.setString(9, modelo.getSpo2());
-            smt.setString(10, modelo.getFr());
-            smt.setString(11, modelo.getPa());
-            smt.setString(12, modelo.getGlicemia());
-            smt.setString(13, modelo.getPeso());
-            smt.setString(14, modelo.getTalla());
-            smt.setString(15, modelo.getImc());
-            smt.setString(16, modelo.getMotivo());
-            smt.setString(17, modelo.getHistoriaActual());
-            smt.setString(18, modelo.getExamenHallazgos());
-            smt.setString(19, modelo.getImpresionClinica());
-            smt.setString(20, modelo.getTratamiento());
-            smt.setString(21, modelo.getReferencia());
-            smt.setString(22, modelo.getTraslado());
-            smt.setString(23, modelo.getPatologia());
-            smt.setString(24, modelo.getObservaciones());
-            smt.setString(25, modelo.getResponsable());
-            smt.setString(26, modelo.getRealizado());
-            smt.setString(27, modelo.getRevisado());
-            smt.setString(28, modelo.getAutorizado());
+            smt.setString(1, modelo.getFecha() + " " + modelo.getHora());
+            smt.setString(2, modelo.getEdad());
+            smt.setString(3, modelo.getArea());
+            smt.setString(4, modelo.getPuesto());
+            smt.setString(5, modelo.getMotivo());
+            smt.setString(6, modelo.getHistoria());
+            smt.setString(7, modelo.getTratamiento());
+            smt.setString(8, modelo.getReferencia());
+            smt.setString(9, modelo.getTraslado());
+            smt.setString(10, modelo.getPatologia());
+            smt.setString(11, modelo.getClinicaId());
+            smt.setString(12, modelo.getEmpleadoId());
+            smt.setString(13, modelo.getRevisionSistemasId());
+            smt.setString(14, modelo.getResponsable());
+            smt.setString(15, modelo.getRealizado());
+            smt.setString(16, modelo.getRevisado());
+            smt.setString(17, modelo.getAutorizado());
+            smt.setString(18, modelo.getEstado());
             smt.executeUpdate();
 
             conn.commit();
@@ -71,6 +61,44 @@ public class FichaClinicaCtrl {
         }
     }
     
+    public String getMaxId() throws SQLException, ConnectException{
+        String id = "";
+        PreparedStatement smt = null;
+        Connection conn;
+        Conexion conex = new Conexion();
+        conn = conex.connect();
+        ResultSet result = null;
+
+        FichaClinicaMod modeloBuscar = null;
+
+        String sql = "SELECT IFNULL(MAX(CONGEN_ID), 0) FROM CONSULTA_GENERAL";
+        try {
+            smt = conn.prepareStatement(sql);
+            result = smt.executeQuery();
+
+            while (result.next()) {
+                modeloBuscar = new FichaClinicaMod();
+
+                id = result.getString(1);
+                
+            }
+        } catch (Exception e) {
+        } finally {
+            if (smt != null) {
+                smt.close();
+            }
+            if (result != null) {
+                smt.close();
+            }
+            if (conn != null) {
+                conex.disconnect(conn);
+                conn.close();
+                conn = null;
+            }
+        }
+        return id;
+    }
+    
     public int Actualizar(FichaClinicaMod modelo) throws SQLException, ConnectException{
         
         PreparedStatement smt = null;
@@ -79,34 +107,18 @@ public class FichaClinicaCtrl {
         conn = conex.connect();
          int result = 0;
         try {
-            String sql = "UPDATE CONSULTA_GENERAL SET CONGEN_TEMPERATURA = ?, CONGEN_PULSO = ?, CONGEN_SPO2 = ?, CONGEN_FR = ?, CONGEN_PA = ?, CONGEN_GLICEMIA = ?, CONGEN_PESO = ?, CONGEN_TALLA = ?, CONGEN_IMC = ?, CONGEN_MOTIVO = ?, CONGEN_HISTORIAACTUAL = ?, CONGEN_EXAMENHALLAZGOS = ?, CONGEN_IMPRESIONCLINICA = ?, CONGEN_TRATAMIENTO = ?, CONGEN_REFERENCIA = ?, CONGEN_TRASLADO = ?, CONGEN_PATOLOGIA = ?, CONGEN_OBSERVACIONES = ?, CONGEN_RESPONSABLE = ?, CONGEN_REALIZADO = ?, CONGEN_REVISADO = ?, CONGEN_AUTORIZADO = ? WHERE CONGEN_ID = ?";
+            String sql = "UPDATE CONSULTA_GENERAL SET CONGEN_FECHAHORA = ?, CONGEN_HISTORIA = ?, CONGEN_TRATAMIENTO = ?, CONGEN_REFERENCIA = ?, CONGEN_TRASLADO = ?, CONGEN_PATOLOGIA = ?, CONGEN_RESPONSABLE = ? WHERE CONGEN_ID = ?";
             conn.setAutoCommit(false);
 
             smt = conn.prepareStatement(sql);
-
-            smt.setString(1, modelo.getTemperatura());
-            smt.setString(2, modelo.getPulso());
-            smt.setString(3, modelo.getSpo2());
-            smt.setString(4, modelo.getFr());
-            smt.setString(5, modelo.getPa());
-            smt.setString(6, modelo.getGlicemia());
-            smt.setString(7, modelo.getPeso());
-            smt.setString(8, modelo.getTalla());
-            smt.setString(9, modelo.getImc());
-            smt.setString(10, modelo.getMotivo());
-            smt.setString(11, modelo.getHistoriaActual());
-            smt.setString(12, modelo.getExamenHallazgos());
-            smt.setString(13, modelo.getImpresionClinica());
-            smt.setString(14, modelo.getTratamiento());
-            smt.setString(15, modelo.getReferencia());
-            smt.setString(16, modelo.getTraslado());
-            smt.setString(17, modelo.getPatologia());
-            smt.setString(18, modelo.getObservaciones());
-            smt.setString(19, modelo.getResponsable());
-            smt.setString(20, modelo.getRealizado());
-            smt.setString(21, modelo.getRevisado());
-            smt.setString(22, modelo.getAutorizado());
-            smt.setString(23, modelo.getId());
+            smt.setString(1, modelo.getFecha() + " " + modelo.getHora());
+            smt.setString(2, modelo.getHistoria());
+            smt.setString(3, modelo.getTratamiento());
+            smt.setString(4, modelo.getReferencia());
+            smt.setString(5, modelo.getTraslado());
+            smt.setString(6, modelo.getPatologia());
+            smt.setString(7, modelo.getResponsable());
+            smt.setString(8, modelo.getId());
             
             smt.executeUpdate();
             conn.commit();
@@ -186,38 +198,27 @@ public class FichaClinicaCtrl {
                 modeloBuscar = new FichaClinicaMod();
 
                 modeloBuscar.setId(result.getString(1));
-                modeloBuscar.setClinica_id(result.getString(2));
-                modeloBuscar.setEmpleado_id(result.getString(3));
-                String fechaHora = result.getString(4);
+                String fechaHora = result.getString(2);
                 String[] partesFechaHora = fechaHora.split(" ");
                 modeloBuscar.setFecha(partesFechaHora[0]);
                 modeloBuscar.setHora(partesFechaHora[1]);
-                modeloBuscar.setEdad(result.getString(5));
-                modeloBuscar.setArea(result.getString(6));
-                modeloBuscar.setPuesto(result.getString(7));
-                modeloBuscar.setTemperatura(result.getString(8));
-                modeloBuscar.setPulso(result.getString(9));
-                modeloBuscar.setSpo2(result.getString(10));
-                modeloBuscar.setFr(result.getString(11));
-                modeloBuscar.setPa(result.getString(12));
-                modeloBuscar.setGlicemia(result.getString(13));
-                modeloBuscar.setPeso(result.getString(14));
-                modeloBuscar.setTalla(result.getString(15));
-                modeloBuscar.setImc(result.getString(16));
-                modeloBuscar.setMotivo(result.getString(17));
-                modeloBuscar.setHistoriaActual(result.getString(18));
-                modeloBuscar.setExamenHallazgos(result.getString(19));
-                modeloBuscar.setImpresionClinica(result.getString(20));
-                modeloBuscar.setTratamiento(result.getString(21));
-                modeloBuscar.setReferencia(result.getString(22));
-                modeloBuscar.setTraslado(result.getString(23));
-                modeloBuscar.setPatologia(result.getString(24));
-                modeloBuscar.setObservaciones(result.getString(25));
-                modeloBuscar.setResponsable(result.getString(26));
-                modeloBuscar.setRealizado(result.getString(27));
-                modeloBuscar.setRevisado(result.getString(28));
-                modeloBuscar.setAutorizado(result.getString(29));
-                modeloBuscar.setEstado(result.getString(30));
+                modeloBuscar.setEdad(result.getString(3));
+                modeloBuscar.setArea(result.getString(4));
+                modeloBuscar.setPuesto(result.getString(5));
+                modeloBuscar.setMotivo(result.getString(6));
+                modeloBuscar.setHistoria(result.getString(7));
+                modeloBuscar.setTratamiento(result.getString(8));
+                modeloBuscar.setReferencia(result.getString(9));
+                modeloBuscar.setTraslado(result.getString(10));
+                modeloBuscar.setPatologia(result.getString(11));
+                modeloBuscar.setClinicaId(result.getString(12));
+                modeloBuscar.setEmpleadoId(result.getString(13));
+                modeloBuscar.setRevisionSistemasId(result.getString(14));
+                modeloBuscar.setResponsable(result.getString(15));
+                modeloBuscar.setRealizado(result.getString(16));
+                modeloBuscar.setRevisado(result.getString(17));
+                modeloBuscar.setAutorizado(result.getString(18));
+                modeloBuscar.setEstado(result.getString(19));
                 
                 lista.add(modeloBuscar);
             }
@@ -262,39 +263,27 @@ public class FichaClinicaCtrl {
                 modeloBuscar = new FichaClinicaMod();
 
                 modeloBuscar.setId(result.getString(1));
-                modeloBuscar.setClinica_id(result.getString(2));
-                modeloBuscar.setEmpleado_id(result.getString(3));
-                String fechaHora = result.getString(4);
+                String fechaHora = result.getString(2);
                 String[] partesFechaHora = fechaHora.split(" ");
                 modeloBuscar.setFecha(partesFechaHora[0]);
                 modeloBuscar.setHora(partesFechaHora[1]);
-                modeloBuscar.setEdad(result.getString(5));
-                modeloBuscar.setArea(result.getString(6));
-                modeloBuscar.setPuesto(result.getString(7));
-                modeloBuscar.setTemperatura(result.getString(8));
-                modeloBuscar.setPulso(result.getString(9));
-                modeloBuscar.setSpo2(result.getString(10));
-                modeloBuscar.setFr(result.getString(11));
-                modeloBuscar.setPa(result.getString(12));
-                modeloBuscar.setGlicemia(result.getString(13));
-                modeloBuscar.setPeso(result.getString(14));
-                modeloBuscar.setTalla(result.getString(15));
-                modeloBuscar.setImc(result.getString(16));
-                modeloBuscar.setMotivo(result.getString(17));
-                modeloBuscar.setHistoriaActual(result.getString(18));
-                modeloBuscar.setExamenHallazgos(result.getString(19));
-                modeloBuscar.setImpresionClinica(result.getString(20));
-                modeloBuscar.setTratamiento(result.getString(21));
-                modeloBuscar.setReferencia(result.getString(22));
-                modeloBuscar.setTraslado(result.getString(23));
-                modeloBuscar.setPatologia(result.getString(24));
-                modeloBuscar.setObservaciones(result.getString(25));
-                modeloBuscar.setResponsable(result.getString(26));
-                modeloBuscar.setRealizado(result.getString(27));
-                modeloBuscar.setRevisado(result.getString(28));
-                modeloBuscar.setAutorizado(result.getString(29));
-                modeloBuscar.setEstado(result.getString(30));
-            }
+                modeloBuscar.setEdad(result.getString(3));
+                modeloBuscar.setArea(result.getString(4));
+                modeloBuscar.setPuesto(result.getString(5));
+                modeloBuscar.setMotivo(result.getString(6));
+                modeloBuscar.setHistoria(result.getString(7));
+                modeloBuscar.setTratamiento(result.getString(8));
+                modeloBuscar.setReferencia(result.getString(9));
+                modeloBuscar.setTraslado(result.getString(10));
+                modeloBuscar.setPatologia(result.getString(11));
+                modeloBuscar.setClinicaId(result.getString(12));
+                modeloBuscar.setEmpleadoId(result.getString(13));
+                modeloBuscar.setRevisionSistemasId(result.getString(14));
+                modeloBuscar.setResponsable(result.getString(15));
+                modeloBuscar.setRealizado(result.getString(16));
+                modeloBuscar.setRevisado(result.getString(17));
+                modeloBuscar.setAutorizado(result.getString(18));
+                modeloBuscar.setEstado(result.getString(19));            }
         } catch (Exception e) {
         } finally {
             if (smt != null) {

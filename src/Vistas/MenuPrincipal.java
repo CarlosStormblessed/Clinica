@@ -194,8 +194,12 @@ public class MenuPrincipal extends javax.swing.JFrame {
         btn_Preempleo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txt_Preempleo.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txt_Preempleo.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         txt_Preempleo.setText("Preempleo");
+        txt_Preempleo.setToolTipText("");
+        txt_Preempleo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        txt_Preempleo.setMaximumSize(new java.awt.Dimension(200, 40));
+        txt_Preempleo.setMinimumSize(new java.awt.Dimension(200, 40));
+        txt_Preempleo.setPreferredSize(new java.awt.Dimension(200, 40));
         txt_Preempleo.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 txt_PreempleoMouseClicked(evt);
@@ -216,8 +220,12 @@ public class MenuPrincipal extends javax.swing.JFrame {
         btn_FichaClinica.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txt_FichaClinica.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txt_FichaClinica.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         txt_FichaClinica.setText("Ficha Clínica");
+        txt_FichaClinica.setToolTipText("");
+        txt_FichaClinica.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        txt_FichaClinica.setMaximumSize(new java.awt.Dimension(200, 40));
+        txt_FichaClinica.setMinimumSize(new java.awt.Dimension(200, 40));
+        txt_FichaClinica.setPreferredSize(new java.awt.Dimension(200, 40));
         txt_FichaClinica.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 txt_FichaClinicaMouseClicked(evt);
@@ -238,8 +246,12 @@ public class MenuPrincipal extends javax.swing.JFrame {
         btn_PacienteCronico.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txt_PacienteCronico.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txt_PacienteCronico.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         txt_PacienteCronico.setText("Paciente Crónico");
+        txt_PacienteCronico.setToolTipText("");
+        txt_PacienteCronico.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        txt_PacienteCronico.setMaximumSize(new java.awt.Dimension(200, 40));
+        txt_PacienteCronico.setMinimumSize(new java.awt.Dimension(200, 40));
+        txt_PacienteCronico.setPreferredSize(new java.awt.Dimension(200, 40));
         txt_PacienteCronico.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 txt_PacienteCronicoMouseEntered(evt);
@@ -257,8 +269,12 @@ public class MenuPrincipal extends javax.swing.JFrame {
         btn_SeguimientoVidaSaludable.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txt_VidaSaludable.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txt_VidaSaludable.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         txt_VidaSaludable.setText("Vida Saludable");
+        txt_VidaSaludable.setToolTipText("");
+        txt_VidaSaludable.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        txt_VidaSaludable.setMaximumSize(new java.awt.Dimension(200, 40));
+        txt_VidaSaludable.setMinimumSize(new java.awt.Dimension(200, 40));
+        txt_VidaSaludable.setPreferredSize(new java.awt.Dimension(200, 40));
         txt_VidaSaludable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 txt_VidaSaludableMouseEntered(evt);
@@ -276,8 +292,12 @@ public class MenuPrincipal extends javax.swing.JFrame {
         btn_FichaAccidente.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txt_FichaAccidente.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txt_FichaAccidente.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         txt_FichaAccidente.setText("Ficha Accidente");
+        txt_FichaAccidente.setToolTipText("");
+        txt_FichaAccidente.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        txt_FichaAccidente.setMaximumSize(new java.awt.Dimension(200, 40));
+        txt_FichaAccidente.setMinimumSize(new java.awt.Dimension(200, 40));
+        txt_FichaAccidente.setPreferredSize(new java.awt.Dimension(200, 40));
         txt_FichaAccidente.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 txt_FichaAccidenteMouseEntered(evt);
@@ -295,8 +315,12 @@ public class MenuPrincipal extends javax.swing.JFrame {
         btn_Antecedentes.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txt_Antecedentes.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txt_Antecedentes.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         txt_Antecedentes.setText("Antecedentes");
+        txt_Antecedentes.setToolTipText("");
+        txt_Antecedentes.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        txt_Antecedentes.setMaximumSize(new java.awt.Dimension(200, 40));
+        txt_Antecedentes.setMinimumSize(new java.awt.Dimension(200, 40));
+        txt_Antecedentes.setPreferredSize(new java.awt.Dimension(200, 40));
         txt_Antecedentes.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 txt_AntecedentesMouseEntered(evt);
@@ -314,8 +338,12 @@ public class MenuPrincipal extends javax.swing.JFrame {
         btn_EvaluacionPeriodica.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txt_EvaluacionPeriodica.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txt_EvaluacionPeriodica.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         txt_EvaluacionPeriodica.setText("Evaluación Periódica");
+        txt_EvaluacionPeriodica.setToolTipText("");
+        txt_EvaluacionPeriodica.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        txt_EvaluacionPeriodica.setMaximumSize(new java.awt.Dimension(200, 40));
+        txt_EvaluacionPeriodica.setMinimumSize(new java.awt.Dimension(200, 40));
+        txt_EvaluacionPeriodica.setPreferredSize(new java.awt.Dimension(200, 40));
         txt_EvaluacionPeriodica.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 txt_EvaluacionPeriodicaMouseEntered(evt);
@@ -333,9 +361,12 @@ public class MenuPrincipal extends javax.swing.JFrame {
         btn_RevisionSistemas.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txt_RevisionSistemas.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txt_RevisionSistemas.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         txt_RevisionSistemas.setText("Revisión Sistemas");
-        txt_RevisionSistemas.setPreferredSize(new java.awt.Dimension(98, 17));
+        txt_RevisionSistemas.setToolTipText("");
+        txt_RevisionSistemas.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        txt_RevisionSistemas.setMaximumSize(new java.awt.Dimension(200, 40));
+        txt_RevisionSistemas.setMinimumSize(new java.awt.Dimension(200, 40));
+        txt_RevisionSistemas.setPreferredSize(new java.awt.Dimension(200, 40));
         txt_RevisionSistemas.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 txt_RevisionSistemasMouseEntered(evt);
@@ -353,8 +384,12 @@ public class MenuPrincipal extends javax.swing.JFrame {
         btn_Reevaluacion.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txt_Reevaluacion.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txt_Reevaluacion.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         txt_Reevaluacion.setText("Reevaluación");
+        txt_Reevaluacion.setToolTipText("");
+        txt_Reevaluacion.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        txt_Reevaluacion.setMaximumSize(new java.awt.Dimension(200, 40));
+        txt_Reevaluacion.setMinimumSize(new java.awt.Dimension(200, 40));
+        txt_Reevaluacion.setPreferredSize(new java.awt.Dimension(200, 40));
         txt_Reevaluacion.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 txt_ReevaluacionMouseEntered(evt);
@@ -372,8 +407,12 @@ public class MenuPrincipal extends javax.swing.JFrame {
         btn_Reincorporacion.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txt_Reincorporacion.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txt_Reincorporacion.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         txt_Reincorporacion.setText("Reincorporación Laboral");
+        txt_Reincorporacion.setToolTipText("");
+        txt_Reincorporacion.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        txt_Reincorporacion.setMaximumSize(new java.awt.Dimension(200, 40));
+        txt_Reincorporacion.setMinimumSize(new java.awt.Dimension(200, 40));
+        txt_Reincorporacion.setPreferredSize(new java.awt.Dimension(200, 40));
         txt_Reincorporacion.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 txt_ReincorporacionMouseEntered(evt);
@@ -391,8 +430,12 @@ public class MenuPrincipal extends javax.swing.JFrame {
         btn_HojaReferencia.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txt_HojaReferencia.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txt_HojaReferencia.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         txt_HojaReferencia.setText("Hoja de Referencia");
+        txt_HojaReferencia.setToolTipText("");
+        txt_HojaReferencia.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        txt_HojaReferencia.setMaximumSize(new java.awt.Dimension(200, 40));
+        txt_HojaReferencia.setMinimumSize(new java.awt.Dimension(200, 40));
+        txt_HojaReferencia.setPreferredSize(new java.awt.Dimension(200, 40));
         txt_HojaReferencia.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 txt_HojaReferenciaMouseEntered(evt);
@@ -410,8 +453,12 @@ public class MenuPrincipal extends javax.swing.JFrame {
         btn_Reportes.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txt_Reportes.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txt_Reportes.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         txt_Reportes.setText("Reportes");
+        txt_Reportes.setToolTipText("");
+        txt_Reportes.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        txt_Reportes.setMaximumSize(new java.awt.Dimension(200, 40));
+        txt_Reportes.setMinimumSize(new java.awt.Dimension(200, 40));
+        txt_Reportes.setPreferredSize(new java.awt.Dimension(200, 40));
         txt_Reportes.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 txt_ReportesMouseEntered(evt);
@@ -600,7 +647,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
         try {
             Preempleo preempleo = new Preempleo();
             if (!preempleo.nombreContenido.equals(contenidoActual)){
-                preempleo.empleadoId = usuario_id;
+                preempleo.responsable = usuario_id;
                 nuevoContenido = preempleo.getContenido();
                 cambioContenido(nuevoContenido, preempleo.nombreContenido);
             }
@@ -615,21 +662,28 @@ public class MenuPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_txt_PreempleoMouseClicked
 
     private void txt_FichaClinicaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt_FichaClinicaMouseClicked
-        try{
+        /*try{
             FichaClinica fichaClinica = new FichaClinica();
             if (!fichaClinica.nombreContenido.equals(contenidoActual)){
                 fichaClinica.responsable = usuario_id;
                 nuevoContenido = fichaClinica.getContenido();
                 cambioContenido(nuevoContenido, fichaClinica.nombreContenido);
             }
-        } catch (SQLException ex) {
+        }*/
+            ConsultaGeneral consultaGeneral= new ConsultaGeneral();
+            if (!consultaGeneral.nombreContenido.equals(contenidoActual)){
+                consultaGeneral.responsable = usuario_id;
+                nuevoContenido = consultaGeneral.getContenido();
+                cambioContenido(nuevoContenido, consultaGeneral.nombreContenido);
+            }
+           /*catch (SQLException ex) {
             Logger.getLogger(MenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ConnectException ex) {
             Logger.getLogger(MenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }catch (Exception ex) {
             Logger.getLogger(MenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println(ex.getMessage());
-        }        
+        }     */   
     }//GEN-LAST:event_txt_FichaClinicaMouseClicked
 
     private void btn_HomeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_HomeMouseClicked
