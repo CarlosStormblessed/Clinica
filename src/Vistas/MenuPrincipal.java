@@ -3,6 +3,7 @@ package Vistas;
 import java.awt.Color;
 import Utilitarios.Utilitarios;
 import java.awt.BorderLayout;
+import java.awt.event.MouseEvent;
 import java.net.ConnectException;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -27,9 +28,8 @@ public class MenuPrincipal extends javax.swing.JFrame {
     }
     
     private void construirEtiquetas(){
-        txt_Antecedentes.setText("<html>&emsp;Antecedentes</html>");
         txt_FichaAccidente.setText("<html>&emsp;Ficha Accidente</html>");
-        txt_FichaClinica.setText("<html>&emsp;Ficha Clínica</html>");
+        txt_EvaluacionPeriodica.setText("<html>&emsp;Ficha Clínica</html>");
         txt_PacienteCronico.setText("<html>&emsp;Seguimiento Pacientes<br>&emsp;Crónicos</html>");
         txt_Preempleo.setText("<html>&emsp;Ficha Preempleo</html>");
         txt_EvaluacionPeriodica.setText("<html>&emsp;Revisión Periódica</html>");
@@ -66,24 +66,20 @@ public class MenuPrincipal extends javax.swing.JFrame {
         txt_Preempleo = new javax.swing.JLabel();
         btn_FichaClinica = new javax.swing.JPanel();
         txt_FichaClinica = new javax.swing.JLabel();
+        btn_EvaluacionPeriodica = new javax.swing.JPanel();
+        txt_EvaluacionPeriodica = new javax.swing.JLabel();
+        btn_HojaReferencia = new javax.swing.JPanel();
+        txt_HojaReferencia = new javax.swing.JLabel();
         btn_PacienteCronico = new javax.swing.JPanel();
         txt_PacienteCronico = new javax.swing.JLabel();
         btn_SeguimientoVidaSaludable = new javax.swing.JPanel();
         txt_VidaSaludable = new javax.swing.JLabel();
         btn_FichaAccidente = new javax.swing.JPanel();
         txt_FichaAccidente = new javax.swing.JLabel();
-        btn_Antecedentes = new javax.swing.JPanel();
-        txt_Antecedentes = new javax.swing.JLabel();
-        btn_EvaluacionPeriodica = new javax.swing.JPanel();
-        txt_EvaluacionPeriodica = new javax.swing.JLabel();
-        btn_RevisionSistemas = new javax.swing.JPanel();
-        txt_RevisionSistemas = new javax.swing.JLabel();
         btn_Reevaluacion = new javax.swing.JPanel();
         txt_Reevaluacion = new javax.swing.JLabel();
         btn_Reincorporacion = new javax.swing.JPanel();
         txt_Reincorporacion = new javax.swing.JLabel();
-        btn_HojaReferencia = new javax.swing.JPanel();
-        txt_HojaReferencia = new javax.swing.JLabel();
         btn_Reportes = new javax.swing.JPanel();
         txt_Reportes = new javax.swing.JLabel();
         contenido = new javax.swing.JPanel();
@@ -159,6 +155,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
         barraOpciones.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         btn_Home.setBackground(new java.awt.Color(172, 211, 227));
+        btn_Home.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         btn_Home.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btn_HomeMouseClicked(evt);
@@ -241,28 +238,69 @@ public class MenuPrincipal extends javax.swing.JFrame {
 
         barraOpciones.add(btn_FichaClinica, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 90, 200, 40));
 
+        btn_EvaluacionPeriodica.setBackground(new java.awt.Color(195, 200, 230));
+        btn_EvaluacionPeriodica.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        btn_EvaluacionPeriodica.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        txt_EvaluacionPeriodica.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txt_EvaluacionPeriodica.setText("Evaluación Periódica");
+        txt_EvaluacionPeriodica.setToolTipText("");
+        txt_EvaluacionPeriodica.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        txt_EvaluacionPeriodica.setMaximumSize(new java.awt.Dimension(200, 40));
+        txt_EvaluacionPeriodica.setMinimumSize(new java.awt.Dimension(200, 40));
+        txt_EvaluacionPeriodica.setPreferredSize(new java.awt.Dimension(200, 40));
+        txt_EvaluacionPeriodica.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txt_EvaluacionPeriodicaMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                txt_EvaluacionPeriodicaMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                txt_EvaluacionPeriodicaMouseExited(evt);
+            }
+        });
+        btn_EvaluacionPeriodica.add(txt_EvaluacionPeriodica, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
+
+        barraOpciones.add(btn_EvaluacionPeriodica, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 130, 200, 40));
+
+        btn_HojaReferencia.setBackground(new java.awt.Color(172, 180, 227));
+        btn_HojaReferencia.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        btn_HojaReferencia.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        txt_HojaReferencia.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txt_HojaReferencia.setText("Hoja de Referencia");
+        txt_HojaReferencia.setToolTipText("");
+        txt_HojaReferencia.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        txt_HojaReferencia.setMaximumSize(new java.awt.Dimension(200, 40));
+        txt_HojaReferencia.setMinimumSize(new java.awt.Dimension(200, 40));
+        txt_HojaReferencia.setPreferredSize(new java.awt.Dimension(200, 40));
+        txt_HojaReferencia.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                txt_HojaReferenciaMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                txt_HojaReferenciaMouseExited(evt);
+            }
+        });
+        btn_HojaReferencia.add(txt_HojaReferencia, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
+
+        barraOpciones.add(btn_HojaReferencia, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 170, 200, 40));
+
         btn_PacienteCronico.setBackground(new java.awt.Color(195, 200, 230));
         btn_PacienteCronico.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         btn_PacienteCronico.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txt_PacienteCronico.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txt_PacienteCronico.setText("Paciente Crónico");
+        txt_PacienteCronico.setText("Seguimiento Pacientes Crónicos");
         txt_PacienteCronico.setToolTipText("");
         txt_PacienteCronico.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         txt_PacienteCronico.setMaximumSize(new java.awt.Dimension(200, 40));
         txt_PacienteCronico.setMinimumSize(new java.awt.Dimension(200, 40));
         txt_PacienteCronico.setPreferredSize(new java.awt.Dimension(200, 40));
-        txt_PacienteCronico.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                txt_PacienteCronicoMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                txt_PacienteCronicoMouseExited(evt);
-            }
-        });
         btn_PacienteCronico.add(txt_PacienteCronico, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
 
-        barraOpciones.add(btn_PacienteCronico, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 130, 200, 40));
+        barraOpciones.add(btn_PacienteCronico, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 210, 200, 40));
 
         btn_SeguimientoVidaSaludable.setBackground(new java.awt.Color(172, 180, 227));
         btn_SeguimientoVidaSaludable.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -285,7 +323,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
         });
         btn_SeguimientoVidaSaludable.add(txt_VidaSaludable, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
 
-        barraOpciones.add(btn_SeguimientoVidaSaludable, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 170, 200, 40));
+        barraOpciones.add(btn_SeguimientoVidaSaludable, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 250, 200, 40));
 
         btn_FichaAccidente.setBackground(new java.awt.Color(195, 200, 230));
         btn_FichaAccidente.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -308,83 +346,14 @@ public class MenuPrincipal extends javax.swing.JFrame {
         });
         btn_FichaAccidente.add(txt_FichaAccidente, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
 
-        barraOpciones.add(btn_FichaAccidente, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 210, 200, 40));
+        barraOpciones.add(btn_FichaAccidente, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 290, 200, 40));
 
-        btn_Antecedentes.setBackground(new java.awt.Color(172, 180, 227));
-        btn_Antecedentes.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        btn_Antecedentes.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        txt_Antecedentes.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txt_Antecedentes.setText("Antecedentes");
-        txt_Antecedentes.setToolTipText("");
-        txt_Antecedentes.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        txt_Antecedentes.setMaximumSize(new java.awt.Dimension(200, 40));
-        txt_Antecedentes.setMinimumSize(new java.awt.Dimension(200, 40));
-        txt_Antecedentes.setPreferredSize(new java.awt.Dimension(200, 40));
-        txt_Antecedentes.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                txt_AntecedentesMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                txt_AntecedentesMouseExited(evt);
-            }
-        });
-        btn_Antecedentes.add(txt_Antecedentes, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
-
-        barraOpciones.add(btn_Antecedentes, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 250, 200, 40));
-
-        btn_EvaluacionPeriodica.setBackground(new java.awt.Color(195, 200, 230));
-        btn_EvaluacionPeriodica.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        btn_EvaluacionPeriodica.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        txt_EvaluacionPeriodica.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txt_EvaluacionPeriodica.setText("Evaluación Periódica");
-        txt_EvaluacionPeriodica.setToolTipText("");
-        txt_EvaluacionPeriodica.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        txt_EvaluacionPeriodica.setMaximumSize(new java.awt.Dimension(200, 40));
-        txt_EvaluacionPeriodica.setMinimumSize(new java.awt.Dimension(200, 40));
-        txt_EvaluacionPeriodica.setPreferredSize(new java.awt.Dimension(200, 40));
-        txt_EvaluacionPeriodica.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                txt_EvaluacionPeriodicaMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                txt_EvaluacionPeriodicaMouseExited(evt);
-            }
-        });
-        btn_EvaluacionPeriodica.add(txt_EvaluacionPeriodica, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
-
-        barraOpciones.add(btn_EvaluacionPeriodica, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 290, 200, 40));
-
-        btn_RevisionSistemas.setBackground(new java.awt.Color(172, 180, 227));
-        btn_RevisionSistemas.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        btn_RevisionSistemas.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        txt_RevisionSistemas.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txt_RevisionSistemas.setText("Revisión Sistemas");
-        txt_RevisionSistemas.setToolTipText("");
-        txt_RevisionSistemas.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        txt_RevisionSistemas.setMaximumSize(new java.awt.Dimension(200, 40));
-        txt_RevisionSistemas.setMinimumSize(new java.awt.Dimension(200, 40));
-        txt_RevisionSistemas.setPreferredSize(new java.awt.Dimension(200, 40));
-        txt_RevisionSistemas.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                txt_RevisionSistemasMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                txt_RevisionSistemasMouseExited(evt);
-            }
-        });
-        btn_RevisionSistemas.add(txt_RevisionSistemas, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
-
-        barraOpciones.add(btn_RevisionSistemas, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 330, 200, 40));
-
-        btn_Reevaluacion.setBackground(new java.awt.Color(195, 200, 230));
+        btn_Reevaluacion.setBackground(new java.awt.Color(172, 180, 227));
         btn_Reevaluacion.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         btn_Reevaluacion.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txt_Reevaluacion.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txt_Reevaluacion.setText("Reevaluación");
+        txt_Reevaluacion.setText("Reevaluación Preempleo");
         txt_Reevaluacion.setToolTipText("");
         txt_Reevaluacion.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         txt_Reevaluacion.setMaximumSize(new java.awt.Dimension(200, 40));
@@ -400,7 +369,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
         });
         btn_Reevaluacion.add(txt_Reevaluacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
 
-        barraOpciones.add(btn_Reevaluacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 370, 200, 40));
+        barraOpciones.add(btn_Reevaluacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 330, 200, 40));
 
         btn_Reincorporacion.setBackground(new java.awt.Color(172, 180, 227));
         btn_Reincorporacion.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -423,30 +392,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
         });
         btn_Reincorporacion.add(txt_Reincorporacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
 
-        barraOpciones.add(btn_Reincorporacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 410, 200, 40));
-
-        btn_HojaReferencia.setBackground(new java.awt.Color(195, 200, 230));
-        btn_HojaReferencia.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        btn_HojaReferencia.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        txt_HojaReferencia.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txt_HojaReferencia.setText("Hoja de Referencia");
-        txt_HojaReferencia.setToolTipText("");
-        txt_HojaReferencia.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        txt_HojaReferencia.setMaximumSize(new java.awt.Dimension(200, 40));
-        txt_HojaReferencia.setMinimumSize(new java.awt.Dimension(200, 40));
-        txt_HojaReferencia.setPreferredSize(new java.awt.Dimension(200, 40));
-        txt_HojaReferencia.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                txt_HojaReferenciaMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                txt_HojaReferenciaMouseExited(evt);
-            }
-        });
-        btn_HojaReferencia.add(txt_HojaReferencia, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
-
-        barraOpciones.add(btn_HojaReferencia, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 450, 200, 40));
+        barraOpciones.add(btn_Reincorporacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 370, 200, 40));
 
         btn_Reportes.setBackground(new java.awt.Color(172, 180, 227));
         btn_Reportes.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -547,14 +493,6 @@ public class MenuPrincipal extends javax.swing.JFrame {
         btn_FichaClinica.setBackground(util.colorCursorSale(btn_FichaClinica.getBackground()));
     }//GEN-LAST:event_txt_FichaClinicaMouseExited
 
-    private void txt_PacienteCronicoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt_PacienteCronicoMouseEntered
-        btn_PacienteCronico.setBackground(util.colorCursorEntra(btn_PacienteCronico.getBackground()));
-    }//GEN-LAST:event_txt_PacienteCronicoMouseEntered
-
-    private void txt_PacienteCronicoMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt_PacienteCronicoMouseExited
-        btn_PacienteCronico.setBackground(util.colorCursorSale(btn_PacienteCronico.getBackground()));
-    }//GEN-LAST:event_txt_PacienteCronicoMouseExited
-
     private void txt_VidaSaludableMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt_VidaSaludableMouseEntered
         btn_SeguimientoVidaSaludable.setBackground(util.colorCursorEntra(btn_SeguimientoVidaSaludable.getBackground()));
     }//GEN-LAST:event_txt_VidaSaludableMouseEntered
@@ -571,14 +509,6 @@ public class MenuPrincipal extends javax.swing.JFrame {
         btn_FichaAccidente.setBackground(util.colorCursorSale(btn_FichaAccidente.getBackground()));
     }//GEN-LAST:event_txt_FichaAccidenteMouseExited
 
-    private void txt_AntecedentesMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt_AntecedentesMouseEntered
-        btn_Antecedentes.setBackground(util.colorCursorEntra(btn_Antecedentes.getBackground()));
-    }//GEN-LAST:event_txt_AntecedentesMouseEntered
-
-    private void txt_AntecedentesMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt_AntecedentesMouseExited
-        btn_Antecedentes.setBackground(util.colorCursorSale(btn_Antecedentes.getBackground()));
-    }//GEN-LAST:event_txt_AntecedentesMouseExited
-
     private void txt_EvaluacionPeriodicaMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt_EvaluacionPeriodicaMouseEntered
         btn_EvaluacionPeriodica.setBackground(util.colorCursorEntra(btn_EvaluacionPeriodica.getBackground()));
     }//GEN-LAST:event_txt_EvaluacionPeriodicaMouseEntered
@@ -586,14 +516,6 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private void txt_EvaluacionPeriodicaMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt_EvaluacionPeriodicaMouseExited
         btn_EvaluacionPeriodica.setBackground(util.colorCursorSale(btn_EvaluacionPeriodica.getBackground()));
     }//GEN-LAST:event_txt_EvaluacionPeriodicaMouseExited
-
-    private void txt_RevisionSistemasMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt_RevisionSistemasMouseEntered
-        btn_RevisionSistemas.setBackground(util.colorCursorEntra(btn_RevisionSistemas.getBackground()));
-    }//GEN-LAST:event_txt_RevisionSistemasMouseEntered
-
-    private void txt_RevisionSistemasMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt_RevisionSistemasMouseExited
-        btn_RevisionSistemas.setBackground(util.colorCursorSale(btn_RevisionSistemas.getBackground()));
-    }//GEN-LAST:event_txt_RevisionSistemasMouseExited
 
     private void txt_ReevaluacionMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt_ReevaluacionMouseEntered
         btn_Reevaluacion.setBackground(util.colorCursorEntra(btn_Reevaluacion.getBackground()));
@@ -662,28 +584,17 @@ public class MenuPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_txt_PreempleoMouseClicked
 
     private void txt_FichaClinicaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt_FichaClinicaMouseClicked
-        /*try{
-            FichaClinica fichaClinica = new FichaClinica();
-            if (!fichaClinica.nombreContenido.equals(contenidoActual)){
-                fichaClinica.responsable = usuario_id;
-                nuevoContenido = fichaClinica.getContenido();
-                cambioContenido(nuevoContenido, fichaClinica.nombreContenido);
-            }
-        }*/
+        try{
             ConsultaGeneral consultaGeneral= new ConsultaGeneral();
             if (!consultaGeneral.nombreContenido.equals(contenidoActual)){
                 consultaGeneral.responsable = usuario_id;
                 nuevoContenido = consultaGeneral.getContenido();
                 cambioContenido(nuevoContenido, consultaGeneral.nombreContenido);
             }
-           /*catch (SQLException ex) {
-            Logger.getLogger(MenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ConnectException ex) {
-            Logger.getLogger(MenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }catch (Exception ex) {
             Logger.getLogger(MenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println(ex.getMessage());
-        }     */   
+        } 
     }//GEN-LAST:event_txt_FichaClinicaMouseClicked
 
     private void btn_HomeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_HomeMouseClicked
@@ -702,11 +613,25 @@ public class MenuPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txt_HomeMouseClicked
 
+    private void txt_EvaluacionPeriodicaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt_EvaluacionPeriodicaMouseClicked
+
+        try{
+            EvaluacionPeriodica evaluacionPeriodica = new EvaluacionPeriodica();
+            if (!evaluacionPeriodica.nombreContenido.equals(contenidoActual)){
+                evaluacionPeriodica.responsable = usuario_id;
+                nuevoContenido = evaluacionPeriodica.getContenido();
+                cambioContenido(nuevoContenido, evaluacionPeriodica.nombreContenido);
+            }
+        }catch (Exception ex) {
+            Logger.getLogger(MenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
+        } 
+    }//GEN-LAST:event_txt_EvaluacionPeriodicaMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel barra;
     private javax.swing.JPanel barraOpciones;
-    private javax.swing.JPanel btn_Antecedentes;
     private javax.swing.JPanel btn_EvaluacionPeriodica;
     private javax.swing.JPanel btn_FichaAccidente;
     private javax.swing.JPanel btn_FichaClinica;
@@ -717,13 +642,11 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JPanel btn_Reevaluacion;
     private javax.swing.JPanel btn_Reincorporacion;
     private javax.swing.JPanel btn_Reportes;
-    private javax.swing.JPanel btn_RevisionSistemas;
     private javax.swing.JPanel btn_SeguimientoVidaSaludable;
     private javax.swing.JPanel contenido;
     private javax.swing.JPanel exit;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel txtExit;
-    private javax.swing.JLabel txt_Antecedentes;
     private javax.swing.JLabel txt_EvaluacionPeriodica;
     private javax.swing.JLabel txt_FichaAccidente;
     private javax.swing.JLabel txt_FichaClinica;
@@ -734,7 +657,6 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel txt_Reevaluacion;
     private javax.swing.JLabel txt_Reincorporacion;
     private javax.swing.JLabel txt_Reportes;
-    private javax.swing.JLabel txt_RevisionSistemas;
     private javax.swing.JLabel txt_VidaSaludable;
     // End of variables declaration//GEN-END:variables
 }

@@ -85,6 +85,8 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         resetRevisionSistemas();
         resetPreempleado();
         construirEtiquetas();
+        setTabla();
+        lbl_SeleccionPreempleo.setText("");
         panelPaginacion.removeAll();
         if (responsable.length() > 0)
             resetUsuarios();
@@ -523,8 +525,6 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         
         antecedentes.setDiagnostico(txtDiagnostico.getText());
         antecedentes.setEstado("1");
-        
-        antecedentes.setMpf("");
     }
     
     /**
@@ -796,7 +796,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         };
     }
     
-    private void setTabla() throws SQLException, ConnectException{
+    private void setTabla(){
         /*
         DefaultTableModel modelo = new DefaultTableModel();
         int cantidadColumnas = jtPreempleo.getColumnCount();
@@ -814,14 +814,20 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         }
         setComboboxUsuarios(idCombobox);
         */
-        jtPreempleo.setModel(crearModeloTabla());
-        DatosPaginacion<PreempleoMod> datosPaginacion = crearDatosPaginacion();
-        paginador = new PaginadorTabla(jtPreempleo, datosPaginacion, new int[]{5,10,20,25,50,75,100}, 10);
-        paginador.crearListadoFilasPermitidas(panelPaginacion);
-        filasPermitidas = paginador.getComboboxFilasPermitidas();
-        filasPermitidas.addActionListener(this);
-        jtPreempleo.getModel().addTableModelListener(this);
-        filasPermitidas.setSelectedItem(Integer.parseInt("10"));
+        try{
+            jtPreempleo.setModel(crearModeloTabla());
+            DatosPaginacion<PreempleoMod> datosPaginacion = crearDatosPaginacion();
+            paginador = new PaginadorTabla(jtPreempleo, datosPaginacion, new int[]{5,10,20,25,50,75,100}, 10);
+            paginador.crearListadoFilasPermitidas(panelPaginacion);
+            filasPermitidas = paginador.getComboboxFilasPermitidas();
+            filasPermitidas.addActionListener(this);
+            jtPreempleo.getModel().addTableModelListener(this);
+            filasPermitidas.setSelectedItem(Integer.parseInt("10"));
+        } catch (SQLException ex) {
+            Logger.getLogger(ConsultaGeneral.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ConnectException ex) {
+            Logger.getLogger(ConsultaGeneral.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     private DatosPaginacion <PreempleoMod> crearDatosPaginacion() throws SQLException, ConnectException{
@@ -1102,11 +1108,10 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         combo_Talla = new javax.swing.JComboBox<>();
         lblIMC = new javax.swing.JLabel();
         txtIMC = new javax.swing.JTextField();
-        lblMotivoConsulta = new javax.swing.JLabel();
         lblPA = new javax.swing.JLabel();
         txtPA = new javax.swing.JTextField();
-        jScrollPane11 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        jLabel2 = new javax.swing.JLabel();
+        txtRuffier = new javax.swing.JTextField();
         lblOjoDerecho = new javax.swing.JLabel();
         txtOjoDerecho = new javax.swing.JTextField();
         lblOjoIzquierdo = new javax.swing.JLabel();
@@ -1116,8 +1121,6 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         lbl_btn_Pagina3_2 = new javax.swing.JLabel();
         btn_Pagina3_4 = new javax.swing.JPanel();
         lbl_btn_Pagina3_4 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        txtRuffier = new javax.swing.JTextField();
         panelPagina4 = new javax.swing.JPanel();
         lblAlteraciones = new javax.swing.JLabel();
         jScrollPane13 = new javax.swing.JScrollPane();
@@ -1147,18 +1150,18 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         lbl_btn_Pagina4_3 = new javax.swing.JLabel();
         btn_Pagina4_5 = new javax.swing.JPanel();
         lbl_btn_Pagina4_5 = new javax.swing.JLabel();
-        panelPagina5 = new javax.swing.JPanel();
-        btn_Pagina5_4 = new javax.swing.JPanel();
-        lbl_btn_Pagina5_4 = new javax.swing.JLabel();
         lblGastrointestinal = new javax.swing.JLabel();
         jScrollPane21 = new javax.swing.JScrollPane();
         txtAreaGastrointestinal = new javax.swing.JTextArea();
-        lblGenitourinario = new javax.swing.JLabel();
-        jScrollPane22 = new javax.swing.JScrollPane();
-        txtAreaGenitourinario = new javax.swing.JTextArea();
         lblExtremidades = new javax.swing.JLabel();
         jScrollPane23 = new javax.swing.JScrollPane();
         txtAreaExtremidades = new javax.swing.JTextArea();
+        panelPagina5 = new javax.swing.JPanel();
+        btn_Pagina5_4 = new javax.swing.JPanel();
+        lbl_btn_Pagina5_4 = new javax.swing.JLabel();
+        lblGenitourinario = new javax.swing.JLabel();
+        jScrollPane22 = new javax.swing.JScrollPane();
+        txtAreaGenitourinario = new javax.swing.JTextArea();
         lblNeurologico = new javax.swing.JLabel();
         jScrollPane24 = new javax.swing.JScrollPane();
         txtAreaNeurologico = new javax.swing.JTextArea();
@@ -1200,9 +1203,11 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         fechaMenarquia.setTextRefernce(txtMenarquia);
 
         fechaFUR.setForeground(new java.awt.Color(87, 87, 238));
+        fechaFUR.setDateFormat("dd/MM/yyyy");
         fechaFUR.setTextRefernce(txtFUR);
 
         fechaCSTP.setForeground(new java.awt.Color(87, 87, 238));
+        fechaCSTP.setDateFormat("dd/MM/yyyy");
         fechaCSTP.setTextRefernce(txtCSTP);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -1613,6 +1618,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         lblMenarquia.setText("Menarquia");
         panelAntecedentesGino.add(lblMenarquia, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, -1, 20));
 
+        txtMenarquia.setBackground(new java.awt.Color(255, 255, 255));
         txtMenarquia.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtMenarquia.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtMenarquia.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
@@ -1622,6 +1628,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         lblFur.setText("FUR");
         panelAntecedentesGino.add(lblFur, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 20, -1, 20));
 
+        txtFUR.setBackground(new java.awt.Color(255, 255, 255));
         txtFUR.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtFUR.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtFUR.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
@@ -1649,6 +1656,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         lblCSTP.setText("CSTP");
         panelAntecedentesGino.add(lblCSTP, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, -1, 20));
 
+        txtCSTP.setBackground(new java.awt.Color(255, 255, 255));
         txtCSTP.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtCSTP.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtCSTP.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
@@ -2384,11 +2392,11 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
                 txtTemperaturaFocusLost(evt);
             }
         });
-        panelPagina3.add(txtTemperatura, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 101, 35));
+        panelPagina3.add(txtTemperatura, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 175, 35));
 
         lblPulso.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblPulso.setText("Pulso");
-        panelPagina3.add(lblPulso, new org.netbeans.lib.awtextra.AbsoluteConstraints(343, 30, -1, 20));
+        panelPagina3.add(lblPulso, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 100, -1, 20));
 
         txtPulso.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtPulso.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -2400,11 +2408,11 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
                 txtPulsoFocusLost(evt);
             }
         });
-        panelPagina3.add(txtPulso, new org.netbeans.lib.awtextra.AbsoluteConstraints(343, 50, 101, 35));
+        panelPagina3.add(txtPulso, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, 175, 35));
 
         lblSPO2.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblSPO2.setText("sPO2");
-        panelPagina3.add(lblSPO2, new org.netbeans.lib.awtextra.AbsoluteConstraints(454, 30, -1, 20));
+        panelPagina3.add(lblSPO2, new org.netbeans.lib.awtextra.AbsoluteConstraints(195, 100, -1, 20));
 
         txtSPO2.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtSPO2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -2416,11 +2424,11 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
                 txtSPO2FocusLost(evt);
             }
         });
-        panelPagina3.add(txtSPO2, new org.netbeans.lib.awtextra.AbsoluteConstraints(454, 50, 101, 35));
+        panelPagina3.add(txtSPO2, new org.netbeans.lib.awtextra.AbsoluteConstraints(195, 120, 175, 35));
 
         lblFR.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblFR.setText("FR");
-        panelPagina3.add(lblFR, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 105, -1, 20));
+        panelPagina3.add(lblFR, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 100, -1, 20));
 
         txtFR.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtFR.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -2432,11 +2440,11 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
                 txtFRFocusLost(evt);
             }
         });
-        panelPagina3.add(txtFR, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 125, 129, 35));
+        panelPagina3.add(txtFR, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 120, 175, 35));
 
         lblGlicemia.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblGlicemia.setText("Glicemia");
-        panelPagina3.add(lblGlicemia, new org.netbeans.lib.awtextra.AbsoluteConstraints(121, 30, -1, 20));
+        panelPagina3.add(lblGlicemia, new org.netbeans.lib.awtextra.AbsoluteConstraints(195, 30, -1, 20));
 
         txtGlicemia.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtGlicemia.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -2448,11 +2456,11 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
                 txtGlicemiaFocusLost(evt);
             }
         });
-        panelPagina3.add(txtGlicemia, new org.netbeans.lib.awtextra.AbsoluteConstraints(121, 50, 101, 35));
+        panelPagina3.add(txtGlicemia, new org.netbeans.lib.awtextra.AbsoluteConstraints(195, 50, 175, 35));
 
         lblPeso.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblPeso.setText("Peso");
-        panelPagina3.add(lblPeso, new org.netbeans.lib.awtextra.AbsoluteConstraints(288, 105, -1, 20));
+        panelPagina3.add(lblPeso, new org.netbeans.lib.awtextra.AbsoluteConstraints(195, 170, -1, 20));
 
         txtPeso.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtPeso.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -2464,20 +2472,20 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
                 txtPesoFocusLost(evt);
             }
         });
-        panelPagina3.add(txtPeso, new org.netbeans.lib.awtextra.AbsoluteConstraints(288, 125, 129, 35));
+        panelPagina3.add(txtPeso, new org.netbeans.lib.awtextra.AbsoluteConstraints(195, 190, 175, 35));
 
         lblTalla.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblTalla.setText("Talla");
-        panelPagina3.add(lblTalla, new org.netbeans.lib.awtextra.AbsoluteConstraints(427, 105, -1, 20));
+        panelPagina3.add(lblTalla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 170, -1, 20));
 
         combo_Talla.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         combo_Talla.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "S", "M", "L", "XL", "XXL" }));
         combo_Talla.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelPagina3.add(combo_Talla, new org.netbeans.lib.awtextra.AbsoluteConstraints(427, 125, 129, 35));
+        panelPagina3.add(combo_Talla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 190, 175, 35));
 
         lblIMC.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblIMC.setText("IMC");
-        panelPagina3.add(lblIMC, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 105, -1, 20));
+        panelPagina3.add(lblIMC, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, -1, 20));
 
         txtIMC.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtIMC.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -2489,15 +2497,11 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
                 txtIMCFocusLost(evt);
             }
         });
-        panelPagina3.add(txtIMC, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 125, 135, 35));
-
-        lblMotivoConsulta.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblMotivoConsulta.setText("Motivo de Consulta");
-        panelPagina3.add(lblMotivoConsulta, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 240, -1, 20));
+        panelPagina3.add(txtIMC, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, 175, 35));
 
         lblPA.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblPA.setText("P/A");
-        panelPagina3.add(lblPA, new org.netbeans.lib.awtextra.AbsoluteConstraints(232, 30, -1, -1));
+        panelPagina3.add(lblPA, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 30, -1, -1));
 
         txtPA.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtPA.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -2509,37 +2513,36 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
                 txtPAFocusLost(evt);
             }
         });
-        panelPagina3.add(txtPA, new org.netbeans.lib.awtextra.AbsoluteConstraints(232, 50, 101, 35));
+        panelPagina3.add(txtPA, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 50, 175, 35));
 
-        jScrollPane11.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jLabel2.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        jLabel2.setText("Ruffier");
+        panelPagina3.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 240, -1, 20));
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
-        jTextArea1.setRows(5);
-        jScrollPane11.setViewportView(jTextArea1);
-
-        panelPagina3.add(jScrollPane11, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 260, 546, 40));
+        txtRuffier.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtRuffier.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        panelPagina3.add(txtRuffier, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 260, 143, 35));
 
         lblOjoDerecho.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblOjoDerecho.setText("Agudeza ojo derecho");
-        panelPagina3.add(lblOjoDerecho, new org.netbeans.lib.awtextra.AbsoluteConstraints(155, 170, -1, 20));
+        panelPagina3.add(lblOjoDerecho, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 240, -1, 20));
 
         txtOjoDerecho.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtOjoDerecho.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelPagina3.add(txtOjoDerecho, new org.netbeans.lib.awtextra.AbsoluteConstraints(155, 190, 135, 35));
+        panelPagina3.add(txtOjoDerecho, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 260, 143, 35));
 
         lblOjoIzquierdo.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblOjoIzquierdo.setText("Agudeza ojo izquierdo");
-        panelPagina3.add(lblOjoIzquierdo, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 170, -1, 20));
+        panelPagina3.add(lblOjoIzquierdo, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 240, -1, 20));
 
         txtOjoIzquierdo.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtOjoIzquierdo.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelPagina3.add(txtOjoIzquierdo, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 190, 135, 35));
+        panelPagina3.add(txtOjoIzquierdo, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 260, 143, 35));
 
         checkLentes.setBackground(new java.awt.Color(255, 255, 255));
         checkLentes.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         checkLentes.setText("Usa Lentes");
-        panelPagina3.add(checkLentes, new org.netbeans.lib.awtextra.AbsoluteConstraints(446, 190, 110, 35));
+        panelPagina3.add(checkLentes, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 260, -1, 35));
 
         btn_Pagina3_2.setBackground(new java.awt.Color(204, 204, 235));
         btn_Pagina3_2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
@@ -2587,14 +2590,6 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
 
         panelPagina3.add(btn_Pagina3_4, new org.netbeans.lib.awtextra.AbsoluteConstraints(293, 320, 106, 35));
 
-        jLabel2.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        jLabel2.setText("Ruffier");
-        panelPagina3.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, -1, 20));
-
-        txtRuffier.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtRuffier.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelPagina3.add(txtRuffier, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, 129, 35));
-
         panelCartas.add(panelPagina3, "card4");
 
         panelPagina4.setBackground(new java.awt.Color(255, 255, 255));
@@ -2602,7 +2597,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
 
         lblAlteraciones.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblAlteraciones.setText("Alteraciones");
-        panelPagina4.add(lblAlteraciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, -1, 20));
+        panelPagina4.add(lblAlteraciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, 20));
 
         jScrollPane13.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -2611,11 +2606,11 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         txtAreaAlteraciones.setRows(5);
         jScrollPane13.setViewportView(txtAreaAlteraciones);
 
-        panelPagina4.add(jScrollPane13, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 60, 260, 40));
+        panelPagina4.add(jScrollPane13, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, 260, 35));
 
         lblPielFaneras.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblPielFaneras.setText("Piel y Faneras");
-        panelPagina4.add(lblPielFaneras, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 110, -1, -1));
+        panelPagina4.add(lblPielFaneras, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, -1, -1));
 
         jScrollPane14.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -2624,11 +2619,11 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         txtAreaPielFaneras.setRows(5);
         jScrollPane14.setViewportView(txtAreaPielFaneras);
 
-        panelPagina4.add(jScrollPane14, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 130, 260, 40));
+        panelPagina4.add(jScrollPane14, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, 260, 35));
 
         lblCabeza.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblCabeza.setText("Cabeza");
-        panelPagina4.add(lblCabeza, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 180, -1, 20));
+        panelPagina4.add(lblCabeza, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, -1, 20));
 
         jScrollPane15.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -2637,11 +2632,11 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         txtAreaCabeza.setRows(5);
         jScrollPane15.setViewportView(txtAreaCabeza);
 
-        panelPagina4.add(jScrollPane15, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 200, 260, 40));
+        panelPagina4.add(jScrollPane15, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, 260, 35));
 
         lblOjoidos.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblOjoidos.setText("Ojos, oídos, nariz y boca");
-        panelPagina4.add(lblOjoidos, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 250, -1, 20));
+        panelPagina4.add(lblOjoidos, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, -1, 20));
 
         jScrollPane16.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -2650,11 +2645,11 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         txtAreaOjoidos.setRows(5);
         jScrollPane16.setViewportView(txtAreaOjoidos);
 
-        panelPagina4.add(jScrollPane16, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 270, 260, 40));
+        panelPagina4.add(jScrollPane16, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 210, 260, 35));
 
         lblOrofaringe.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblOrofaringe.setText("Orofaringe");
-        panelPagina4.add(lblOrofaringe, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 40, -1, 20));
+        panelPagina4.add(lblOrofaringe, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 10, -1, 20));
 
         jScrollPane17.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -2663,11 +2658,11 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         txtAreaOrofaringe.setRows(5);
         jScrollPane17.setViewportView(txtAreaOrofaringe);
 
-        panelPagina4.add(jScrollPane17, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 60, 260, 40));
+        panelPagina4.add(jScrollPane17, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 30, 260, 35));
 
         lblCuello.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblCuello.setText("Cuello");
-        panelPagina4.add(lblCuello, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 110, -1, 20));
+        panelPagina4.add(lblCuello, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 70, -1, 20));
 
         jScrollPane18.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -2676,11 +2671,11 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         txtAreaCuello.setRows(5);
         jScrollPane18.setViewportView(txtAreaCuello);
 
-        panelPagina4.add(jScrollPane18, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 130, 260, 40));
+        panelPagina4.add(jScrollPane18, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 90, 260, 35));
 
         lblRespiratorio.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblRespiratorio.setText("Sistema Respiratorio");
-        panelPagina4.add(lblRespiratorio, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 180, -1, 20));
+        panelPagina4.add(lblRespiratorio, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 130, -1, 20));
 
         jScrollPane19.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -2689,11 +2684,11 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         txtAreaRespiratorio.setRows(5);
         jScrollPane19.setViewportView(txtAreaRespiratorio);
 
-        panelPagina4.add(jScrollPane19, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 200, 260, 40));
+        panelPagina4.add(jScrollPane19, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 150, 260, 35));
 
         lblCardiovascular.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblCardiovascular.setText("Sistema Cardiovascular");
-        panelPagina4.add(lblCardiovascular, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 250, -1, 20));
+        panelPagina4.add(lblCardiovascular, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 190, -1, 20));
 
         jScrollPane20.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -2702,7 +2697,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         txtAreaCardiovascular.setRows(5);
         jScrollPane20.setViewportView(txtAreaCardiovascular);
 
-        panelPagina4.add(jScrollPane20, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 270, 260, 40));
+        panelPagina4.add(jScrollPane20, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 210, 260, 35));
 
         btn_Pagina4_3.setBackground(new java.awt.Color(204, 204, 235));
         btn_Pagina4_3.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
@@ -2750,6 +2745,30 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
 
         panelPagina4.add(btn_Pagina4_5, new org.netbeans.lib.awtextra.AbsoluteConstraints(293, 320, 106, 35));
 
+        lblGastrointestinal.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblGastrointestinal.setText("Sistema Gastrointestinal");
+        panelPagina4.add(lblGastrointestinal, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 250, -1, 20));
+
+        jScrollPane21.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        txtAreaGastrointestinal.setColumns(20);
+        txtAreaGastrointestinal.setRows(5);
+        jScrollPane21.setViewportView(txtAreaGastrointestinal);
+
+        panelPagina4.add(jScrollPane21, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 270, 260, 35));
+
+        lblExtremidades.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblExtremidades.setText("Extremidades");
+        panelPagina4.add(lblExtremidades, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 250, -1, 20));
+
+        jScrollPane23.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        txtAreaExtremidades.setColumns(20);
+        txtAreaExtremidades.setRows(5);
+        jScrollPane23.setViewportView(txtAreaExtremidades);
+
+        panelPagina4.add(jScrollPane23, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 270, 260, 35));
+
         panelCartas.add(panelPagina4, "card5");
 
         panelPagina5.setBackground(new java.awt.Color(255, 255, 255));
@@ -2779,21 +2798,9 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
 
         panelPagina5.add(btn_Pagina5_4, new org.netbeans.lib.awtextra.AbsoluteConstraints(167, 320, 106, 35));
 
-        lblGastrointestinal.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblGastrointestinal.setText("Sistema Gastrointestinal");
-        panelPagina5.add(lblGastrointestinal, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, 20));
-
-        jScrollPane21.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        txtAreaGastrointestinal.setColumns(20);
-        txtAreaGastrointestinal.setRows(5);
-        jScrollPane21.setViewportView(txtAreaGastrointestinal);
-
-        panelPagina5.add(jScrollPane21, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, 260, 30));
-
         lblGenitourinario.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblGenitourinario.setText("Sistema Genitourinario");
-        panelPagina5.add(lblGenitourinario, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, -1, 20));
+        panelPagina5.add(lblGenitourinario, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, 20));
 
         jScrollPane22.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -2801,23 +2808,11 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         txtAreaGenitourinario.setRows(5);
         jScrollPane22.setViewportView(txtAreaGenitourinario);
 
-        panelPagina5.add(jScrollPane22, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, 260, 30));
-
-        lblExtremidades.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblExtremidades.setText("Extremidades");
-        panelPagina5.add(lblExtremidades, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 10, -1, 20));
-
-        jScrollPane23.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        txtAreaExtremidades.setColumns(20);
-        txtAreaExtremidades.setRows(5);
-        jScrollPane23.setViewportView(txtAreaExtremidades);
-
-        panelPagina5.add(jScrollPane23, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 30, 260, 30));
+        panelPagina5.add(jScrollPane22, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, 260, 35));
 
         lblNeurologico.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblNeurologico.setText("Neurológico");
-        panelPagina5.add(lblNeurologico, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 70, -1, 20));
+        panelPagina5.add(lblNeurologico, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 10, -1, 20));
 
         jScrollPane24.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -2825,11 +2820,11 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         txtAreaNeurologico.setRows(5);
         jScrollPane24.setViewportView(txtAreaNeurologico);
 
-        panelPagina5.add(jScrollPane24, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 90, 260, 30));
+        panelPagina5.add(jScrollPane24, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 30, 260, 35));
 
         lblImpresionClinica.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblImpresionClinica.setText("Impresión Clínica");
-        panelPagina5.add(lblImpresionClinica, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, -1, 20));
+        panelPagina5.add(lblImpresionClinica, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, -1, 20));
 
         jScrollPane25.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -2837,11 +2832,11 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         txtAreaImpresionClinica.setRows(5);
         jScrollPane25.setViewportView(txtAreaImpresionClinica);
 
-        panelPagina5.add(jScrollPane25, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, 260, 30));
+        panelPagina5.add(jScrollPane25, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, 260, 35));
 
         lblObservaciones.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblObservaciones.setText("Observaciones");
-        panelPagina5.add(lblObservaciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 130, -1, 20));
+        panelPagina5.add(lblObservaciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 70, -1, 20));
 
         jScrollPane26.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -2849,37 +2844,37 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         txtAreaObservaciones.setRows(5);
         jScrollPane26.setViewportView(txtAreaObservaciones);
 
-        panelPagina5.add(jScrollPane26, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 150, 260, 30));
+        panelPagina5.add(jScrollPane26, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 90, 260, 35));
 
         lblAptitud.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblAptitud.setForeground(new java.awt.Color(31, 78, 121));
         lblAptitud.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblAptitud.setText("APTITUD");
-        panelPagina5.add(lblAptitud, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, -1, -1));
+        panelPagina5.add(lblAptitud, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, -1, -1));
 
         rbtn_Aptitud1.setBackground(new java.awt.Color(255, 255, 255));
         grbtn_Aptitud.add(rbtn_Aptitud1);
         rbtn_Aptitud1.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         rbtn_Aptitud1.setText("Apto");
-        panelPagina5.add(rbtn_Aptitud1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 210, -1, 30));
+        panelPagina5.add(rbtn_Aptitud1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 180, -1, 30));
 
         rbtn_Aptitud2.setBackground(new java.awt.Color(255, 255, 255));
         grbtn_Aptitud.add(rbtn_Aptitud2);
         rbtn_Aptitud2.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         rbtn_Aptitud2.setText("Apto con restricciones");
-        panelPagina5.add(rbtn_Aptitud2, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 210, -1, 30));
+        panelPagina5.add(rbtn_Aptitud2, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 180, -1, 30));
 
         rbtn_Aptitud3.setBackground(new java.awt.Color(255, 255, 255));
         grbtn_Aptitud.add(rbtn_Aptitud3);
         rbtn_Aptitud3.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         rbtn_Aptitud3.setText("Reevaluación");
-        panelPagina5.add(rbtn_Aptitud3, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 210, -1, 30));
+        panelPagina5.add(rbtn_Aptitud3, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 180, -1, 30));
 
         rbtn_Aptitud4.setBackground(new java.awt.Color(255, 255, 255));
         grbtn_Aptitud.add(rbtn_Aptitud4);
         rbtn_Aptitud4.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         rbtn_Aptitud4.setText("No apto para el puesto");
-        panelPagina5.add(rbtn_Aptitud4, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 210, -1, 30));
+        panelPagina5.add(rbtn_Aptitud4, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 180, -1, 30));
 
         lblResponsable.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblResponsable.setText("Responsable:");
@@ -2887,24 +2882,24 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
 
         lbl_Realizado.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lbl_Realizado.setText("Realizado");
-        panelPagina5.add(lbl_Realizado, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 250, -1, 20));
+        panelPagina5.add(lbl_Realizado, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 220, -1, 20));
 
         combo_Realizado.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        panelPagina5.add(combo_Realizado, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 280, 175, 30));
+        panelPagina5.add(combo_Realizado, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 250, 175, 30));
 
         lbl_Revisado.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lbl_Revisado.setText("Revisado");
-        panelPagina5.add(lbl_Revisado, new org.netbeans.lib.awtextra.AbsoluteConstraints(195, 250, -1, 20));
+        panelPagina5.add(lbl_Revisado, new org.netbeans.lib.awtextra.AbsoluteConstraints(195, 220, -1, 20));
 
         combo_Revisado.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        panelPagina5.add(combo_Revisado, new org.netbeans.lib.awtextra.AbsoluteConstraints(195, 280, 175, 30));
+        panelPagina5.add(combo_Revisado, new org.netbeans.lib.awtextra.AbsoluteConstraints(195, 250, 175, 30));
 
         lbl_Autorizado.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lbl_Autorizado.setText("Autorizado");
-        panelPagina5.add(lbl_Autorizado, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 250, -1, 20));
+        panelPagina5.add(lbl_Autorizado, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 220, -1, 20));
 
         combo_Autorizado.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        panelPagina5.add(combo_Autorizado, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 280, 175, 30));
+        panelPagina5.add(combo_Autorizado, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 250, 175, 30));
 
         panelCartas.add(panelPagina5, "card6");
 
@@ -3342,13 +3337,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
             contenidoActual = "Actualizar";
             lbl_btn_Confirmar.setEnabled(true);
             reset();
-            try {
-                setTabla();
-            } catch (SQLException ex) {
-                Logger.getLogger(Preempleo.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ConnectException ex) {
-                Logger.getLogger(Preempleo.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            setTabla();
         }
     }//GEN-LAST:event_lbl_btnActualizarMouseClicked
 
@@ -3362,13 +3351,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
             contenidoActual = "Eliminar";
             lbl_btn_Confirmar.setEnabled(true);
             reset();
-            try {
-                setTabla();
-            } catch (SQLException ex) {
-                Logger.getLogger(Preempleo.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ConnectException ex) {
-                Logger.getLogger(Preempleo.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            setTabla();
         }
     }//GEN-LAST:event_lbl_BtnEliminarMouseClicked
 
@@ -3429,134 +3412,6 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         setCartas(panelPagina1);
         btn_Pagina2_1.setBackground(util.colorCursorSale(btn_Pagina2_1.getBackground()));
     }//GEN-LAST:event_lbl_btn_Pagina2_1MouseClicked
-
-    private void txtTemperaturaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTemperaturaFocusGained
-        if (String.valueOf(txtTemperatura.getText()).equals("°C")){
-            txtTemperatura.setText("");
-            txtTemperatura.setForeground(Color.black);
-        }
-    }//GEN-LAST:event_txtTemperaturaFocusGained
-
-    private void txtTemperaturaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTemperaturaFocusLost
-        if (!(util.verificarNumero(txtTemperatura.getText())) && (txtTemperatura.getText().length() > 0))
-            txtTemperatura.requestFocus();
-        if (txtTemperatura.getText().isEmpty()){
-            txtTemperatura.setText("°C");
-            txtTemperatura.setForeground(Color.gray);
-        }
-    }//GEN-LAST:event_txtTemperaturaFocusLost
-
-    private void txtPulsoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPulsoFocusGained
-        if (String.valueOf(txtPulso.getText()).equals("LPM")){
-            txtPulso.setText("");
-            txtPulso.setForeground(Color.black);
-        }
-    }//GEN-LAST:event_txtPulsoFocusGained
-
-    private void txtPulsoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPulsoFocusLost
-        if (!(util.verificarNumero(txtPulso.getText())) && (txtPulso.getText().length() > 0))
-            txtPulso.requestFocus();
-        if (txtPulso.getText().isEmpty()){
-            txtPulso.setText("LPM");
-            txtPulso.setForeground(Color.gray);
-        }
-    }//GEN-LAST:event_txtPulsoFocusLost
-
-    private void txtSPO2FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtSPO2FocusGained
-        if (String.valueOf(txtSPO2.getText()).equals("%")){
-            txtSPO2.setText("");
-            txtSPO2.setForeground(Color.black);
-        }
-    }//GEN-LAST:event_txtSPO2FocusGained
-
-    private void txtSPO2FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtSPO2FocusLost
-        if (!(util.verificarNumero(txtSPO2.getText())) && (txtSPO2.getText().length() > 0))
-            txtSPO2.requestFocus();
-        if (txtSPO2.getText().isEmpty()){
-            txtSPO2.setText("%");
-            txtSPO2.setForeground(Color.gray);
-        }
-    }//GEN-LAST:event_txtSPO2FocusLost
-
-    private void txtFRFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFRFocusGained
-        if (String.valueOf(txtFR.getText()).equals("RPM")){
-            txtFR.setText("");
-            txtFR.setForeground(Color.black);
-        }
-    }//GEN-LAST:event_txtFRFocusGained
-
-    private void txtFRFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFRFocusLost
-        if (!(util.verificarNumero(txtFR.getText())) && (txtFR.getText().length() > 0))
-            txtFR.requestFocus();
-        if (txtFR.getText().isEmpty()){
-            txtFR.setText("RPM");
-            txtFR.setForeground(Color.gray);
-        }
-    }//GEN-LAST:event_txtFRFocusLost
-
-    private void txtGlicemiaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtGlicemiaFocusGained
-        if (String.valueOf(txtGlicemia.getText()).equals("mg/dl")){
-            txtGlicemia.setText("");
-            txtGlicemia.setForeground(Color.black);
-        }
-    }//GEN-LAST:event_txtGlicemiaFocusGained
-
-    private void txtGlicemiaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtGlicemiaFocusLost
-        if (!(util.verificarNumero(txtGlicemia.getText())) && (txtGlicemia.getText().length() > 0))
-            txtGlicemia.requestFocus();
-        if (txtGlicemia.getText().isEmpty()){
-            txtGlicemia.setText("mg/dl");
-            txtGlicemia.setForeground(Color.gray);
-        }
-    }//GEN-LAST:event_txtGlicemiaFocusLost
-
-    private void txtPesoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPesoFocusGained
-        if (String.valueOf(txtPeso.getText()).equals("lb")){
-            txtPeso.setText("");
-            txtPeso.setForeground(Color.black);
-        }
-    }//GEN-LAST:event_txtPesoFocusGained
-
-    private void txtPesoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPesoFocusLost
-        if (!(util.verificarNumero(txtPeso.getText())) && (txtPeso.getText().length() > 0))
-            txtPeso.requestFocus();
-        if (txtPeso.getText().isEmpty()){
-            txtPeso.setText("lb");
-            txtPeso.setForeground(Color.gray);
-        }
-    }//GEN-LAST:event_txtPesoFocusLost
-
-    private void txtIMCFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtIMCFocusGained
-        if (String.valueOf(txtIMC.getText()).equals("Kg/m^2")){
-            txtIMC.setText("");
-            txtIMC.setForeground(Color.black);
-        }
-    }//GEN-LAST:event_txtIMCFocusGained
-
-    private void txtIMCFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtIMCFocusLost
-        if (!(util.verificarNumero(txtIMC.getText())) && (txtIMC.getText().length() > 0))
-            txtIMC.requestFocus();
-        if (txtIMC.getText().isEmpty()){
-            txtIMC.setText("Kg/m^2");
-            txtIMC.setForeground(Color.gray);
-        }
-    }//GEN-LAST:event_txtIMCFocusLost
-
-    private void txtPAFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPAFocusGained
-        if (String.valueOf(txtPA.getText()).equals("mmHg")){
-            txtPA.setText("");
-            txtPA.setForeground(Color.black);
-        }
-    }//GEN-LAST:event_txtPAFocusGained
-
-    private void txtPAFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPAFocusLost
-        if (!(util.verificarNumero(txtPA.getText())) && (txtPA.getText().length() > 0))
-            txtPA.requestFocus();
-        if (txtPA.getText().isEmpty()){
-            txtPA.setText("mmHg");
-            txtPA.setForeground(Color.gray);
-        }
-    }//GEN-LAST:event_txtPAFocusLost
 
     private void lbl_btn_Pagina3_2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btn_Pagina3_2MouseClicked
         setCartas(panelPagina2);
@@ -3636,6 +3491,134 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         btn_Pagina4_5.setBackground(util.colorCursorSale(btn_Pagina4_5.getBackground()));
     }//GEN-LAST:event_lbl_btn_Pagina4_5MouseExited
 
+    private void txtPAFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPAFocusLost
+        if (!(util.verificarNumero(txtPA.getText())) && (txtPA.getText().length() > 0))
+        txtPA.requestFocus();
+        if (txtPA.getText().isEmpty()){
+            txtPA.setText("mmHg");
+            txtPA.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtPAFocusLost
+
+    private void txtPAFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPAFocusGained
+        if (String.valueOf(txtPA.getText()).equals("mmHg")){
+            txtPA.setText("");
+            txtPA.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtPAFocusGained
+
+    private void txtIMCFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtIMCFocusLost
+        if (!(util.verificarNumero(txtIMC.getText())) && (txtIMC.getText().length() > 0))
+        txtIMC.requestFocus();
+        if (txtIMC.getText().isEmpty()){
+            txtIMC.setText("Kg/m^2");
+            txtIMC.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtIMCFocusLost
+
+    private void txtIMCFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtIMCFocusGained
+        if (String.valueOf(txtIMC.getText()).equals("Kg/m^2")){
+            txtIMC.setText("");
+            txtIMC.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtIMCFocusGained
+
+    private void txtPesoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPesoFocusLost
+        if (!(util.verificarNumero(txtPeso.getText())) && (txtPeso.getText().length() > 0))
+        txtPeso.requestFocus();
+        if (txtPeso.getText().isEmpty()){
+            txtPeso.setText("lb");
+            txtPeso.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtPesoFocusLost
+
+    private void txtPesoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPesoFocusGained
+        if (String.valueOf(txtPeso.getText()).equals("lb")){
+            txtPeso.setText("");
+            txtPeso.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtPesoFocusGained
+
+    private void txtGlicemiaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtGlicemiaFocusLost
+        if (!(util.verificarNumero(txtGlicemia.getText())) && (txtGlicemia.getText().length() > 0))
+        txtGlicemia.requestFocus();
+        if (txtGlicemia.getText().isEmpty()){
+            txtGlicemia.setText("mg/dl");
+            txtGlicemia.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtGlicemiaFocusLost
+
+    private void txtGlicemiaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtGlicemiaFocusGained
+        if (String.valueOf(txtGlicemia.getText()).equals("mg/dl")){
+            txtGlicemia.setText("");
+            txtGlicemia.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtGlicemiaFocusGained
+
+    private void txtFRFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFRFocusLost
+        if (!(util.verificarNumero(txtFR.getText())) && (txtFR.getText().length() > 0))
+        txtFR.requestFocus();
+        if (txtFR.getText().isEmpty()){
+            txtFR.setText("RPM");
+            txtFR.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtFRFocusLost
+
+    private void txtFRFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFRFocusGained
+        if (String.valueOf(txtFR.getText()).equals("RPM")){
+            txtFR.setText("");
+            txtFR.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtFRFocusGained
+
+    private void txtSPO2FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtSPO2FocusLost
+        if (!(util.verificarNumero(txtSPO2.getText())) && (txtSPO2.getText().length() > 0))
+        txtSPO2.requestFocus();
+        if (txtSPO2.getText().isEmpty()){
+            txtSPO2.setText("%");
+            txtSPO2.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtSPO2FocusLost
+
+    private void txtSPO2FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtSPO2FocusGained
+        if (String.valueOf(txtSPO2.getText()).equals("%")){
+            txtSPO2.setText("");
+            txtSPO2.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtSPO2FocusGained
+
+    private void txtPulsoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPulsoFocusLost
+        if (!(util.verificarNumero(txtPulso.getText())) && (txtPulso.getText().length() > 0))
+        txtPulso.requestFocus();
+        if (txtPulso.getText().isEmpty()){
+            txtPulso.setText("LPM");
+            txtPulso.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtPulsoFocusLost
+
+    private void txtPulsoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPulsoFocusGained
+        if (String.valueOf(txtPulso.getText()).equals("LPM")){
+            txtPulso.setText("");
+            txtPulso.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtPulsoFocusGained
+
+    private void txtTemperaturaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTemperaturaFocusLost
+        if (!(util.verificarNumero(txtTemperatura.getText())) && (txtTemperatura.getText().length() > 0))
+        txtTemperatura.requestFocus();
+        if (txtTemperatura.getText().isEmpty()){
+            txtTemperatura.setText("°C");
+            txtTemperatura.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtTemperaturaFocusLost
+
+    private void txtTemperaturaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTemperaturaFocusGained
+        if (String.valueOf(txtTemperatura.getText()).equals("°C")){
+            txtTemperatura.setText("");
+            txtTemperatura.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtTemperaturaFocusGained
+
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -3673,7 +3656,6 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     public javax.swing.JLabel jLabel5;
     public javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane10;
-    private javax.swing.JScrollPane jScrollPane11;
     private javax.swing.JScrollPane jScrollPane13;
     private javax.swing.JScrollPane jScrollPane14;
     private javax.swing.JScrollPane jScrollPane15;
@@ -3696,7 +3678,6 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JScrollPane jScrollPane8;
     private javax.swing.JScrollPane jScrollPane9;
-    private javax.swing.JTextArea jTextArea1;
     public javax.swing.JTable jtPreempleo;
     public javax.swing.JLabel lbl11anios;
     public javax.swing.JLabel lbl1anio;
@@ -3731,7 +3712,6 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     private javax.swing.JLabel lblImpresionClinica;
     public javax.swing.JLabel lblMPF;
     public javax.swing.JLabel lblMenarquia;
-    public javax.swing.JLabel lblMotivoConsulta;
     private javax.swing.JLabel lblNeurologico;
     public javax.swing.JLabel lblNivelAcademico;
     public javax.swing.JLabel lblNombre;
