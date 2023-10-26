@@ -298,6 +298,17 @@ public class MenuPrincipal extends javax.swing.JFrame {
         txt_PacienteCronico.setMaximumSize(new java.awt.Dimension(200, 40));
         txt_PacienteCronico.setMinimumSize(new java.awt.Dimension(200, 40));
         txt_PacienteCronico.setPreferredSize(new java.awt.Dimension(200, 40));
+        txt_PacienteCronico.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txt_PacienteCronicoMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                txt_PacienteCronicoMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                txt_PacienteCronicoMouseExited(evt);
+            }
+        });
         btn_PacienteCronico.add(txt_PacienteCronico, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
 
         barraOpciones.add(btn_PacienteCronico, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 210, 200, 40));
@@ -627,6 +638,28 @@ public class MenuPrincipal extends javax.swing.JFrame {
             System.out.println(ex.getMessage());
         } 
     }//GEN-LAST:event_txt_EvaluacionPeriodicaMouseClicked
+
+    private void txt_PacienteCronicoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt_PacienteCronicoMouseClicked
+        try{
+            SeguimientoCronicos seguimientoCronicos = new SeguimientoCronicos();
+            if (!seguimientoCronicos.nombreContenido.equals(contenidoActual)){
+                seguimientoCronicos.responsable = usuario_id;
+                nuevoContenido = seguimientoCronicos.getContenido();
+                cambioContenido(nuevoContenido, seguimientoCronicos.nombreContenido);
+            }
+        }catch (Exception ex) {
+            Logger.getLogger(MenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
+        } 
+    }//GEN-LAST:event_txt_PacienteCronicoMouseClicked
+
+    private void txt_PacienteCronicoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt_PacienteCronicoMouseEntered
+        btn_PacienteCronico.setBackground(util.colorCursorEntra(btn_PacienteCronico.getBackground()));
+    }//GEN-LAST:event_txt_PacienteCronicoMouseEntered
+
+    private void txt_PacienteCronicoMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt_PacienteCronicoMouseExited
+        btn_PacienteCronico.setBackground(util.colorCursorSale(btn_PacienteCronico.getBackground()));
+    }//GEN-LAST:event_txt_PacienteCronicoMouseExited
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
