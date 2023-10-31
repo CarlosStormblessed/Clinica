@@ -348,6 +348,9 @@ public class MenuPrincipal extends javax.swing.JFrame {
         txt_FichaAccidente.setMinimumSize(new java.awt.Dimension(200, 40));
         txt_FichaAccidente.setPreferredSize(new java.awt.Dimension(200, 40));
         txt_FichaAccidente.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txt_FichaAccidenteMouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 txt_FichaAccidenteMouseEntered(evt);
             }
@@ -660,6 +663,20 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private void txt_PacienteCronicoMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt_PacienteCronicoMouseExited
         btn_PacienteCronico.setBackground(util.colorCursorSale(btn_PacienteCronico.getBackground()));
     }//GEN-LAST:event_txt_PacienteCronicoMouseExited
+
+    private void txt_FichaAccidenteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt_FichaAccidenteMouseClicked
+        try{
+            Accidentes accidentes = new Accidentes();
+            if (!accidentes.nombreContenido.equals(contenidoActual)){
+                accidentes.responsable = usuario_id;
+                nuevoContenido = accidentes.getContenido();
+                cambioContenido(nuevoContenido, accidentes.nombreContenido);
+            }
+        }catch (Exception ex) {
+            Logger.getLogger(MenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
+        } 
+    }//GEN-LAST:event_txt_FichaAccidenteMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
