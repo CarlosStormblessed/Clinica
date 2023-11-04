@@ -69,6 +69,8 @@ public class MenuPrincipal extends javax.swing.JFrame {
         txt_PacienteCronico = new javax.swing.JLabel();
         btn_FichaAccidente = new javax.swing.JPanel();
         txt_FichaAccidente = new javax.swing.JLabel();
+        btn_VidaSaludable = new javax.swing.JPanel();
+        txt_VidaSaludable = new javax.swing.JLabel();
         contenido = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -139,10 +141,11 @@ public class MenuPrincipal extends javax.swing.JFrame {
         jPanel1.add(barra, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1280, 40));
 
         barraOpciones.setBackground(new java.awt.Color(172, 211, 227));
-        barraOpciones.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        barraOpciones.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 0, 0));
 
         btn_Home.setBackground(new java.awt.Color(172, 211, 227));
-        btn_Home.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        btn_Home.setMinimumSize(new java.awt.Dimension(200, 100));
+        btn_Home.setPreferredSize(new java.awt.Dimension(200, 85));
         btn_Home.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btn_HomeMouseClicked(evt);
@@ -168,13 +171,13 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 txt_HomeMouseExited(evt);
             }
         });
-        btn_Home.add(txt_Home, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 0, 100, 100));
+        btn_Home.add(txt_Home, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 0, 85, 85));
 
-        barraOpciones.add(btn_Home, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 100));
+        barraOpciones.add(btn_Home);
 
         btn_Preempleo.setBackground(new java.awt.Color(195, 200, 230));
         btn_Preempleo.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        btn_Preempleo.setPreferredSize(new java.awt.Dimension(200, 40));
+        btn_Preempleo.setPreferredSize(new java.awt.Dimension(200, 85));
         btn_Preempleo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txt_Preempleo.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
@@ -195,12 +198,13 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 txt_PreempleoMouseExited(evt);
             }
         });
-        btn_Preempleo.add(txt_Preempleo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 100));
+        btn_Preempleo.add(txt_Preempleo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 85));
 
-        barraOpciones.add(btn_Preempleo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 200, 100));
+        barraOpciones.add(btn_Preempleo);
 
         btn_FichaClinica.setBackground(new java.awt.Color(172, 180, 227));
         btn_FichaClinica.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        btn_FichaClinica.setPreferredSize(new java.awt.Dimension(200, 85));
         btn_FichaClinica.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txt_FichaClinica.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
@@ -221,12 +225,13 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 txt_FichaClinicaMouseExited(evt);
             }
         });
-        btn_FichaClinica.add(txt_FichaClinica, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 100));
+        btn_FichaClinica.add(txt_FichaClinica, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 85));
 
-        barraOpciones.add(btn_FichaClinica, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 200, 200, 100));
+        barraOpciones.add(btn_FichaClinica);
 
         btn_EvaluacionPeriodica.setBackground(new java.awt.Color(195, 200, 230));
         btn_EvaluacionPeriodica.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        btn_EvaluacionPeriodica.setPreferredSize(new java.awt.Dimension(200, 85));
         btn_EvaluacionPeriodica.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txt_EvaluacionPeriodica.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
@@ -247,12 +252,13 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 txt_EvaluacionPeriodicaMouseExited(evt);
             }
         });
-        btn_EvaluacionPeriodica.add(txt_EvaluacionPeriodica, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 100));
+        btn_EvaluacionPeriodica.add(txt_EvaluacionPeriodica, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 85));
 
-        barraOpciones.add(btn_EvaluacionPeriodica, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 300, 200, 100));
+        barraOpciones.add(btn_EvaluacionPeriodica);
 
         btn_PacienteCronico.setBackground(new java.awt.Color(172, 180, 227));
         btn_PacienteCronico.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        btn_PacienteCronico.setPreferredSize(new java.awt.Dimension(200, 85));
         btn_PacienteCronico.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txt_PacienteCronico.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
@@ -273,12 +279,13 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 txt_PacienteCronicoMouseExited(evt);
             }
         });
-        btn_PacienteCronico.add(txt_PacienteCronico, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 100));
+        btn_PacienteCronico.add(txt_PacienteCronico, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 85));
 
-        barraOpciones.add(btn_PacienteCronico, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 400, 200, 100));
+        barraOpciones.add(btn_PacienteCronico);
 
         btn_FichaAccidente.setBackground(new java.awt.Color(195, 200, 230));
         btn_FichaAccidente.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        btn_FichaAccidente.setPreferredSize(new java.awt.Dimension(200, 85));
         btn_FichaAccidente.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txt_FichaAccidente.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
@@ -299,9 +306,30 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 txt_FichaAccidenteMouseExited(evt);
             }
         });
-        btn_FichaAccidente.add(txt_FichaAccidente, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 100));
+        btn_FichaAccidente.add(txt_FichaAccidente, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 85));
 
-        barraOpciones.add(btn_FichaAccidente, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 500, 200, 100));
+        barraOpciones.add(btn_FichaAccidente);
+
+        btn_VidaSaludable.setBackground(new java.awt.Color(172, 180, 227));
+        btn_VidaSaludable.setPreferredSize(new java.awt.Dimension(200, 85));
+        btn_VidaSaludable.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        txt_VidaSaludable.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txt_VidaSaludable.setText("Seguimiento Vida Saludable");
+        txt_VidaSaludable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txt_VidaSaludableMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                txt_VidaSaludableMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                txt_VidaSaludableMouseExited(evt);
+            }
+        });
+        btn_VidaSaludable.add(txt_VidaSaludable, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 85));
+
+        barraOpciones.add(btn_VidaSaludable);
 
         jPanel1.add(barraOpciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, 200, 600));
 
@@ -510,6 +538,28 @@ public class MenuPrincipal extends javax.swing.JFrame {
         } 
     }//GEN-LAST:event_txt_FichaAccidenteMouseClicked
 
+    private void txt_VidaSaludableMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt_VidaSaludableMouseEntered
+        btn_VidaSaludable.setBackground(util.colorCursorEntra(btn_VidaSaludable.getBackground()));
+    }//GEN-LAST:event_txt_VidaSaludableMouseEntered
+
+    private void txt_VidaSaludableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt_VidaSaludableMouseExited
+        btn_VidaSaludable.setBackground(util.colorCursorSale(btn_VidaSaludable.getBackground()));
+    }//GEN-LAST:event_txt_VidaSaludableMouseExited
+
+    private void txt_VidaSaludableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt_VidaSaludableMouseClicked
+        try{
+            VidaSaludable vidaSaludable = new VidaSaludable();
+            if (!vidaSaludable.nombreContenido.equals(contenidoActual)){
+                vidaSaludable.responsable = usuario_id;
+                nuevoContenido = vidaSaludable.getContenido();
+                cambioContenido(nuevoContenido, vidaSaludable.nombreContenido);
+            }
+        }catch (Exception ex) {
+            Logger.getLogger(MenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
+        }
+    }//GEN-LAST:event_txt_VidaSaludableMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel barra;
@@ -520,6 +570,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JPanel btn_Home;
     private javax.swing.JPanel btn_PacienteCronico;
     private javax.swing.JPanel btn_Preempleo;
+    private javax.swing.JPanel btn_VidaSaludable;
     private javax.swing.JPanel contenido;
     private javax.swing.JPanel exit;
     private javax.swing.JPanel jPanel1;
@@ -530,5 +581,6 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel txt_Home;
     private javax.swing.JLabel txt_PacienteCronico;
     private javax.swing.JLabel txt_Preempleo;
+    private javax.swing.JLabel txt_VidaSaludable;
     // End of variables declaration//GEN-END:variables
 }
