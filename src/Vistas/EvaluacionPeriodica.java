@@ -37,7 +37,6 @@ import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
-import dateChooser.dateChooser.*;
 import java.awt.CardLayout;
 import java.util.ArrayList;
 
@@ -218,6 +217,9 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
     
     private void resetUsuarios(){
         try {
+            combo_Autorizado.removeAllItems();
+            combo_Realizado.removeAllItems();
+            combo_Revisado.removeAllItems();
             List<UsuarioMod> listaUsuarios = new ArrayList<UsuarioMod>();
             listaUsuarios = usrCtrl.seleccionarTodos();
             List<String> nombresUsuarios = new ArrayList<String>();

@@ -35,7 +35,6 @@ import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
-import dateChooser.dateChooser.*;
 import java.awt.CardLayout;
 import java.util.ArrayList;
 public class VidaSaludable extends javax.swing.JFrame implements ActionListener, TableModelListener{
@@ -228,7 +227,7 @@ public class VidaSaludable extends javax.swing.JFrame implements ActionListener,
     private void resetUsuarios(){
         try {
             List<UsuarioMod> listaUsuarios = new ArrayList<UsuarioMod>();
-            listaUsuarios = usrCtrl.seleccionarTodos();
+            listaUsuarios = usrCtrl.seleccionarTodosUsuarios();
             List<String> nombresUsuarios = new ArrayList<String>();
             for (int i = 0; i < listaUsuarios.size(); i++){
                 if (listaUsuarios.get(i).getId().equals(responsable)){

@@ -235,6 +235,9 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
     
     private void resetUsuarios(){
         try {
+            combo_Autorizado.removeAllItems();
+            combo_Realizado.removeAllItems();
+            combo_Revisado.removeAllItems();
             List<UsuarioMod> listaUsuarios = new ArrayList<UsuarioMod>();
             listaUsuarios = usrCtrl.seleccionarTodos();
             List<String> nombresUsuarios = new ArrayList<String>();

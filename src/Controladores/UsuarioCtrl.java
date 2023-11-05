@@ -19,13 +19,14 @@ public class UsuarioCtrl {
         conn = conex.connect();
         try {
 
-            String sql = "INSERT INTO USUARIO VALUES ((SELECT IFNULL(MAX(USR_ID), 0)+1 FROM USR u), ?,?,?,?,1)";
+            String sql = "INSERT INTO USUARIO VALUES ((SELECT IFNULL(MAX(USR_ID), 0)+1 FROM USUARIO u), ?,?,?,?,?)";
             conn.setAutoCommit(false);
             smt = conn.prepareStatement(sql);
             smt.setString(1, modelo.getUsuario());
             smt.setString(2, modelo.getNombre());
             smt.setString(3, modelo.getPassword());
             smt.setString(4, modelo.getRol());
+            smt.setString(5, modelo.getEstado());
             smt.executeUpdate();
 
             conn.commit();
@@ -170,6 +171,57 @@ public class UsuarioCtrl {
         String sql = "";
 
         sql = "SELECT * FROM USUARIO WHERE USR_ESTADO = 1 ORDER BY USR_ID ASC";
+        //+ filtro;
+
+        try {
+            
+            smt = conn.prepareStatement(sql);
+
+            result = smt.executeQuery();
+
+            while (result.next()) {
+                modeloBuscar = new UsuarioMod();
+
+                modeloBuscar.setId(result.getString(1));
+                modeloBuscar.setUsuario(result.getString(2));
+                modeloBuscar.setNombre(result.getString(3));
+                modeloBuscar.setPassword(result.getString(4));
+                modeloBuscar.setRol(result.getString(5));
+                modeloBuscar.setEstado(result.getString(6));
+                
+                lista.add(modeloBuscar);
+            }
+        } catch (Exception e) {
+        } finally {
+            if (smt != null) {
+                smt.close();
+            }
+            if (result != null) {
+                smt.close();
+            }
+            if (conn != null) {
+                conex.disconnect(conn);
+                conn.close();
+                conn = null;
+            }
+        }
+        return lista;
+    }
+    
+    public List<UsuarioMod> seleccionarTodosUsuarios() throws SQLException, ConnectException {
+        
+        PreparedStatement smt = null;
+        Connection conn;
+        Conexion conex = new Conexion();
+        conn = conex.connect();
+        ResultSet result = null;
+        List<UsuarioMod> lista = new ArrayList<UsuarioMod>();
+
+        UsuarioMod modeloBuscar = null;
+
+        String sql = "";
+
+        sql = "SELECT * FROM USUARIO WHERE USR_ESTADO = 1 AND USR_ROL NOT LIKE 'admin' ORDER BY USR_ID ASC;";
         //+ filtro;
 
         try {
