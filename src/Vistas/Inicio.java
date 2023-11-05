@@ -2,13 +2,13 @@ package Vistas;
 
 import javax.swing.JPanel;
 
-public class Dashboard extends javax.swing.JFrame {
+public class Inicio extends javax.swing.JFrame {
 
     /**
      * Creates new form Preempleo
      */
     public String nombreContenido = "Dashboard";
-    public Dashboard() {
+    public Inicio() {
         initComponents();
     }
     
@@ -27,6 +27,7 @@ public class Dashboard extends javax.swing.JFrame {
 
         cont_Dashboard = new javax.swing.JPanel();
         lblDashboard = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -36,8 +37,12 @@ public class Dashboard extends javax.swing.JFrame {
 
         lblDashboard.setFont(new java.awt.Font("Roboto", 1, 24)); // NOI18N
         lblDashboard.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblDashboard.setText("Dashboard");
+        lblDashboard.setText("Bienvenido");
         cont_Dashboard.add(lblDashboard, new org.netbeans.lib.awtextra.AbsoluteConstraints(-2, 50, 1080, -1));
+
+        jLabel1.setFont(new java.awt.Font("Roboto", 0, 24)); // NOI18N
+        jLabel1.setText("Ingrese a una Ficha Médica en el panel izquierdo");
+        cont_Dashboard.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 160, 520, 40));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -57,6 +62,7 @@ public class Dashboard extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel cont_Dashboard;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel lblDashboard;
     // End of variables declaration//GEN-END:variables
 }

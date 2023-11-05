@@ -12,8 +12,23 @@ public class PreempleoMod {
     private String telefono;
     private String nivelAcademico;
     private String puestoAplica;
+    private String empresa1;
+    private String empresa2;
+    private String empresa3;
+    private String puesto1;
+    private String puesto2;
+    private String puesto3;
+    private String tiempoLaborado1;
+    private String tiempoLaborado2;
+    private String tiempoLaborado3;
+    private String aptitud;
     private String clinicaId;
     private String antecedentesId;
+    private String revisionSistemasId;
+    private String responsable;
+    private String realizado;
+    private String revisado;
+    private String autorizado;
     private String estado;
     
     public PreempleoMod(){
@@ -107,6 +122,86 @@ public class PreempleoMod {
         this.puestoAplica = puestoAplica;
     }
 
+    public String getEmpresa1() {
+        return empresa1;
+    }
+
+    public void setEmpresa1(String empresa1) {
+        this.empresa1 = empresa1;
+    }
+
+    public String getEmpresa2() {
+        return empresa2;
+    }
+
+    public void setEmpresa2(String empresa2) {
+        this.empresa2 = empresa2;
+    }
+
+    public String getEmpresa3() {
+        return empresa3;
+    }
+
+    public void setEmpresa3(String empresa3) {
+        this.empresa3 = empresa3;
+    }
+
+    public String getPuesto1() {
+        return puesto1;
+    }
+
+    public void setPuesto1(String puesto1) {
+        this.puesto1 = puesto1;
+    }
+
+    public String getPuesto2() {
+        return puesto2;
+    }
+
+    public void setPuesto2(String puesto2) {
+        this.puesto2 = puesto2;
+    }
+
+    public String getPuesto3() {
+        return puesto3;
+    }
+
+    public void setPuesto3(String puesto3) {
+        this.puesto3 = puesto3;
+    }
+
+    public String getTiempoLaborado1() {
+        return tiempoLaborado1;
+    }
+
+    public void setTiempoLaborado1(String tiempoLaborado1) {
+        this.tiempoLaborado1 = tiempoLaborado1;
+    }
+
+    public String getTiempoLaborado2() {
+        return tiempoLaborado2;
+    }
+
+    public void setTiempoLaborado2(String tiempoLaborado2) {
+        this.tiempoLaborado2 = tiempoLaborado2;
+    }
+
+    public String getTiempoLaborado3() {
+        return tiempoLaborado3;
+    }
+
+    public void setTiempoLaborado3(String tiempoLaborado3) {
+        this.tiempoLaborado3 = tiempoLaborado3;
+    }
+
+    public String getAptitud() {
+        return aptitud;
+    }
+
+    public void setAptitud(String aptitud) {
+        this.aptitud = aptitud;
+    }
+
     public String getClinicaId() {
         return clinicaId;
     }
@@ -123,6 +218,46 @@ public class PreempleoMod {
         this.antecedentesId = antecedentesId;
     }
 
+    public String getRevisionSistemasId() {
+        return revisionSistemasId;
+    }
+
+    public void setRevisionSistemasId(String revisionSistemasId) {
+        this.revisionSistemasId = revisionSistemasId;
+    }
+
+    public String getResponsable() {
+        return responsable;
+    }
+
+    public void setResponsable(String responsable) {
+        this.responsable = responsable;
+    }
+
+    public String getRealizado() {
+        return realizado;
+    }
+
+    public void setRealizado(String realizado) {
+        this.realizado = realizado;
+    }
+
+    public String getRevisado() {
+        return revisado;
+    }
+
+    public void setRevisado(String revisado) {
+        this.revisado = revisado;
+    }
+
+    public String getAutorizado() {
+        return autorizado;
+    }
+
+    public void setAutorizado(String autorizado) {
+        this.autorizado = autorizado;
+    }
+
     public String getEstado() {
         return estado;
     }
@@ -130,5 +265,4 @@ public class PreempleoMod {
     public void setEstado(String estado) {
         this.estado = estado;
     }
-    
 }

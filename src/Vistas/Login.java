@@ -21,6 +21,7 @@ import java.sql.Statement;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import Utilitarios.Utilitarios;
+import java.sql.PreparedStatement;
 
 /**
  *
@@ -44,16 +45,29 @@ public class Login extends javax.swing.JFrame {
         else
         {
             try{
-                Conexion conexion = new Conexion();
-                Connection conn = conexion.connect();
-                String sql = "select * from clinica.usuario where USR_USUARIO = '" + txt_Usuario.getText() + "' AND USR_PASSWORD ='" + String.valueOf(txt_Contrasena.getPassword()) + "'";
-                Statement transaccion = conn.createStatement();
-                ResultSet resultado = transaccion.executeQuery(sql);
+                PreparedStatement smt = null;
+                Connection conn;
+                Conexion conex = new Conexion();
+                conn = conex.connect();
+                ResultSet resultado = null;
+                String sql = "select * from clinica.usuario where USR_USUARIO = '" + txt_Usuario.getText() + "' AND USR_PASSWORD ='" + String.valueOf(txt_Contrasena.getPassword()) + "' AND USR_ESTADO = 1";
+                smt = conn.prepareStatement(sql);
+                resultado = smt.executeQuery(sql);
                 if (resultado.next()) {
-                    MenuPrincipal menu = new MenuPrincipal();
-                    menu.setVisible(true);
-                    menu.setLocationRelativeTo(null);
-                    this.setVisible(false);
+                    if (resultado.getString(5).equals("admin")){
+                        Usuario usuario = new Usuario();
+                        usuario.setVisible(true);
+                        usuario.setLocationRelativeTo(null);
+                        this.setVisible(false);
+                    } else if(resultado.getString(5).equals("medico")){
+                        String id;
+                        id = resultado.getString(1);
+                        MenuPrincipal menu = new MenuPrincipal();
+                        menu.usuario_id = id;
+                        menu.setVisible(true);
+                        menu.setLocationRelativeTo(null);
+                        this.setVisible(false);
+                    }
                 } else {
                     JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos", "Consulta", JOptionPane.INFORMATION_MESSAGE);
                 }
