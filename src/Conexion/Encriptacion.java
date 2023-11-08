@@ -1,6 +1,6 @@
 package Conexion;
 
-import com.sun.org.apache.xml.internal.security.utils.Base64;
+import java.util.Base64;
 import java.security.MessageDigest;
 import java.util.Arrays;
 import javax.crypto.Cipher;
@@ -39,7 +39,8 @@ public class Encriptacion {
             cripto.init(Cipher.ENCRYPT_MODE, sks);
             byte[] cadena = encriptar.getBytes("UTF-8");
             byte[] encriptada = cripto.doFinal(cadena);
-            String cadenaEncriptada = Base64.encode(encriptada);
+            String cadenaEncriptada;
+            cadenaEncriptada = Base64.getEncoder().encodeToString(cadena);
             return cadenaEncriptada;
         }catch (Exception e){
             return "";
@@ -56,9 +57,8 @@ public class Encriptacion {
             SecretKeySpec sks = crearClave(this.clave);
             Cipher cripto = Cipher.getInstance("AES");
             cripto.init(Cipher.DECRYPT_MODE, sks);
-            byte[] cadena = Base64.decode(desencriptar);
-            byte[] desencriptada = cripto.doFinal(cadena);
-            String cadenaDesencriptada = new String(desencriptada);
+            byte[] cadena = Base64.getDecoder().decode(desencriptar);
+            String cadenaDesencriptada = new String(cadena);
             return cadenaDesencriptada;
         }catch (Exception e){
             return "";
