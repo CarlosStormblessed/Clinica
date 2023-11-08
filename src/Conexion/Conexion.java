@@ -1,6 +1,10 @@
 package Conexion;
 
-
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Properties;
 import java.net.ConnectException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,16 +12,38 @@ import java.sql.SQLException;
 
 public class Conexion {
 
-    private String host = "localhost";
-    private String port = "3306";
-    private String userName = "dev";
-    private String dbName = "clinica";
-    private String password = "POtOHeKA";
+    private String host;
+    private String port;
+    private String userName;
+    private String dbName;
+    private String password;
 
     /**
      * Creates a new instance of Conexion
      */
     public Conexion() {
+        
+    }
+    
+    
+    
+    private void getCredenciales(){
+        Properties properties= new Properties();
+    try {
+      properties.load(new FileInputStream(new File("./Configuracion/DBconfig.properties")));
+      this.host = properties.getProperty("HOST");
+      this.port = properties.getProperty("PORT");
+      this.userName = properties.getProperty("USERNAME");
+      this.dbName = properties.getProperty("DBNAME");
+      this.password = properties.getProperty("PASSWORD");
+      
+    } catch (FileNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
     }
 
     /**
@@ -28,6 +54,7 @@ public class Conexion {
      * @throws SQLException
      */
     public Connection connect() throws ConnectException, SQLException {
+        getCredenciales();
         Connection conn;
         try {
             Class.forName("com.mysql.jdbc.Driver");

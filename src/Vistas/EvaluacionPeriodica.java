@@ -78,7 +78,7 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
                 Point punto = Mouse_evt.getPoint();
                 int fila = tabla.rowAtPoint(punto);
                 if (Mouse_evt.getClickCount() == 1){
-                    lbl_SeleccionEvaluacionPeriodica.setText(jtEvaluacionPeriodica.getValueAt(jtEvaluacionPeriodica.getSelectedRow(), 2).toString());
+                    lbl_SeleccionEvaluacionPeriodica.setText(jtEvaluacionPeriodica.getValueAt(jtEvaluacionPeriodica.getSelectedRow(), 3).toString());
                 }
             }
         });
@@ -131,9 +131,6 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         txtEdad.setText("");
         txtArea.setText("");
         txtPuesto.setText("");
-        combo_Realizado.setSelectedIndex(0);
-        combo_Revisado.setSelectedIndex(0);
-        combo_Autorizado.setSelectedIndex(0);
         
         evaluacionPeriodica.setId("");
         evaluacionPeriodica.setFecha("");
@@ -217,16 +214,10 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
     
     private void resetUsuarios(){
         try {
-            combo_Autorizado.removeAllItems();
-            combo_Realizado.removeAllItems();
-            combo_Revisado.removeAllItems();
             List<UsuarioMod> listaUsuarios = new ArrayList<UsuarioMod>();
             listaUsuarios = usrCtrl.seleccionarTodos();
             List<String> nombresUsuarios = new ArrayList<String>();
             for (int i = 0; i < listaUsuarios.size(); i++){
-                combo_Autorizado.addItem(listaUsuarios.get(i).getId() + ". " + listaUsuarios.get(i).getNombre());
-                combo_Realizado.addItem(listaUsuarios.get(i).getId() + ". " + listaUsuarios.get(i).getNombre());
-                combo_Revisado.addItem(listaUsuarios.get(i).getId() + ". " + listaUsuarios.get(i).getNombre());
                 if (listaUsuarios.get(i).getId().equals(responsable)){
                     usuario = usrCtrl.buscarFila(responsable);
                     lblResponsable.setText("Responsable: " + usuario.getNombre());
@@ -342,6 +333,15 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         evaluacionPeriodica.setArea(txtArea.getText());
         evaluacionPeriodica.setPuesto(txtPuesto.getText());
         
+        if(rbtn_Aptitud1.isSelected())
+            evaluacionPeriodica.setAptitud("1");
+        else if(rbtn_Aptitud2.isSelected())
+            evaluacionPeriodica.setAptitud("2");
+        else if(rbtn_Aptitud3.isSelected())
+            evaluacionPeriodica.setAptitud("3");
+        else if(rbtn_Aptitud4.isSelected())
+            evaluacionPeriodica.setAptitud("4");
+        
         evaluacionPeriodica.setClinicaId(clinicaId);
         evaluacionPeriodica.setEmpleadoId(empleado.getId());
         evaluacionPeriodica.setRevisionSistemasId(revisionSistemas.getId());
@@ -358,6 +358,24 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         txtEdad.setText(evaluacionPeriodica.getEdad());
         txtArea.setText(evaluacionPeriodica.getArea());
         txtPuesto.setText(evaluacionPeriodica.getPuesto());
+        
+        switch(evaluacionPeriodica.getAptitud()){
+            case "1":
+                grbtn_Aptitud.setSelected(rbtn_Aptitud1.getModel(), true);
+                break;
+            case "2":
+                grbtn_Aptitud.setSelected(rbtn_Aptitud2.getModel(), true);
+                break;
+            case "3":
+                grbtn_Aptitud.setSelected(rbtn_Aptitud3.getModel(), true);
+                break;
+            case "4":
+                grbtn_Aptitud.setSelected(rbtn_Aptitud4.getModel(), true);
+                break;
+            default:
+                
+                break;
+        }
         
         txtAreaObservaciones.setText(revisionSistemas.getObservaciones());
         responsable = evaluacionPeriodica.getResponsable();
@@ -1047,12 +1065,6 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         rbtn_Aptitud2 = new javax.swing.JRadioButton();
         rbtn_Aptitud3 = new javax.swing.JRadioButton();
         rbtn_Aptitud4 = new javax.swing.JRadioButton();
-        lbl_Realizado = new javax.swing.JLabel();
-        combo_Realizado = new javax.swing.JComboBox<>();
-        lbl_Revisado = new javax.swing.JLabel();
-        combo_Revisado = new javax.swing.JComboBox<>();
-        lbl_Autorizado = new javax.swing.JLabel();
-        combo_Autorizado = new javax.swing.JComboBox<>();
         lblResponsable = new javax.swing.JLabel();
         btn_Pagina4_3 = new javax.swing.JPanel();
         lbl_btn_Pagina4_3 = new javax.swing.JLabel();
@@ -1499,7 +1511,6 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         lblMenarquia.setText("Menarquia");
         panelAntecedentesGino.add(lblMenarquia, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, -1, 20));
 
-        txtMenarquia.setBackground(new java.awt.Color(255, 255, 255));
         txtMenarquia.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtMenarquia.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtMenarquia.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
@@ -1510,7 +1521,6 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         lblFur.setText("FUR");
         panelAntecedentesGino.add(lblFur, new org.netbeans.lib.awtextra.AbsoluteConstraints(106, 20, -1, 20));
 
-        txtFUR.setBackground(new java.awt.Color(255, 255, 255));
         txtFUR.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtFUR.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtFUR.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
@@ -1539,7 +1549,6 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         lblCSTP.setText("CSTP");
         panelAntecedentesGino.add(lblCSTP, new org.netbeans.lib.awtextra.AbsoluteConstraints(394, 20, -1, 20));
 
-        txtCSTP.setBackground(new java.awt.Color(255, 255, 255));
         txtCSTP.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtCSTP.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtCSTP.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
@@ -2184,45 +2193,28 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         panelPagina4.add(lblAptitud, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, -1, -1));
 
         rbtn_Aptitud1.setBackground(new java.awt.Color(255, 255, 255));
+        grbtn_Aptitud.add(rbtn_Aptitud1);
         rbtn_Aptitud1.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         rbtn_Aptitud1.setText("Apto");
         panelPagina4.add(rbtn_Aptitud1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, -1, 30));
 
         rbtn_Aptitud2.setBackground(new java.awt.Color(255, 255, 255));
+        grbtn_Aptitud.add(rbtn_Aptitud2);
         rbtn_Aptitud2.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         rbtn_Aptitud2.setText("Apto con restricciones");
         panelPagina4.add(rbtn_Aptitud2, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 170, -1, 30));
 
         rbtn_Aptitud3.setBackground(new java.awt.Color(255, 255, 255));
+        grbtn_Aptitud.add(rbtn_Aptitud3);
         rbtn_Aptitud3.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         rbtn_Aptitud3.setText("Reevaluación");
         panelPagina4.add(rbtn_Aptitud3, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 170, -1, 30));
 
         rbtn_Aptitud4.setBackground(new java.awt.Color(255, 255, 255));
+        grbtn_Aptitud.add(rbtn_Aptitud4);
         rbtn_Aptitud4.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         rbtn_Aptitud4.setText("Valorar cambio de puesto");
         panelPagina4.add(rbtn_Aptitud4, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 170, -1, 30));
-
-        lbl_Realizado.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lbl_Realizado.setText("Realizado");
-        panelPagina4.add(lbl_Realizado, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 220, -1, 20));
-
-        combo_Realizado.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        panelPagina4.add(combo_Realizado, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 250, 175, 30));
-
-        lbl_Revisado.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lbl_Revisado.setText("Revisado");
-        panelPagina4.add(lbl_Revisado, new org.netbeans.lib.awtextra.AbsoluteConstraints(195, 220, -1, 20));
-
-        combo_Revisado.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        panelPagina4.add(combo_Revisado, new org.netbeans.lib.awtextra.AbsoluteConstraints(195, 250, 175, 30));
-
-        lbl_Autorizado.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lbl_Autorizado.setText("Autorizado");
-        panelPagina4.add(lbl_Autorizado, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 220, -1, 20));
-
-        combo_Autorizado.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        panelPagina4.add(combo_Autorizado, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 250, 175, 30));
 
         lblResponsable.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblResponsable.setText("Responsable:");
@@ -2792,9 +2784,6 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
     private javax.swing.JPanel btn_Pagina4_3;
     private javax.swing.JPanel btn_SeleccionEmpleado;
     private javax.swing.JCheckBox checkLentes;
-    private javax.swing.JComboBox<String> combo_Autorizado;
-    private javax.swing.JComboBox<String> combo_Realizado;
-    private javax.swing.JComboBox<String> combo_Revisado;
     private javax.swing.JComboBox<String> combo_Talla;
     private javax.swing.JPanel cont_EvaluacionPeriodica;
     private com.raven.datechooser.DateChooser fechaCSTP;
@@ -2887,15 +2876,12 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
     public javax.swing.JLabel lblTitulos;
     private javax.swing.JLabel lbl_Alergicos;
     private javax.swing.JLabel lbl_AntecedentesGenerales;
-    private javax.swing.JLabel lbl_Autorizado;
     public javax.swing.JLabel lbl_BtnEliminar;
     private javax.swing.JLabel lbl_Familiares;
     public javax.swing.JLabel lbl_InicioInicio;
     private javax.swing.JLabel lbl_Laboratorios;
     private javax.swing.JLabel lbl_Medicos;
     private javax.swing.JLabel lbl_Quirurgicos;
-    private javax.swing.JLabel lbl_Realizado;
-    private javax.swing.JLabel lbl_Revisado;
     private javax.swing.JLabel lbl_RevisionPorSistemas;
     private javax.swing.JLabel lbl_SeleccionEvaluacionPeriodica;
     private javax.swing.JLabel lbl_TituloSeleccion;

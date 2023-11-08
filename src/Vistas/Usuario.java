@@ -256,6 +256,7 @@ public class Usuario extends javax.swing.JFrame implements ActionListener, Table
                     JOptionPane.showMessageDialog(this, "USUARIO ACTUALIZADO CON EXITO", "Inserción de Usuarios", JOptionPane.INFORMATION_MESSAGE);
                     reset();
                     setTabla();
+                    btn_Confirmar.setVisible(false);
                     setCartaContenido(panelCombobox);
                 } else {
                     JOptionPane.showMessageDialog(this, "ERROR AL ACTUALIZAR EL USUARIO. COMUNIQUESE CON TI", "Inserción de Usuarios", JOptionPane.ERROR_MESSAGE);
@@ -273,6 +274,7 @@ public class Usuario extends javax.swing.JFrame implements ActionListener, Table
                     JOptionPane.showMessageDialog(this, "USUARIO ELIMINADO CON EXITO", "Inserción de Usuarios", JOptionPane.INFORMATION_MESSAGE);
                     reset();
                     setTabla();
+                    btn_Confirmar.setVisible(false);
                     setCartaContenido(panelCombobox);
                 } else {
                     JOptionPane.showMessageDialog(this, "ERROR AL ELIMINADO EL USUARIO. COMUNIQUESE CON TI", "Inserción de Usuarios", JOptionPane.ERROR_MESSAGE);
@@ -780,6 +782,7 @@ public class Usuario extends javax.swing.JFrame implements ActionListener, Table
     private void lbl_btnCrearMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btnCrearMouseClicked
         if (!contenidoActual.equals("Formulario")){
             setCartaContenido(panelFormulario);
+            btn_Crear.setBackground(util.colorCursorSale(btn_Crear.getBackground()));
             btn_Confirmar.setBackground(new Color(40,235,40));
             btn_Confirmar.setVisible(true);
             lbl_btn_Confirmar.setText("Ingresar");
@@ -801,6 +804,7 @@ public class Usuario extends javax.swing.JFrame implements ActionListener, Table
         if (!contenidoActual.equals("Actualizar")){
             btn_Confirmar.setVisible(false);
             setCartaContenido(panelCombobox);
+            btn_Actualizar.setBackground(util.colorCursorSale(btn_Actualizar.getBackground()));
             btn_Ingresar.setBackground(new Color(92,92,235));
             lblTituloCombobox.setText("Actualizar");
             lbl_btn_Confirmar.setText("Actualizar");
@@ -823,6 +827,7 @@ public class Usuario extends javax.swing.JFrame implements ActionListener, Table
         if (!contenidoActual.equals("Eliminar")){
             btn_Confirmar.setVisible(false);
             setCartaContenido(panelCombobox);
+            btn_Eliminar.setBackground(util.colorCursorSale(btn_Eliminar.getBackground()));
             btn_Ingresar.setBackground(new Color(235,91,91));
             lblTituloCombobox.setText("Eliminar");
             lbl_btn_Confirmar.setText("Eliminar");
@@ -878,22 +883,38 @@ public class Usuario extends javax.swing.JFrame implements ActionListener, Table
         if (lbl_btn_Confirmar.isEnabled()){
             if (verificarUsuario()){
                 try {
+                    UsuarioMod usrAux = new UsuarioMod();
+                    usrAux.setRol(usuario.getRol());
                     getUsuario();
                     switch (contenidoActual){
                         case "Eliminar":
-                        eliminar();
-                        break;
+                            if(usrAux.getRol().equals("admin") && (usuario.getRol().equals("medico")) && (usrCtrl.contarUsuarios(1) == 1)){
+                                JOptionPane.showMessageDialog(this, "Debe existir por lo menos 1 usuario administrador");
+                                comboRol.setSelectedIndex(0);
+                                usuario.setRol("admin");
+                                return;
+                            }
+                            eliminar();
+                            break;
                         case "Actualizar":
-                        actualizar();
-                        break;
+                            if(usrAux.getRol().equals("admin") && (usuario.getRol().equals("medico")) && (usrCtrl.contarUsuarios(1) == 1)){
+                                JOptionPane.showMessageDialog(this, "Debe existir por lo menos 1 usuario administrador");
+                                comboRol.setSelectedIndex(0);
+                                usuario.setRol("admin");
+                                return;
+                            }
+                            actualizar();
+                            break;
                         case "Crear":
-                        crear();
-                        break;
+                            crear();
+                            break;
                         default:
                         break;
                     }
                 }catch (SQLException e) {
                     JOptionPane.showMessageDialog(this, "ERROR " + e.toString() + " AL INSERTAR EL REGISTRO. COMUNIQUESE CON TI", "Inserción de Datos", JOptionPane.ERROR_MESSAGE);
+                } catch (ConnectException ex) {
+                    Logger.getLogger(Usuario.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
