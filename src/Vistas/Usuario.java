@@ -888,7 +888,7 @@ public class Usuario extends javax.swing.JFrame implements ActionListener, Table
                     getUsuario();
                     switch (contenidoActual){
                         case "Eliminar":
-                            if(usrAux.getRol().equals("admin") && (usuario.getRol().equals("medico")) && (usrCtrl.contarUsuarios(1) == 1)){
+                            if(usrAux.getRol().equals("admin") && (usrCtrl.contarUsuarios(1) == 1)){
                                 JOptionPane.showMessageDialog(this, "Debe existir por lo menos 1 usuario administrador");
                                 comboRol.setSelectedIndex(0);
                                 usuario.setRol("admin");
