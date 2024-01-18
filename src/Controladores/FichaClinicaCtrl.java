@@ -31,7 +31,7 @@ public class FichaClinicaCtrl {
             smt.setString(7, modelo.getTratamiento());
             smt.setString(8, modelo.getReferencia());
             smt.setString(9, modelo.getTraslado());
-            smt.setString(10, modelo.getPatologia());
+            smt.setString(10, modelo.getSuspension());
             smt.setString(11, modelo.getClinicaId());
             smt.setString(12, modelo.getEmpleadoId());
             smt.setString(13, modelo.getRevisionSistemasId());
@@ -107,7 +107,7 @@ public class FichaClinicaCtrl {
         conn = conex.connect();
          int result = 0;
         try {
-            String sql = "UPDATE CONSULTA_GENERAL SET CONGEN_FECHAHORA = ?, CONGEN_HISTORIA = ?, CONGEN_TRATAMIENTO = ?, CONGEN_REFERENCIA = ?, CONGEN_TRASLADO = ?, CONGEN_PATOLOGIA = ?, CONGEN_RESPONSABLE = ? WHERE CONGEN_ID = ?";
+            String sql = "UPDATE CONSULTA_GENERAL SET CONGEN_FECHAHORA = ?, CONGEN_HISTORIA = ?, CONGEN_TRATAMIENTO = ?, CONGEN_REFERENCIA = ?, CONGEN_TRASLADO = ?, CONGEN_SUSPENSION = ?, CONGEN_RESPONSABLE = ? WHERE CONGEN_ID = ?";
             conn.setAutoCommit(false);
 
             smt = conn.prepareStatement(sql);
@@ -116,7 +116,7 @@ public class FichaClinicaCtrl {
             smt.setString(3, modelo.getTratamiento());
             smt.setString(4, modelo.getReferencia());
             smt.setString(5, modelo.getTraslado());
-            smt.setString(6, modelo.getPatologia());
+            smt.setString(6, modelo.getSuspension());
             smt.setString(7, modelo.getResponsable());
             smt.setString(8, modelo.getId());
             
@@ -210,7 +210,7 @@ public class FichaClinicaCtrl {
                 modeloBuscar.setTratamiento(result.getString(8));
                 modeloBuscar.setReferencia(result.getString(9));
                 modeloBuscar.setTraslado(result.getString(10));
-                modeloBuscar.setPatologia(result.getString(11));
+                modeloBuscar.setSuspension(result.getString(11));
                 modeloBuscar.setClinicaId(result.getString(12));
                 modeloBuscar.setEmpleadoId(result.getString(13));
                 modeloBuscar.setRevisionSistemasId(result.getString(14));
@@ -275,7 +275,7 @@ public class FichaClinicaCtrl {
                 modeloBuscar.setTratamiento(result.getString(8));
                 modeloBuscar.setReferencia(result.getString(9));
                 modeloBuscar.setTraslado(result.getString(10));
-                modeloBuscar.setPatologia(result.getString(11));
+                modeloBuscar.setSuspension(result.getString(11));
                 modeloBuscar.setClinicaId(result.getString(12));
                 modeloBuscar.setEmpleadoId(result.getString(13));
                 modeloBuscar.setRevisionSistemasId(result.getString(14));

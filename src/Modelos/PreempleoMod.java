@@ -22,7 +22,9 @@ public class PreempleoMod {
     private String tiempoLaborado2;
     private String tiempoLaborado3;
     private String aptitud;
+    private String restricciones;
     private String clinicaId;
+    private String empleadoId;
     private String antecedentesId;
     private String revisionSistemasId;
     private String responsable;
@@ -202,12 +204,28 @@ public class PreempleoMod {
         this.aptitud = aptitud;
     }
 
+    public String getRestricciones() {
+        return restricciones;
+    }
+
+    public void setRestricciones(String restricciones) {
+        this.restricciones = restricciones;
+    }
+
     public String getClinicaId() {
         return clinicaId;
     }
 
     public void setClinicaId(String clinicaId) {
         this.clinicaId = clinicaId;
+    }
+
+    public String getEmpleadoId() {
+        return empleadoId;
+    }
+
+    public void setEmpleadoId(String empleadoId) {
+        this.empleadoId = empleadoId;
     }
 
     public String getAntecedentesId() {

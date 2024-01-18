@@ -14,6 +14,7 @@ public class AccidenteMod {
     private String tratamiento;
     private String referencia;
     private String traslado;
+    private String reincorporacion;
     private String empleadoId;
     private String revisionSistemasId;
     private String responsable;
@@ -121,6 +122,14 @@ public class AccidenteMod {
 
     public void setTraslado(String traslado) {
         this.traslado = traslado;
+    }
+
+    public String getReincorporacion() {
+        return reincorporacion;
+    }
+
+    public void setReincorporacion(String reincorporacion) {
+        this.reincorporacion = reincorporacion;
     }
     
     public String getEmpleadoId() {

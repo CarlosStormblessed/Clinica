@@ -141,7 +141,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         txtAreaTratamiento.setText("");
         checkReferencia.setSelected(false);
         checkTraslado.setSelected(false);
-        checkPatologia.setSelected(false);
+        checkSuspension.setSelected(false);
         combo_Realizado.setSelectedIndex(0);
         combo_Revisado.setSelectedIndex(0);
         combo_Autorizado.setSelectedIndex(0);
@@ -156,7 +156,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         fichaClinica.setTratamiento("");
         fichaClinica.setReferencia("");
         fichaClinica.setTraslado("");
-        fichaClinica.setPatologia("");
+        fichaClinica.setSuspension("");
         fichaClinica.setClinicaId("");
         fichaClinica.setEmpleadoId("");
         fichaClinica.setEmpleadoId("");
@@ -175,9 +175,9 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         txtAreaOjoidos.setText("");
         txtAreaOrofaringe.setText("");
         txtAreaCuello.setText("");
-        txtAreaRespiratorio.setText("");
-        txtAreaCardiovascular.setText("");
-        txtAreaGastrointestinal.setText("");
+        txtAreaCardiopulmonar.setText("");
+        txtAreaTorax.setText("");
+        txtAreaAbdomen.setText("");
         txtAreaGenitourinario.setText("");
         txtAreaExtremidades.setText("");
         txtAreaNeurologico.setText("");
@@ -197,9 +197,10 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         txtPeso.setForeground(Color.gray);
         txtIMC.setText("Kg/m^2");
         txtIMC.setForeground(Color.gray);
-        combo_Talla.setSelectedIndex(0);
-        txtOjoDerecho.setText("");
-        txtOjoIzquierdo.setText("");
+        txtTalla.setText("m");
+        txtTalla.setForeground(Color.gray);
+        txtOjoDerechoNumerador.setText("");
+        txtOjoIzquierdoNumerador.setText("");
         checkLentes.setSelected(false);
         txtAreaImpresionClinica.setText("");
         
@@ -209,9 +210,9 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         revisionSistemas.setOjoOidoNarizBoca("");
         revisionSistemas.setOrofarinje("");
         revisionSistemas.setCuello("");
-        revisionSistemas.setRespiratorio("");
-        revisionSistemas.setCardiovascular("");
-        revisionSistemas.setGastrointestinal("");
+        revisionSistemas.setCardiopulmonar("");
+        revisionSistemas.setTorax("");
+        revisionSistemas.setAbdomen("");
         revisionSistemas.setGenitourinario("");
         revisionSistemas.setExtremidades("");
         revisionSistemas.setNeurologico("");
@@ -261,8 +262,8 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         String codigo;
         try {
             codigo = conGenCtrl.getMaxId();
-            lblTitulos.setText("<html><center>Formato<br><b>FICHA MÉDICA CONSULTA GENERAL</b><br>CÓDIGO " + codigo + "</center></html>");
-            lblSeguridad.setText("<html><center>Seguridad Industrial y Salud Ocupacional</center></html>");
+            lblTitulos.setText("<html><center>Formato<br><b>FICHA MÉDICA CONSULTA GENERAL</b><br>CORRELATIVO: " + codigo + "</center></html>");
+            lblSeguridad.setText("<html><center>Salud Ocupacional</center></html>");
             lblFechaMod.setText("<html><center>Fecha de<br>modificacion:<br>"+ util.convertirFechaGUI(now.format(dtf)) + "</center></html>");
             
             txtFecha.setText(util.convertirFechaGUI(now.format(dtf)));
@@ -290,14 +291,22 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
     
     private boolean verificarFichaClinica(){
         boolean valido = false;
-        if ((util.verificarNumero(txtEdad.getText())) && (txtArea.getText().length()>0) && (txtPuesto.getText().length()>0) && (txtHora.getText().length() > 0) && (txtAreaMotivo.getText().length() > 0))
+        if ((util.verificarEntero(txtEdad.getText())) && (txtArea.getText().length()>0) && (txtPuesto.getText().length()>0) && (txtHora.getText().length() > 0) && (txtAreaMotivo.getText().length() > 0))
             valido = true;
         return valido;
     }
     
     private boolean verificarRevisionSistemas(){
         boolean valido = false;
-        if ((util.verificarNumero(txtTemperatura.getText()) || (txtTemperatura.getText().equals("°C"))) && ((util.verificarNumero(txtPulso.getText())) || (txtPulso.getText().equals("LPM"))) && ((util.verificarNumero(txtSPO2.getText())) || (txtSPO2.getText().equals("%"))) && ((util.verificarNumero(txtFR.getText())) || (txtFR.getText().equals("RPM"))) && ((util.verificarNumero(txtGlicemia.getText())) || (txtGlicemia.getText().equals("mg/dl"))) && ((util.verificarNumero(txtPeso.getText())) || (txtPeso.getText().equals("lb"))) && (util.verificarNumero(txtIMC.getText()) || (txtIMC.getText().equals("Kg/m^2"))) && ((util.verificarNumero(txtRuffier.getText())) || (txtRuffier.getText().equals(""))) && ((util.verificarNumero(txtOjoDerecho.getText())) || (txtOjoDerecho.getText().equals(""))) && ((util.verificarNumero(txtOjoIzquierdo.getText())) || (txtOjoIzquierdo.getText().equals(""))))
+        if ((util.verificarFlotante(txtTemperatura.getText()) || (txtTemperatura.getText().equals("°C"))) && 
+           ((util.verificarFlotante(txtPulso.getText())) || (txtPulso.getText().equals("LPM"))) && ((util.verificarFlotante(txtSPO2.getText())) || (txtSPO2.getText().equals("%"))) && 
+           ((util.verificarFlotante(txtFR.getText())) || (txtFR.getText().equals("RPM"))) && ((util.verificarFlotante(txtGlicemia.getText())) || (txtGlicemia.getText().equals("mg/dl"))) && 
+           ((util.verificarFlotante(txtPeso.getText())) || (txtPeso.getText().equals("lb"))) && (util.verificarFlotante(txtIMC.getText()) || (txtIMC.getText().equals("Kg/m^2"))) && 
+           ((util.verificarFlotante(txtRuffier.getText())) || (txtRuffier.getText().equals(""))) &&
+           (((txtOjoDerechoNumerador.getText().length()>0) && (txtOjoDerechoDenominador.getText().length()>0) && (txtOjoIzquierdoNumerador.getText().length()>0) && (txtOjoIzquierdoDenominador.getText().length()>0)) ||
+           (((txtOjoDerechoNumerador.getText().length()>0) && (txtOjoDerechoDenominador.getText().length()>0)) && !((txtOjoIzquierdoNumerador.getText().length()>0) && (txtOjoIzquierdoDenominador.getText().length()>0))) ||
+           (((txtOjoIzquierdoNumerador.getText().length()>0) && (txtOjoIzquierdoDenominador.getText().length()>0)) && !((txtOjoDerechoNumerador.getText().length()>0) && (txtOjoDerechoDenominador.getText().length()>0))) ||
+           !((txtOjoDerechoDenominador.getText().length()>0) || (txtOjoDerechoNumerador.getText().length()>0) || (txtOjoIzquierdoNumerador.getText().length()>0) || (txtOjoIzquierdoDenominador.getText().length()>0))))
                 valido = true;
         return valido;
     }
@@ -364,10 +373,10 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
             fichaClinica.setTraslado("1");
         else
             fichaClinica.setTraslado("0");
-        if (checkPatologia.isSelected())
-            fichaClinica.setPatologia("1");
+        if (checkSuspension.isSelected())
+            fichaClinica.setSuspension("1");
         else
-            fichaClinica.setPatologia("0");
+            fichaClinica.setSuspension("0");
         
         fichaClinica.setClinicaId(clinicaId);
         fichaClinica.setEmpleadoId(empleado.getId());
@@ -405,10 +414,10 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
             checkTraslado.setSelected(true);
         else
             checkTraslado.setSelected(false);
-        if(fichaClinica.getPatologia().equals("1"))
-            checkPatologia.setSelected(true);
+        if(fichaClinica.getSuspension().equals("1"))
+            checkSuspension.setSelected(true);
         else
-            checkPatologia.setSelected(false);
+            checkSuspension.setSelected(false);
         txtAreaObservaciones.setText(revisionSistemas.getObservaciones());
         responsable = fichaClinica.getResponsable();
         
@@ -425,9 +434,9 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         revisionSistemas.setOjoOidoNarizBoca(txtAreaOjoidos.getText());
         revisionSistemas.setOrofarinje(txtAreaOrofaringe.getText());
         revisionSistemas.setCuello(txtAreaCuello.getText());
-        revisionSistemas.setRespiratorio(txtAreaRespiratorio.getText());
-        revisionSistemas.setCardiovascular(txtAreaCardiovascular.getText());
-        revisionSistemas.setGastrointestinal(txtAreaGastrointestinal.getText());
+        revisionSistemas.setCardiopulmonar(txtAreaCardiopulmonar.getText());
+        revisionSistemas.setTorax(txtAreaTorax.getText());
+        revisionSistemas.setAbdomen(txtAreaAbdomen.getText());
         revisionSistemas.setGenitourinario(txtAreaGenitourinario.getText());
         revisionSistemas.setExtremidades(txtAreaExtremidades.getText());
         revisionSistemas.setNeurologico(txtAreaNeurologico.getText());
@@ -450,22 +459,29 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         if (!(txtPA.getText().equals("mmHg")))
             revisionSistemas.setPa(txtPA.getText());
         else
-            revisionSistemas.setFr("");
+            revisionSistemas.setPa("");
         if (!(txtGlicemia.getText().equals("mg/dl")))
             revisionSistemas.setGlicemia(txtGlicemia.getText());
         else
-            revisionSistemas.setFr("");
+            revisionSistemas.setGlicemia("");
         if (!(txtPeso.getText().equals("lb")))
             revisionSistemas.setPeso(txtPeso.getText());
         else
-            revisionSistemas.setFr("");
-        revisionSistemas.setTalla(combo_Talla.getSelectedItem().toString());
+            revisionSistemas.setPeso("");
         if (!(txtIMC.getText().equals("Kg/m^2")))
             revisionSistemas.setImc(txtIMC.getText());
-        revisionSistemas.setFr("");
+        else
+            revisionSistemas.setImc("");
+        revisionSistemas.setTalla(txtTalla.getText());
         revisionSistemas.setRuffier(txtRuffier.getText());
-        revisionSistemas.setOjoDerecho(txtOjoDerecho.getText());
-        revisionSistemas.setOjoIzquierdo(txtOjoIzquierdo.getText());
+        if((txtOjoDerechoNumerador.getText().length()>0) && (txtOjoDerechoDenominador.getText().length()>0))
+            revisionSistemas.setOjoDerecho(txtOjoDerechoNumerador.getText() + "/" + txtOjoDerechoDenominador.getText());
+        else
+            revisionSistemas.setOjoDerecho("");
+        if((txtOjoIzquierdoNumerador.getText().length()>0) && (txtOjoIzquierdoDenominador.getText().length()>0))
+            revisionSistemas.setOjoIzquierdo(txtOjoIzquierdoNumerador.getText() + "/" + txtOjoIzquierdoDenominador.getText());
+        else
+            revisionSistemas.setOjoIzquierdo("");
         if(checkLentes.isSelected())
             revisionSistemas.setAnteojos("1");
         else
@@ -485,9 +501,9 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         txtAreaOjoidos.setText(revisionSistemas.getOjoOidoNarizBoca());
         txtAreaOrofaringe.setText(revisionSistemas.getOrofarinje());
         txtAreaCuello.setText(revisionSistemas.getCuello());
-        txtAreaRespiratorio.setText(revisionSistemas.getRespiratorio());
-        txtAreaCardiovascular.setText(revisionSistemas.getCardiovascular());
-        txtAreaGastrointestinal.setText(revisionSistemas.getGastrointestinal());
+        txtAreaCardiopulmonar.setText(revisionSistemas.getCardiopulmonar());
+        txtAreaTorax.setText(revisionSistemas.getTorax());
+        txtAreaAbdomen.setText(revisionSistemas.getAbdomen());
         txtAreaGenitourinario.setText(revisionSistemas.getGenitourinario());
         txtAreaExtremidades.setText(revisionSistemas.getExtremidades());
         txtAreaNeurologico.setText(revisionSistemas.getNeurologico());
@@ -540,26 +556,6 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
             txtPeso.setForeground(Color.gray);
             txtPeso.setText("lb");
         }
-        //Set Talla
-        switch(revisionSistemas.getTalla()){
-            case "S":
-                combo_Talla.setSelectedIndex(0);
-                break;
-            case "M":
-                combo_Talla.setSelectedIndex(1);
-                break;
-            case "L":
-                combo_Talla.setSelectedIndex(2);
-                break;
-            case "XL":
-                combo_Talla.setSelectedIndex(3);
-                break;
-            case "XXL":
-                combo_Talla.setSelectedIndex(4);
-                break;
-            default:
-                break;
-        }
         if (revisionSistemas.getImc().length() > 0){
             txtIMC.setForeground(Color.black);
             txtIMC.setText(revisionSistemas.getImc());
@@ -568,9 +564,31 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
             txtIMC.setForeground(Color.gray);
             txtIMC.setText("Kg/m^2");
         }
+        if(revisionSistemas.getTalla().length() > 0){
+            txtTalla.setForeground(Color.black);
+            txtTalla.setText(revisionSistemas.getTalla());
+        }else{
+            txtTalla.setForeground(Color.gray);
+            txtTalla.setText("m");
+        }
         txtRuffier.setText(revisionSistemas.getRuffier());
-        txtOjoDerecho.setText(revisionSistemas.getOjoDerecho());
-        txtOjoIzquierdo.setText(revisionSistemas.getOjoIzquierdo());
+        if(revisionSistemas.getOjoDerecho().length()>1){
+            String [] partesOjoDerecho = revisionSistemas.getOjoDerecho().split("/");
+            txtOjoDerechoNumerador.setText(partesOjoDerecho[0]);
+            txtOjoDerechoDenominador.setText(partesOjoDerecho[1]);
+        } else{
+            txtOjoDerechoNumerador.setText("");
+            txtOjoDerechoDenominador.setText("");
+        }
+        if(revisionSistemas.getOjoIzquierdo().length()>1){
+            String [] partesOjoIzquierdo = revisionSistemas.getOjoIzquierdo().split("/");
+            txtOjoIzquierdoNumerador.setText(partesOjoIzquierdo[0]);
+            txtOjoIzquierdoDenominador.setText(partesOjoIzquierdo[1]);
+        }else{
+            txtOjoIzquierdoNumerador.setText("");
+            txtOjoIzquierdoDenominador.setText("");
+        }
+        
         // Set Lentes
         switch(revisionSistemas.getAnteojos()){
             case "0":
@@ -793,7 +811,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
     }
     
     private DatosPaginacion <EmpleadoMod> crearDatosPaginacionEmpleado() throws SQLException, ConnectException{
-        List <EmpleadoMod> lista = empCtrl.seleccionarTodos();
+        List <EmpleadoMod> lista = empCtrl.seleccionarTodosActivos();
         //Reemplazar el id del empleado por el nombre del empleado
         
         return new DatosPaginacion<EmpleadoMod>(){
@@ -811,7 +829,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
     
     private void buscarEmpleadoFichaClinica(String valorBuscar) throws SQLException, ConnectException{
         fichaClinica = conGenCtrl.buscarFila(valorBuscar);
-        lblTitulos.setText("<html><center>Formato<br><b>FICHA MÉDICA CONSULTA GENERAL</b><br>CÓDIGO " + fichaClinica.getId() + "</center></html>");
+        lblTitulos.setText("<html><center>Formato<br><b>FICHA MÉDICA CONSULTA GENERAL</b><br>CORRELATIVO: " + fichaClinica.getId() + "</center></html>");
         setFichaClinica();
         empleado = empCtrl.buscarFila(fichaClinica.getEmpleadoId());
         setEmpleado();
@@ -943,9 +961,9 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         lblInstruccionComboboxEmpleado = new javax.swing.JLabel();
         panelCartas = new javax.swing.JPanel();
         panelPagina1 = new javax.swing.JPanel();
+        lbl_RevisionPorSistemas = new javax.swing.JLabel();
         btn_Pagina1_2 = new javax.swing.JPanel();
         lbl_btn_Pagina1_2 = new javax.swing.JLabel();
-        lbl_RevisionPorSistemas = new javax.swing.JLabel();
         lblTemperatura = new javax.swing.JLabel();
         txtTemperatura = new javax.swing.JTextField();
         lblPulso = new javax.swing.JLabel();
@@ -959,17 +977,21 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         lblPeso = new javax.swing.JLabel();
         txtPeso = new javax.swing.JTextField();
         lblTalla = new javax.swing.JLabel();
-        combo_Talla = new javax.swing.JComboBox<>();
         lblIMC = new javax.swing.JLabel();
         txtIMC = new javax.swing.JTextField();
         lblPA = new javax.swing.JLabel();
         txtPA = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
+        txtTalla = new javax.swing.JTextField();
+        lblRuffier = new javax.swing.JLabel();
         txtRuffier = new javax.swing.JTextField();
         lblOjoDerecho = new javax.swing.JLabel();
-        txtOjoDerecho = new javax.swing.JTextField();
+        txtOjoDerechoNumerador = new javax.swing.JTextField();
+        lblFraccion1 = new javax.swing.JLabel();
+        txtOjoDerechoDenominador = new javax.swing.JTextField();
         lblOjoIzquierdo = new javax.swing.JLabel();
-        txtOjoIzquierdo = new javax.swing.JTextField();
+        txtOjoIzquierdoNumerador = new javax.swing.JTextField();
+        lblFraccion2 = new javax.swing.JLabel();
+        txtOjoIzquierdoDenominador = new javax.swing.JTextField();
         checkLentes = new javax.swing.JCheckBox();
         panelPagina2 = new javax.swing.JPanel();
         btn_Pagina2_1 = new javax.swing.JPanel();
@@ -994,21 +1016,18 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         lblCuello = new javax.swing.JLabel();
         jScrollPane18 = new javax.swing.JScrollPane();
         txtAreaCuello = new javax.swing.JTextArea();
+        lblHallazgos = new javax.swing.JLabel();
         lblRespiratorio = new javax.swing.JLabel();
         jScrollPane19 = new javax.swing.JScrollPane();
-        txtAreaRespiratorio = new javax.swing.JTextArea();
+        txtAreaCardiopulmonar = new javax.swing.JTextArea();
         lblCardiovascular = new javax.swing.JLabel();
         jScrollPane20 = new javax.swing.JScrollPane();
-        txtAreaCardiovascular = new javax.swing.JTextArea();
-        lblHallazgos = new javax.swing.JLabel();
+        txtAreaTorax = new javax.swing.JTextArea();
         panelPagina3 = new javax.swing.JPanel();
         btn_Pagina3_2 = new javax.swing.JPanel();
         lbl_btn_Pagina3_2 = new javax.swing.JLabel();
         btn_Pagina3_4 = new javax.swing.JPanel();
         lbl_btn_Pagina3_4 = new javax.swing.JLabel();
-        lblGastrointestinal = new javax.swing.JLabel();
-        jScrollPane21 = new javax.swing.JScrollPane();
-        txtAreaGastrointestinal = new javax.swing.JTextArea();
         lblGenitourinario = new javax.swing.JLabel();
         jScrollPane22 = new javax.swing.JScrollPane();
         txtAreaGenitourinario = new javax.swing.JTextArea();
@@ -1021,6 +1040,9 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         lblTratamiento = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         txtAreaTratamiento = new javax.swing.JTextArea();
+        lblGastrointestinal = new javax.swing.JLabel();
+        jScrollPane21 = new javax.swing.JScrollPane();
+        txtAreaAbdomen = new javax.swing.JTextArea();
         panelPagina4 = new javax.swing.JPanel();
         btn_Pagina4_3 = new javax.swing.JPanel();
         lbl_btn_Pagina4_3 = new javax.swing.JLabel();
@@ -1032,7 +1054,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         combo_Autorizado = new javax.swing.JComboBox<>();
         checkReferencia = new javax.swing.JCheckBox();
         checkTraslado = new javax.swing.JCheckBox();
-        checkPatologia = new javax.swing.JCheckBox();
+        checkSuspension = new javax.swing.JCheckBox();
         jScrollPane7 = new javax.swing.JScrollPane();
         txtAreaObservaciones = new javax.swing.JTextArea();
         lblObservaciones = new javax.swing.JLabel();
@@ -1302,7 +1324,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
 
         panelEmpleado.add(btn_OtroEmpleado, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 0, 120, 40));
 
-        lblArea.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblArea.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblArea.setText("Área de Trabajo");
         panelEmpleado.add(lblArea, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, -1, -1));
 
@@ -1339,7 +1361,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         });
         panelEmpleado.add(rbtn_SexoM, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 110, -1, -1));
 
-        lblSexo.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblSexo.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblSexo.setText("Sexo");
         panelEmpleado.add(lblSexo, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 90, -1, 20));
 
@@ -1357,7 +1379,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         txtPuesto.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         panelEmpleado.add(txtPuesto, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 170, 240, 35));
 
-        lblPuesto1.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblPuesto1.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblPuesto1.setText("Puesto");
         panelEmpleado.add(lblPuesto1, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 150, -1, 20));
 
@@ -1384,11 +1406,11 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         txtArea.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         panelEmpleado.add(txtArea, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, 207, 35));
 
-        lblHora.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblHora.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblHora.setText("Hora");
         panelEmpleado.add(lblHora, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 90, -1, 20));
 
-        lblEdad.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblEdad.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblEdad.setText("Edad");
         panelEmpleado.add(lblEdad, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 90, -1, 20));
 
@@ -1467,6 +1489,11 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         panelPagina1.setBackground(new java.awt.Color(255, 255, 255));
         panelPagina1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        lbl_RevisionPorSistemas.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lbl_RevisionPorSistemas.setForeground(new java.awt.Color(31, 78, 121));
+        lbl_RevisionPorSistemas.setText("EXAMEN FÍSICO");
+        panelPagina1.add(lbl_RevisionPorSistemas, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, -1, -1));
+
         btn_Pagina1_2.setBackground(new java.awt.Color(204, 204, 235));
         btn_Pagina1_2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         btn_Pagina1_2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -1489,11 +1516,6 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         btn_Pagina1_2.add(lbl_btn_Pagina1_2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 106, 35));
 
         panelPagina1.add(btn_Pagina1_2, new org.netbeans.lib.awtextra.AbsoluteConstraints(293, 320, 106, 35));
-
-        lbl_RevisionPorSistemas.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lbl_RevisionPorSistemas.setForeground(new java.awt.Color(31, 78, 121));
-        lbl_RevisionPorSistemas.setText("EXAMEN FÍSICO");
-        panelPagina1.add(lbl_RevisionPorSistemas, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, -1, -1));
 
         lblTemperatura.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblTemperatura.setText("Temperatura");
@@ -1595,11 +1617,6 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         lblTalla.setText("Talla");
         panelPagina1.add(lblTalla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 170, -1, 20));
 
-        combo_Talla.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        combo_Talla.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "S", "M", "L", "XL", "XXL" }));
-        combo_Talla.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelPagina1.add(combo_Talla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 190, 175, 35));
-
         lblIMC.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblIMC.setText("IMC");
         panelPagina1.add(lblIMC, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, -1, 20));
@@ -1632,9 +1649,21 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         });
         panelPagina1.add(txtPA, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 50, 175, 35));
 
-        jLabel2.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        jLabel2.setText("Ruffier");
-        panelPagina1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 240, -1, 20));
+        txtTalla.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtTalla.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtTalla.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtTallaFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtTallaFocusLost(evt);
+            }
+        });
+        panelPagina1.add(txtTalla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 190, 175, 35));
+
+        lblRuffier.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblRuffier.setText("Ruffier");
+        panelPagina1.add(lblRuffier, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 240, -1, 20));
 
         txtRuffier.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtRuffier.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -1644,17 +1673,33 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         lblOjoDerecho.setText("Agudeza ojo derecho");
         panelPagina1.add(lblOjoDerecho, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 240, -1, 20));
 
-        txtOjoDerecho.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtOjoDerecho.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelPagina1.add(txtOjoDerecho, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 260, 143, 35));
+        txtOjoDerechoNumerador.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtOjoDerechoNumerador.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        panelPagina1.add(txtOjoDerechoNumerador, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 260, 40, 35));
+
+        lblFraccion1.setFont(new java.awt.Font("Roboto", 0, 36)); // NOI18N
+        lblFraccion1.setText("/");
+        panelPagina1.add(lblFraccion1, new org.netbeans.lib.awtextra.AbsoluteConstraints(203, 260, -1, 35));
+
+        txtOjoDerechoDenominador.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtOjoDerechoDenominador.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        panelPagina1.add(txtOjoDerechoDenominador, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 260, 40, 35));
 
         lblOjoIzquierdo.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblOjoIzquierdo.setText("Agudeza ojo izquierdo");
         panelPagina1.add(lblOjoIzquierdo, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 240, -1, 20));
 
-        txtOjoIzquierdo.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtOjoIzquierdo.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelPagina1.add(txtOjoIzquierdo, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 260, 143, 35));
+        txtOjoIzquierdoNumerador.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtOjoIzquierdoNumerador.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        panelPagina1.add(txtOjoIzquierdoNumerador, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 260, 40, 35));
+
+        lblFraccion2.setFont(new java.awt.Font("Roboto", 0, 36)); // NOI18N
+        lblFraccion2.setText("/");
+        panelPagina1.add(lblFraccion2, new org.netbeans.lib.awtextra.AbsoluteConstraints(353, 260, -1, 35));
+
+        txtOjoIzquierdoDenominador.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtOjoIzquierdoDenominador.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        panelPagina1.add(txtOjoIzquierdoDenominador, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 260, 40, 35));
 
         checkLentes.setBackground(new java.awt.Color(255, 255, 255));
         checkLentes.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
@@ -1766,7 +1811,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
 
         lblOrofaringe.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblOrofaringe.setText("Orofaringe");
-        panelPagina2.add(lblOrofaringe, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 50, -1, 20));
+        panelPagina2.add(lblOrofaringe, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 50, -1, 20));
 
         jScrollPane24.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -1779,7 +1824,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
 
         lblCuello.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblCuello.setText("Cuello");
-        panelPagina2.add(lblCuello, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 110, -1, 20));
+        panelPagina2.add(lblCuello, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 110, -1, 20));
 
         jScrollPane18.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -1790,36 +1835,36 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
 
         panelPagina2.add(jScrollPane18, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 130, 260, 35));
 
-        lblRespiratorio.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblRespiratorio.setText("Sistema Respiratorio");
-        panelPagina2.add(lblRespiratorio, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 170, -1, 20));
-
-        jScrollPane19.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        txtAreaRespiratorio.setColumns(20);
-        txtAreaRespiratorio.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
-        txtAreaRespiratorio.setRows(5);
-        jScrollPane19.setViewportView(txtAreaRespiratorio);
-
-        panelPagina2.add(jScrollPane19, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 190, 260, 35));
-
-        lblCardiovascular.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblCardiovascular.setText("Sistema Cardiovascular");
-        panelPagina2.add(lblCardiovascular, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 230, -1, 20));
-
-        jScrollPane20.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        txtAreaCardiovascular.setColumns(20);
-        txtAreaCardiovascular.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
-        txtAreaCardiovascular.setRows(5);
-        jScrollPane20.setViewportView(txtAreaCardiovascular);
-
-        panelPagina2.add(jScrollPane20, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 250, 260, 35));
-
         lblHallazgos.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblHallazgos.setForeground(new java.awt.Color(31, 78, 121));
         lblHallazgos.setText("HALLAZGOS PATOLÓGICOS O DE IMPORTANCIA AL EXAMEN FÍSICO");
         panelPagina2.add(lblHallazgos, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, -1, 20));
+
+        lblRespiratorio.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblRespiratorio.setText("Cardiopulmonar");
+        panelPagina2.add(lblRespiratorio, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 170, -1, 20));
+
+        jScrollPane19.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        txtAreaCardiopulmonar.setColumns(20);
+        txtAreaCardiopulmonar.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        txtAreaCardiopulmonar.setRows(5);
+        jScrollPane19.setViewportView(txtAreaCardiopulmonar);
+
+        panelPagina2.add(jScrollPane19, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 190, 260, 35));
+
+        lblCardiovascular.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblCardiovascular.setText("Torax");
+        panelPagina2.add(lblCardiovascular, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 230, -1, 20));
+
+        jScrollPane20.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        txtAreaTorax.setColumns(20);
+        txtAreaTorax.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        txtAreaTorax.setRows(5);
+        jScrollPane20.setViewportView(txtAreaTorax);
+
+        panelPagina2.add(jScrollPane20, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 250, 260, 35));
 
         panelCartas.add(panelPagina2, "card3");
 
@@ -1872,18 +1917,6 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
 
         panelPagina3.add(btn_Pagina3_4, new org.netbeans.lib.awtextra.AbsoluteConstraints(293, 320, 106, 35));
 
-        lblGastrointestinal.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblGastrointestinal.setText("Sistema Gastrointestinal");
-        panelPagina3.add(lblGastrointestinal, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, 20));
-
-        jScrollPane21.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        txtAreaGastrointestinal.setColumns(20);
-        txtAreaGastrointestinal.setRows(5);
-        jScrollPane21.setViewportView(txtAreaGastrointestinal);
-
-        panelPagina3.add(jScrollPane21, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, 260, 35));
-
         lblGenitourinario.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblGenitourinario.setText("Sistema Genitourinario");
         panelPagina3.add(lblGenitourinario, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, -1, 20));
@@ -1931,6 +1964,19 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         jScrollPane3.setViewportView(txtAreaTratamiento);
 
         panelPagina3.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, 546, 100));
+
+        lblGastrointestinal.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblGastrointestinal.setText("Abdomen");
+        panelPagina3.add(lblGastrointestinal, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, 20));
+
+        jScrollPane21.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        txtAreaAbdomen.setColumns(20);
+        txtAreaAbdomen.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        txtAreaAbdomen.setRows(5);
+        jScrollPane21.setViewportView(txtAreaAbdomen);
+
+        panelPagina3.add(jScrollPane21, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, 260, 35));
 
         panelCartas.add(panelPagina3, "card4");
 
@@ -1984,17 +2030,17 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         checkReferencia.setBackground(new java.awt.Color(255, 255, 255));
         checkReferencia.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         checkReferencia.setText("Referencia");
-        panelPagina4.add(checkReferencia, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 210, -1, -1));
+        panelPagina4.add(checkReferencia, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 210, -1, 20));
 
         checkTraslado.setBackground(new java.awt.Color(255, 255, 255));
         checkTraslado.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         checkTraslado.setText("Traslado");
-        panelPagina4.add(checkTraslado, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 210, -1, -1));
+        panelPagina4.add(checkTraslado, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 210, -1, 20));
 
-        checkPatologia.setBackground(new java.awt.Color(255, 255, 255));
-        checkPatologia.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
-        checkPatologia.setText("Patología relacionada al trabajo");
-        panelPagina4.add(checkPatologia, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 210, -1, -1));
+        checkSuspension.setBackground(new java.awt.Color(255, 255, 255));
+        checkSuspension.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        checkSuspension.setText("Suspensión");
+        panelPagina4.add(checkSuspension, new org.netbeans.lib.awtextra.AbsoluteConstraints(465, 210, -1, 20));
 
         jScrollPane7.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -2031,7 +2077,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         panelAuxiliar.setBackground(new java.awt.Color(255, 255, 255));
         panelAuxiliar.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        lblMotivoConsulta.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblMotivoConsulta.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblMotivoConsulta.setText("Motivo de Consulta");
         panelAuxiliar.add(lblMotivoConsulta, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, -1, 20));
 
@@ -2440,7 +2486,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
     }//GEN-LAST:event_txtTemperaturaFocusGained
 
     private void txtTemperaturaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTemperaturaFocusLost
-        if (!(util.verificarNumero(txtTemperatura.getText())) && (txtTemperatura.getText().length() > 0))
+        if (!(util.verificarFlotante(txtTemperatura.getText())) && (txtTemperatura.getText().length() > 0))
         txtTemperatura.requestFocus();
         if (txtTemperatura.getText().isEmpty()){
             txtTemperatura.setText("°C");
@@ -2456,7 +2502,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
     }//GEN-LAST:event_txtPulsoFocusGained
 
     private void txtPulsoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPulsoFocusLost
-        if (!(util.verificarNumero(txtPulso.getText())) && (txtPulso.getText().length() > 0))
+        if (!(util.verificarFlotante(txtPulso.getText())) && (txtPulso.getText().length() > 0))
         txtPulso.requestFocus();
         if (txtPulso.getText().isEmpty()){
             txtPulso.setText("LPM");
@@ -2472,7 +2518,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
     }//GEN-LAST:event_txtSPO2FocusGained
 
     private void txtSPO2FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtSPO2FocusLost
-        if (!(util.verificarNumero(txtSPO2.getText())) && (txtSPO2.getText().length() > 0))
+        if (!(util.verificarFlotante(txtSPO2.getText())) && (txtSPO2.getText().length() > 0))
         txtSPO2.requestFocus();
         if (txtSPO2.getText().isEmpty()){
             txtSPO2.setText("%");
@@ -2488,7 +2534,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
     }//GEN-LAST:event_txtFRFocusGained
 
     private void txtFRFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFRFocusLost
-        if (!(util.verificarNumero(txtFR.getText())) && (txtFR.getText().length() > 0))
+        if (!(util.verificarFlotante(txtFR.getText())) && (txtFR.getText().length() > 0))
         txtFR.requestFocus();
         if (txtFR.getText().isEmpty()){
             txtFR.setText("RPM");
@@ -2504,7 +2550,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
     }//GEN-LAST:event_txtGlicemiaFocusGained
 
     private void txtGlicemiaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtGlicemiaFocusLost
-        if (!(util.verificarNumero(txtGlicemia.getText())) && (txtGlicemia.getText().length() > 0))
+        if (!(util.verificarFlotante(txtGlicemia.getText())) && (txtGlicemia.getText().length() > 0))
         txtGlicemia.requestFocus();
         if (txtGlicemia.getText().isEmpty()){
             txtGlicemia.setText("mg/dl");
@@ -2520,7 +2566,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
     }//GEN-LAST:event_txtPesoFocusGained
 
     private void txtPesoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPesoFocusLost
-        if (!(util.verificarNumero(txtPeso.getText())) && (txtPeso.getText().length() > 0))
+        if (!(util.verificarFlotante(txtPeso.getText())) && (txtPeso.getText().length() > 0))
         txtPeso.requestFocus();
         if (txtPeso.getText().isEmpty()){
             txtPeso.setText("lb");
@@ -2536,7 +2582,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
     }//GEN-LAST:event_txtIMCFocusGained
 
     private void txtIMCFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtIMCFocusLost
-        if (!(util.verificarNumero(txtIMC.getText())) && (txtIMC.getText().length() > 0))
+        if (!(util.verificarFlotante(txtIMC.getText())) && (txtIMC.getText().length() > 0))
         txtIMC.requestFocus();
         if (txtIMC.getText().isEmpty()){
             txtIMC.setText("Kg/m^2");
@@ -2552,13 +2598,29 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
     }//GEN-LAST:event_txtPAFocusGained
 
     private void txtPAFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPAFocusLost
-        if (!(util.verificarNumero(txtPA.getText())) && (txtPA.getText().length() > 0))
+        if (!(util.verificarFlotante(txtPA.getText())) && (txtPA.getText().length() > 0))
         txtPA.requestFocus();
         if (txtPA.getText().isEmpty()){
             txtPA.setText("mmHg");
             txtPA.setForeground(Color.gray);
         }
     }//GEN-LAST:event_txtPAFocusLost
+
+    private void txtTallaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTallaFocusGained
+        if (String.valueOf(txtTalla.getText()).equals("m")){
+            txtTalla.setText("");
+            txtTalla.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtTallaFocusGained
+
+    private void txtTallaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTallaFocusLost
+        if (!(util.verificarFlotante(txtTalla.getText())) && (txtTalla.getText().length() > 0))
+        txtTalla.requestFocus();
+        if (txtTalla.getText().isEmpty()){
+            txtTalla.setText("m");
+            txtTalla.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtTallaFocusLost
 
     
 
@@ -2577,16 +2639,14 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
     private javax.swing.JPanel btn_Pagina4_3;
     private javax.swing.JPanel btn_SeleccionEmpleado;
     private javax.swing.JCheckBox checkLentes;
-    private javax.swing.JCheckBox checkPatologia;
     private javax.swing.JCheckBox checkReferencia;
+    private javax.swing.JCheckBox checkSuspension;
     private javax.swing.JCheckBox checkTraslado;
     private javax.swing.JComboBox<String> combo_Autorizado;
     private javax.swing.JComboBox<String> combo_Realizado;
     private javax.swing.JComboBox<String> combo_Revisado;
-    private javax.swing.JComboBox<String> combo_Talla;
     private javax.swing.JPanel cont_ConsultaGeneral;
     public static javax.swing.ButtonGroup grbtn_Sexo;
-    private javax.swing.JLabel jLabel2;
     public javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane13;
@@ -2621,6 +2681,8 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
     private javax.swing.JLabel lblExtremidades;
     public javax.swing.JLabel lblFR;
     public javax.swing.JLabel lblFechaMod;
+    private javax.swing.JLabel lblFraccion1;
+    private javax.swing.JLabel lblFraccion2;
     private javax.swing.JLabel lblGastrointestinal;
     private javax.swing.JLabel lblGenitourinario;
     public javax.swing.JLabel lblGlicemia;
@@ -2646,6 +2708,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
     public javax.swing.JLabel lblPulso;
     private javax.swing.JLabel lblRespiratorio;
     private javax.swing.JLabel lblResponsable;
+    private javax.swing.JLabel lblRuffier;
     public javax.swing.JLabel lblSPO2;
     public javax.swing.JLabel lblSeguridad;
     public javax.swing.JLabel lblSexo;
@@ -2701,12 +2764,12 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
     public javax.swing.JPanel tablaTitulos;
     private com.raven.swing.TimePicker timeHora;
     public javax.swing.JTextField txtArea;
+    private javax.swing.JTextArea txtAreaAbdomen;
     private javax.swing.JTextArea txtAreaAlteraciones;
     private javax.swing.JTextArea txtAreaCabeza;
-    private javax.swing.JTextArea txtAreaCardiovascular;
+    private javax.swing.JTextArea txtAreaCardiopulmonar;
     private javax.swing.JTextArea txtAreaCuello;
     private javax.swing.JTextArea txtAreaExtremidades;
-    private javax.swing.JTextArea txtAreaGastrointestinal;
     private javax.swing.JTextArea txtAreaGenitourinario;
     private javax.swing.JTextArea txtAreaHistoria;
     private javax.swing.JTextArea txtAreaImpresionClinica;
@@ -2716,7 +2779,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
     private javax.swing.JTextArea txtAreaOjoidos;
     private javax.swing.JTextArea txtAreaOrofaringe;
     private javax.swing.JTextArea txtAreaPielFaneras;
-    private javax.swing.JTextArea txtAreaRespiratorio;
+    private javax.swing.JTextArea txtAreaTorax;
     private javax.swing.JTextArea txtAreaTratamiento;
     public javax.swing.JTextField txtCodigo;
     public javax.swing.JTextField txtEdad;
@@ -2726,8 +2789,10 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
     private javax.swing.JTextField txtHora;
     public javax.swing.JTextField txtIMC;
     public javax.swing.JTextField txtNombre;
-    private javax.swing.JTextField txtOjoDerecho;
-    private javax.swing.JTextField txtOjoIzquierdo;
+    private javax.swing.JTextField txtOjoDerechoDenominador;
+    private javax.swing.JTextField txtOjoDerechoNumerador;
+    private javax.swing.JTextField txtOjoIzquierdoDenominador;
+    private javax.swing.JTextField txtOjoIzquierdoNumerador;
     private javax.swing.JTextField txtPA;
     public javax.swing.JTextField txtPeso;
     public javax.swing.JLabel txtPreempleoId;
@@ -2736,6 +2801,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
     private javax.swing.JTextField txtRuffier;
     public javax.swing.JTextField txtSPO2;
     private javax.swing.JTextField txtSeleccionEmpleado;
+    private javax.swing.JTextField txtTalla;
     public javax.swing.JTextField txtTemperatura;
     // End of variables declaration//GEN-END:variables
 

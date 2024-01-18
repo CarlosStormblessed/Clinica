@@ -131,6 +131,8 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         txtEdad.setText("");
         txtArea.setText("");
         txtPuesto.setText("");
+        txtAreaRestricciones.setText("");
+        txtAreaRestricciones.setEnabled(false);
         
         evaluacionPeriodica.setId("");
         evaluacionPeriodica.setFecha("");
@@ -154,9 +156,9 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         txtAreaOjoidos.setText("");
         txtAreaOrofaringe.setText("");
         txtAreaCuello.setText("");
-        txtAreaRespiratorio.setText("");
-        txtAreaCardiovascular.setText("");
-        txtAreaGastrointestinal.setText("");
+        txtAreaCardiopulmonar.setText("");
+        txtAreaTorax.setText("");
+        txtAreaAbdomen.setText("");
         txtAreaGenitourinario.setText("");
         txtAreaExtremidades.setText("");
         txtAreaNeurologico.setText("");
@@ -176,9 +178,10 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         txtPeso.setForeground(Color.gray);
         txtIMC.setText("Kg/m^2");
         txtIMC.setForeground(Color.gray);
-        combo_Talla.setSelectedIndex(0);
-        txtOjoDerecho.setText("");
-        txtOjoIzquierdo.setText("");
+        txtTalla.setText("m");
+        txtTalla.setForeground(Color.gray);
+        txtOjoDerechoNumerador.setText("");
+        txtOjoIzquierdoNumerador.setText("");
         checkLentes.setSelected(false);
         txtAreaImpresionClinica.setText("");
         
@@ -188,9 +191,9 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         revisionSistemas.setOjoOidoNarizBoca("");
         revisionSistemas.setOrofarinje("");
         revisionSistemas.setCuello("");
-        revisionSistemas.setRespiratorio("");
-        revisionSistemas.setCardiovascular("");
-        revisionSistemas.setGastrointestinal("");
+        revisionSistemas.setCardiopulmonar("");
+        revisionSistemas.setTorax("");
+        revisionSistemas.setAbdomen("");
         revisionSistemas.setGenitourinario("");
         revisionSistemas.setExtremidades("");
         revisionSistemas.setNeurologico("");
@@ -234,8 +237,8 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         String codigo;
         try {
             codigo = evaPerCtrl.getMaxId();
-            lblTitulos.setText("<html><center>Formato<br><b>FICHA MÉDICA EVALUACIÓN RIESGOS CRÍTICOS / EVALUACIÓN PERIÓDICA</b><br>CÓDIGO " + codigo + "</center></html>");
-            lblSeguridad.setText("<html><center>Seguridad Industrial y Salud Ocupacional</center></html>");
+            lblTitulos.setText("<html><center>Formato<br><b>FICHA MÉDICA EVALUACIÓN RIESGOS CRÍTICOS / EVALUACIÓN PERIÓDICA</b><br>CORRELATIVO: " + codigo + "</center></html>");
+            lblSeguridad.setText("<html><center>Salud Ocupacional</center></html>");
             lblFechaMod.setText("<html><center>Fecha de<br>modificacion:<br>"+ util.convertirFechaGUI(now.format(dtf)) + "</center></html>");
             
             txtFecha.setText(util.convertirFechaGUI(now.format(dtf)));
@@ -253,31 +256,46 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         return valido;
     }
     
+    private boolean verificarAptitud(){
+        boolean valido = false;
+        if((rbtn_Aptitud1.isSelected()) || ((rbtn_Aptitud2.isSelected()) && (txtAreaRestricciones.getText().length()>0)) || (rbtn_Aptitud3.isSelected()) || (rbtn_Aptitud4.isSelected()))
+            valido = true;
+        return valido;
+    }
+    
     private boolean verificarEmpleado(){
         boolean valido = false;
-        if ((txtNombre.getText().length()>0) && (txtCodigo.getText().length()>0) && (verificarSexo()))
+        if ((txtNombre.getText().length()>0) && (txtCodigo.getText().length()>0))
             valido = true;
         else valido = false;
         return valido;
     }
     
-    private boolean verificarevaluacionPeriodica(){
+    private boolean verificarEvaluacionPeriodica(){
         boolean valido = false;
-        if ((util.verificarNumero(txtEdad.getText())) && (txtArea.getText().length()>0) && (txtPuesto.getText().length()>0) && (txtHora.getText().length() > 0))
+        if ((util.verificarFlotante(txtEdad.getText())) && (verificarSexo()) && (txtArea.getText().length()>0) && (txtPuesto.getText().length()>0) && (txtHora.getText().length() > 0) && (verificarAptitud()))
             valido = true;
         return valido;
     }
     
     private boolean verificarAntecedentes(){
         boolean valido = false;
-        if (((util.verificarNumero(txtG.getText())) || (txtG.getText().length() == 0)) && ((util.verificarNumero(txtP.getText())) || (txtP.getText().length() == 0)) && ((util.verificarNumero(txtHV.getText())) || (txtHV.getText().length() == 0)) && ((util.verificarNumero(txtHM.getText())) || (txtHM.getText().length() == 0)) && (util.verificarNumero(txtAB.getText()) || (txtAB.getText().length() == 0)) && (txtDiagnostico.getText().length()>0))
+        if (((util.verificarFlotante(txtG.getText())) || (txtG.getText().length() == 0)) && ((util.verificarFlotante(txtP.getText())) || (txtP.getText().length() == 0)) && ((util.verificarFlotante(txtHV.getText())) || (txtHV.getText().length() == 0)) && ((util.verificarFlotante(txtHM.getText())) || (txtHM.getText().length() == 0)) && (util.verificarFlotante(txtAB.getText()) || (txtAB.getText().length() == 0)) && (txtDiagnostico.getText().length()>0))
                 valido = true;
         return valido;
     }
     
     private boolean verificarRevisionSistemas(){
         boolean valido = false;
-        if ((util.verificarNumero(txtTemperatura.getText()) || (txtTemperatura.getText().equals("°C"))) && ((util.verificarNumero(txtPulso.getText())) || (txtPulso.getText().equals("LPM"))) && ((util.verificarNumero(txtSPO2.getText())) || (txtSPO2.getText().equals("%"))) && ((util.verificarNumero(txtFR.getText())) || (txtFR.getText().equals("RPM"))) && ((util.verificarNumero(txtGlicemia.getText())) || (txtGlicemia.getText().equals("mg/dl"))) && ((util.verificarNumero(txtPeso.getText())) || (txtPeso.getText().equals("lb"))) && (util.verificarNumero(txtIMC.getText()) || (txtIMC.getText().equals("Kg/m^2"))) && ((util.verificarNumero(txtRuffier.getText())) || (txtRuffier.getText().equals(""))) && ((util.verificarNumero(txtOjoDerecho.getText())) || (txtOjoDerecho.getText().equals(""))) && ((util.verificarNumero(txtOjoIzquierdo.getText())) || (txtOjoIzquierdo.getText().equals(""))))
+        if ((util.verificarFlotante(txtTemperatura.getText()) || (txtTemperatura.getText().equals("°C"))) && 
+           ((util.verificarFlotante(txtPulso.getText())) || (txtPulso.getText().equals("LPM"))) && ((util.verificarFlotante(txtSPO2.getText())) || (txtSPO2.getText().equals("%"))) && 
+           ((util.verificarFlotante(txtFR.getText())) || (txtFR.getText().equals("RPM"))) && ((util.verificarFlotante(txtGlicemia.getText())) || (txtGlicemia.getText().equals("mg/dl"))) && 
+           ((util.verificarFlotante(txtPeso.getText())) || (txtPeso.getText().equals("lb"))) && (util.verificarFlotante(txtIMC.getText()) || (txtIMC.getText().equals("Kg/m^2"))) && 
+           ((util.verificarFlotante(txtRuffier.getText())) || (txtRuffier.getText().equals(""))) &&
+           (((txtOjoDerechoNumerador.getText().length()>0) && (txtOjoDerechoDenominador.getText().length()>0) && (txtOjoIzquierdoNumerador.getText().length()>0) && (txtOjoIzquierdoDenominador.getText().length()>0)) ||
+           (((txtOjoDerechoNumerador.getText().length()>0) && (txtOjoDerechoDenominador.getText().length()>0)) && !((txtOjoIzquierdoNumerador.getText().length()>0) && (txtOjoIzquierdoDenominador.getText().length()>0))) ||
+           (((txtOjoIzquierdoNumerador.getText().length()>0) && (txtOjoIzquierdoDenominador.getText().length()>0)) && !((txtOjoDerechoNumerador.getText().length()>0) && (txtOjoDerechoDenominador.getText().length()>0))) ||
+           !((txtOjoDerechoDenominador.getText().length()>0) || (txtOjoDerechoNumerador.getText().length()>0) || (txtOjoIzquierdoNumerador.getText().length()>0) || (txtOjoIzquierdoDenominador.getText().length()>0))))
                 valido = true;
         return valido;
     }
@@ -342,6 +360,7 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         else if(rbtn_Aptitud4.isSelected())
             evaluacionPeriodica.setAptitud("4");
         
+        evaluacionPeriodica.setRestricciones(txtAreaRestricciones.getText());
         evaluacionPeriodica.setClinicaId(clinicaId);
         evaluacionPeriodica.setEmpleadoId(empleado.getId());
         evaluacionPeriodica.setRevisionSistemasId(revisionSistemas.getId());
@@ -376,7 +395,7 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
                 
                 break;
         }
-        
+        txtAreaRestricciones.setText(evaluacionPeriodica.getRestricciones());
         txtAreaObservaciones.setText(revisionSistemas.getObservaciones());
         responsable = evaluacionPeriodica.getResponsable();
     }
@@ -443,9 +462,9 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         revisionSistemas.setOjoOidoNarizBoca(txtAreaOjoidos.getText());
         revisionSistemas.setOrofarinje(txtAreaOrofaringe.getText());
         revisionSistemas.setCuello(txtAreaCuello.getText());
-        revisionSistemas.setRespiratorio(txtAreaRespiratorio.getText());
-        revisionSistemas.setCardiovascular(txtAreaCardiovascular.getText());
-        revisionSistemas.setGastrointestinal(txtAreaGastrointestinal.getText());
+        revisionSistemas.setCardiopulmonar(txtAreaCardiopulmonar.getText());
+        revisionSistemas.setTorax(txtAreaTorax.getText());
+        revisionSistemas.setAbdomen(txtAreaAbdomen.getText());
         revisionSistemas.setGenitourinario(txtAreaGenitourinario.getText());
         revisionSistemas.setExtremidades(txtAreaExtremidades.getText());
         revisionSistemas.setNeurologico(txtAreaNeurologico.getText());
@@ -468,22 +487,29 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         if (!(txtPA.getText().equals("mmHg")))
             revisionSistemas.setPa(txtPA.getText());
         else
-            revisionSistemas.setFr("");
+            revisionSistemas.setPa("");
         if (!(txtGlicemia.getText().equals("mg/dl")))
             revisionSistemas.setGlicemia(txtGlicemia.getText());
         else
-            revisionSistemas.setFr("");
+            revisionSistemas.setGlicemia("");
         if (!(txtPeso.getText().equals("lb")))
             revisionSistemas.setPeso(txtPeso.getText());
         else
-            revisionSistemas.setFr("");
-        revisionSistemas.setTalla(combo_Talla.getSelectedItem().toString());
+            revisionSistemas.setPeso("");
         if (!(txtIMC.getText().equals("Kg/m^2")))
             revisionSistemas.setImc(txtIMC.getText());
-        revisionSistemas.setFr("");
+        else
+            revisionSistemas.setImc("");
+        revisionSistemas.setTalla(txtTalla.getText());
         revisionSistemas.setRuffier(txtRuffier.getText());
-        revisionSistemas.setOjoDerecho(txtOjoDerecho.getText());
-        revisionSistemas.setOjoIzquierdo(txtOjoIzquierdo.getText());
+        if((txtOjoDerechoNumerador.getText().length()>0) && (txtOjoDerechoDenominador.getText().length()>0))
+            revisionSistemas.setOjoDerecho(txtOjoDerechoNumerador.getText() + "/" + txtOjoDerechoDenominador.getText());
+        else
+            revisionSistemas.setOjoDerecho("");
+        if((txtOjoIzquierdoNumerador.getText().length()>0) && (txtOjoIzquierdoDenominador.getText().length()>0))
+            revisionSistemas.setOjoIzquierdo(txtOjoIzquierdoNumerador.getText() + "/" + txtOjoIzquierdoDenominador.getText());
+        else
+            revisionSistemas.setOjoIzquierdo("");
         if(checkLentes.isSelected())
             revisionSistemas.setAnteojos("1");
         else
@@ -503,93 +529,39 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         txtAreaOjoidos.setText(revisionSistemas.getOjoOidoNarizBoca());
         txtAreaOrofaringe.setText(revisionSistemas.getOrofarinje());
         txtAreaCuello.setText(revisionSistemas.getCuello());
-        txtAreaRespiratorio.setText(revisionSistemas.getRespiratorio());
-        txtAreaCardiovascular.setText(revisionSistemas.getCardiovascular());
-        txtAreaGastrointestinal.setText(revisionSistemas.getGastrointestinal());
+        txtAreaCardiopulmonar.setText(revisionSistemas.getCardiopulmonar());
+        txtAreaTorax.setText(revisionSistemas.getTorax());
+        txtAreaAbdomen.setText(revisionSistemas.getAbdomen());
         txtAreaGenitourinario.setText(revisionSistemas.getGenitourinario());
         txtAreaExtremidades.setText(revisionSistemas.getExtremidades());
         txtAreaNeurologico.setText(revisionSistemas.getNeurologico());
-        if(revisionSistemas.getTemperatura().length() > 0){
-            txtTemperatura.setForeground(Color.black);
-            txtTemperatura.setText(revisionSistemas.getTemperatura());
+        txtTemperatura.setText(revisionSistemas.getTemperatura());
+        txtPulso.setText(revisionSistemas.getPulso());
+        txtSPO2.setText(revisionSistemas.getSpo2());
+        txtFR.setText(revisionSistemas.getFr());
+        txtPA.setText(revisionSistemas.getPa());
+        txtGlicemia.setText(revisionSistemas.getGlicemia());
+        txtPeso.setText(revisionSistemas.getPeso());
+        txtTalla.setText(revisionSistemas.getTalla());
+        txtIMC.setText(revisionSistemas.getImc());
+        txtRuffier.setText(revisionSistemas.getRuffier());
+        if(revisionSistemas.getOjoDerecho().length()>1){
+            String [] partesOjoDerecho = revisionSistemas.getOjoDerecho().split("/");
+            txtOjoDerechoNumerador.setText(partesOjoDerecho[0]);
+            txtOjoDerechoDenominador.setText(partesOjoDerecho[1]);
+        } else{
+            txtOjoDerechoNumerador.setText("");
+            txtOjoDerechoDenominador.setText("");
+        }
+        if(revisionSistemas.getOjoIzquierdo().length()>1){
+            String [] partesOjoIzquierdo = revisionSistemas.getOjoIzquierdo().split("/");
+            txtOjoIzquierdoNumerador.setText(partesOjoIzquierdo[0]);
+            txtOjoIzquierdoDenominador.setText(partesOjoIzquierdo[1]);
         }else{
-            txtTemperatura.setForeground(Color.gray);
-            txtTemperatura.setText("°C");
-        }
-        if (revisionSistemas.getPulso().length() > 0){
-            txtPulso.setForeground(Color.black);
-            txtPulso.setText(revisionSistemas.getPulso());
-        }else{
-            txtPulso.setForeground(Color.gray);
-            txtPulso.setText("LPM");
-        }
-        if (revisionSistemas.getSpo2().length() > 0){
-            txtSPO2.setForeground(Color.black);
-            txtSPO2.setText(revisionSistemas.getSpo2());
-        }else{
-            txtSPO2.setForeground(Color.gray);
-            txtSPO2.setText("%");
-        }
-        if (revisionSistemas.getFr().length() > 0){
-            txtFR.setForeground(Color.black);
-            txtFR.setText(revisionSistemas.getFr());
-        }else{
-            txtFR.setForeground(Color.gray);
-            txtFR.setText("RPM");
-        }
-        if (revisionSistemas.getPa().length() > 0){
-            txtPA.setForeground(Color.black);
-            txtPA.setText(revisionSistemas.getPa());
-        }else{
-            txtPA.setForeground(Color.gray);
-            txtPA.setText("mmHg");
-        }
-        if (revisionSistemas.getGlicemia().length() > 0){
-            txtGlicemia.setForeground(Color.black);
-            txtGlicemia.setText(revisionSistemas.getGlicemia());
-        }else{
-            txtGlicemia.setForeground(Color.gray);
-            txtGlicemia.setText("mg/dl");
-        }
-        if (revisionSistemas.getPeso().length() > 0){
-            txtPeso.setForeground(Color.black);
-            txtPeso.setText(revisionSistemas.getPeso());
-        }else{
-            txtPeso.setForeground(Color.gray);
-            txtPeso.setText("lb");
-        }
-        if (revisionSistemas.getImc().length() > 0){
-            txtIMC.setForeground(Color.black);
-            txtIMC.setText(revisionSistemas.getImc());
-        }else
-        {
-            txtIMC.setForeground(Color.gray);
-            txtIMC.setText("Kg/m^2");
-        }
-        //Set Talla
-        switch(revisionSistemas.getTalla()){
-            case "S":
-                combo_Talla.setSelectedIndex(0);
-                break;
-            case "M":
-                combo_Talla.setSelectedIndex(1);
-                break;
-            case "L":
-                combo_Talla.setSelectedIndex(2);
-                break;
-            case "XL":
-                combo_Talla.setSelectedIndex(3);
-                break;
-            case "XXL":
-                combo_Talla.setSelectedIndex(4);
-                break;
-            default:
-                break;
+            txtOjoIzquierdoNumerador.setText("");
+            txtOjoIzquierdoDenominador.setText("");
         }
         
-        txtRuffier.setText(revisionSistemas.getRuffier());
-        txtOjoDerecho.setText(revisionSistemas.getOjoDerecho());
-        txtOjoIzquierdo.setText(revisionSistemas.getOjoIzquierdo());
         // Set Lentes
         switch(revisionSistemas.getAnteojos()){
             case "0":
@@ -765,7 +737,7 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
     }
     
     private DatosPaginacion <EmpleadoMod> crearDatosPaginacionEmpleado() throws SQLException, ConnectException{
-        List <EmpleadoMod> lista = empCtrl.seleccionarTodos();
+        List <EmpleadoMod> lista = empCtrl.seleccionarTodosActivos();
         //Reemplazar el id del empleado por el nombre del empleado
         
         return new DatosPaginacion<EmpleadoMod>(){
@@ -783,7 +755,7 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
     
     private void buscarEmpleadoEvaluacionPeriodica(String valorBuscar) throws SQLException, ConnectException{
         evaluacionPeriodica = evaPerCtrl.buscarFila(valorBuscar);
-        lblTitulos.setText("<html><center>Formato<br><b>EVALUACIÓN PERIÓDICA / RIESGOS CRÍTICOS</b><br>CÓDIGO " + evaluacionPeriodica.getId() + "</center></html>");
+        lblTitulos.setText("<html><center>Formato<br><b>FICHA MÉDICA EVALUACIÓN PERIÓDICA / RIESGOS CRÍTICOS</b><br>CÓDIGO " + evaluacionPeriodica.getId() + "</center></html>");
         empleado = empCtrl.buscarFila(evaluacionPeriodica.getEmpleadoId());
         antecedentes = antCtrl.buscarFila(evaluacionPeriodica.getAntecedentesId());
         revisionSistemas = revSisCtrl.buscarFila(evaluacionPeriodica.getRevisionSistemasId());
@@ -934,6 +906,8 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         lblInstruccionComboboxEmpleado = new javax.swing.JLabel();
         panelAntecedentesGino = new javax.swing.JPanel();
         lblAntecedentesGi = new javax.swing.JLabel();
+        lblMPF = new javax.swing.JLabel();
+        txtMPF = new javax.swing.JTextField();
         lblMenarquia = new javax.swing.JLabel();
         txtMenarquia = new javax.swing.JTextField();
         lblFur = new javax.swing.JLabel();
@@ -950,11 +924,11 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         txtHM = new javax.swing.JTextField();
         lblAB = new javax.swing.JLabel();
         txtAB = new javax.swing.JTextField();
-        lblMPF = new javax.swing.JLabel();
-        txtMPF = new javax.swing.JTextField();
         panelCartas = new javax.swing.JPanel();
         panelPagina1 = new javax.swing.JPanel();
         lbl_AntecedentesGenerales = new javax.swing.JLabel();
+        btn_Pagina1_2 = new javax.swing.JPanel();
+        lbl_btn_Pagina1_2 = new javax.swing.JLabel();
         lbl_Familiares = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         txtAreaFamiliares = new javax.swing.JTextArea();
@@ -965,53 +939,55 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         jScrollPane5 = new javax.swing.JScrollPane();
         txtAreaTratamientos = new javax.swing.JTextArea();
         lbl_Laboratorios = new javax.swing.JLabel();
-        jScrollPane7 = new javax.swing.JScrollPane();
+        jScrollPane12 = new javax.swing.JScrollPane();
         txtAreaLaboratorios = new javax.swing.JTextArea();
         lbl_Quirurgicos = new javax.swing.JLabel();
-        jScrollPane8 = new javax.swing.JScrollPane();
+        jScrollPane7 = new javax.swing.JScrollPane();
         txtAreaQuirurgicos = new javax.swing.JTextArea();
         lbl_Traumaticos = new javax.swing.JLabel();
-        jScrollPane9 = new javax.swing.JScrollPane();
+        jScrollPane8 = new javax.swing.JScrollPane();
         txtAreaTraumaticos = new javax.swing.JTextArea();
         lbl_Alergicos = new javax.swing.JLabel();
-        jScrollPane10 = new javax.swing.JScrollPane();
+        jScrollPane9 = new javax.swing.JScrollPane();
         txtAreaAlergicos = new javax.swing.JTextArea();
         lbl_Vicios = new javax.swing.JLabel();
-        jScrollPane11 = new javax.swing.JScrollPane();
+        jScrollPane10 = new javax.swing.JScrollPane();
         txtAreaVicios = new javax.swing.JTextArea();
-        btn_Pagina1_2 = new javax.swing.JPanel();
-        lbl_btn_Pagina1_2 = new javax.swing.JLabel();
         panelPagina2 = new javax.swing.JPanel();
         lbl_RevisionPorSistemas = new javax.swing.JLabel();
+        btn_Pagina2_1 = new javax.swing.JPanel();
+        lbl_btn_Pagina2_1 = new javax.swing.JLabel();
+        btn_Pagina2_3 = new javax.swing.JPanel();
+        lbl_btn_Pagina2_3 = new javax.swing.JLabel();
         lblTemperatura = new javax.swing.JLabel();
         txtTemperatura = new javax.swing.JTextField();
+        lblGlicemia = new javax.swing.JLabel();
+        txtGlicemia = new javax.swing.JTextField();
+        lblPA = new javax.swing.JLabel();
+        txtPA = new javax.swing.JTextField();
         lblPulso = new javax.swing.JLabel();
         txtPulso = new javax.swing.JTextField();
         lblSPO2 = new javax.swing.JLabel();
         txtSPO2 = new javax.swing.JTextField();
         lblFR = new javax.swing.JLabel();
         txtFR = new javax.swing.JTextField();
-        lblGlicemia = new javax.swing.JLabel();
-        txtGlicemia = new javax.swing.JTextField();
+        lblIMC = new javax.swing.JLabel();
+        txtIMC = new javax.swing.JTextField();
         lblPeso = new javax.swing.JLabel();
         txtPeso = new javax.swing.JTextField();
         lblTalla = new javax.swing.JLabel();
-        combo_Talla = new javax.swing.JComboBox<>();
-        lblIMC = new javax.swing.JLabel();
-        txtIMC = new javax.swing.JTextField();
-        lblPA = new javax.swing.JLabel();
-        txtPA = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
+        txtTalla = new javax.swing.JTextField();
+        lblRuffier = new javax.swing.JLabel();
         txtRuffier = new javax.swing.JTextField();
         lblOjoDerecho = new javax.swing.JLabel();
-        txtOjoDerecho = new javax.swing.JTextField();
+        txtOjoDerechoNumerador = new javax.swing.JTextField();
+        lblFraccion1 = new javax.swing.JLabel();
+        txtOjoDerechoDenominador = new javax.swing.JTextField();
         lblOjoIzquierdo = new javax.swing.JLabel();
-        txtOjoIzquierdo = new javax.swing.JTextField();
+        txtOjoIzquierdoNumerador = new javax.swing.JTextField();
+        lblFraccion2 = new javax.swing.JLabel();
+        txtOjoIzquierdoDenominador = new javax.swing.JTextField();
         checkLentes = new javax.swing.JCheckBox();
-        btn_Pagina2_1 = new javax.swing.JPanel();
-        lbl_btn_Pagina2_1 = new javax.swing.JLabel();
-        btn_Pagina2_3 = new javax.swing.JPanel();
-        lbl_btn_Pagina2_3 = new javax.swing.JLabel();
         panelPagina3 = new javax.swing.JPanel();
         lblAlteraciones = new javax.swing.JLabel();
         jScrollPane13 = new javax.swing.JScrollPane();
@@ -1033,13 +1009,13 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         txtAreaCuello = new javax.swing.JTextArea();
         lblRespiratorio = new javax.swing.JLabel();
         jScrollPane19 = new javax.swing.JScrollPane();
-        txtAreaRespiratorio = new javax.swing.JTextArea();
+        txtAreaCardiopulmonar = new javax.swing.JTextArea();
         lblCardiovascular = new javax.swing.JLabel();
         jScrollPane20 = new javax.swing.JScrollPane();
-        txtAreaCardiovascular = new javax.swing.JTextArea();
+        txtAreaTorax = new javax.swing.JTextArea();
         lblGastrointestinal = new javax.swing.JLabel();
         jScrollPane21 = new javax.swing.JScrollPane();
-        txtAreaGastrointestinal = new javax.swing.JTextArea();
+        txtAreaAbdomen = new javax.swing.JTextArea();
         lblExtremidades = new javax.swing.JLabel();
         jScrollPane23 = new javax.swing.JScrollPane();
         txtAreaExtremidades = new javax.swing.JTextArea();
@@ -1065,9 +1041,12 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         rbtn_Aptitud2 = new javax.swing.JRadioButton();
         rbtn_Aptitud3 = new javax.swing.JRadioButton();
         rbtn_Aptitud4 = new javax.swing.JRadioButton();
-        lblResponsable = new javax.swing.JLabel();
+        lblRestricciones = new javax.swing.JLabel();
+        jScrollPane11 = new javax.swing.JScrollPane();
+        txtAreaRestricciones = new javax.swing.JTextArea();
         btn_Pagina4_3 = new javax.swing.JPanel();
         lbl_btn_Pagina4_3 = new javax.swing.JLabel();
+        lblResponsable = new javax.swing.JLabel();
         panel_Diagnostico = new javax.swing.JPanel();
         lblDiagnostico = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -1338,7 +1317,7 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
 
         panelEmpleado.add(btn_OtroEmpleado, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 0, 120, 40));
 
-        lblArea.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblArea.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblArea.setText("Área de Trabajo");
         panelEmpleado.add(lblArea, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, -1, -1));
 
@@ -1356,7 +1335,7 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         txtCodigo.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         panelEmpleado.add(txtCodigo, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 110, 100, 35));
 
-        lblCodigo.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblCodigo.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblCodigo.setText("Código");
         panelEmpleado.add(lblCodigo, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 90, -1, 20));
 
@@ -1375,7 +1354,7 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         });
         panelEmpleado.add(rbtn_SexoM, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 110, -1, -1));
 
-        lblSexo.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblSexo.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblSexo.setText("Sexo");
         panelEmpleado.add(lblSexo, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 90, -1, 20));
 
@@ -1393,7 +1372,7 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         txtPuesto.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         panelEmpleado.add(txtPuesto, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 170, 240, 35));
 
-        lblPuesto1.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblPuesto1.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblPuesto1.setText("Puesto");
         panelEmpleado.add(lblPuesto1, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 150, -1, 20));
 
@@ -1401,7 +1380,7 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         lblClinica.setText("Clínica de Atención: Sidegua");
         panelEmpleado.add(lblClinica, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 190, 30));
 
-        lblNombre.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblNombre.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblNombre.setText("Nombre");
         panelEmpleado.add(lblNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, -1, 20));
 
@@ -1420,11 +1399,11 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         txtArea.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         panelEmpleado.add(txtArea, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, 207, 35));
 
-        lblHora.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblHora.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblHora.setText("Hora");
         panelEmpleado.add(lblHora, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 90, -1, 20));
 
-        lblEdad.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblEdad.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblEdad.setText("Edad");
         panelEmpleado.add(lblEdad, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 90, -1, 20));
 
@@ -1507,6 +1486,15 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         lblAntecedentesGi.setText("ANTECEDENTES GINOCOBSTÉTRICOS");
         panelAntecedentesGino.add(lblAntecedentesGi, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, -1, -1));
 
+        lblMPF.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblMPF.setText("MPF");
+        panelAntecedentesGino.add(lblMPF, new org.netbeans.lib.awtextra.AbsoluteConstraints(298, 80, -1, 20));
+
+        txtMPF.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtMPF.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtMPF.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        panelAntecedentesGino.add(txtMPF, new org.netbeans.lib.awtextra.AbsoluteConstraints(298, 100, 182, 35));
+
         lblMenarquia.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblMenarquia.setText("Menarquia");
         panelAntecedentesGino.add(lblMenarquia, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, -1, 20));
@@ -1514,7 +1502,14 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         txtMenarquia.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtMenarquia.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtMenarquia.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        txtMenarquia.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        txtMenarquia.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtMenarquiaFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtMenarquiaFocusLost(evt);
+            }
+        });
         panelAntecedentesGino.add(txtMenarquia, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 86, 35));
 
         lblFur.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
@@ -1524,7 +1519,6 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         txtFUR.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtFUR.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtFUR.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        txtFUR.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         panelAntecedentesGino.add(txtFUR, new org.netbeans.lib.awtextra.AbsoluteConstraints(106, 40, 86, 35));
 
         lblG.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
@@ -1534,6 +1528,14 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         txtG.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtG.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtG.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtG.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtGFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtGFocusLost(evt);
+            }
+        });
         panelAntecedentesGino.add(txtG, new org.netbeans.lib.awtextra.AbsoluteConstraints(202, 40, 86, 35));
 
         lblP.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
@@ -1543,6 +1545,14 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         txtP.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtP.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtP.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtP.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtPFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtPFocusLost(evt);
+            }
+        });
         panelAntecedentesGino.add(txtP, new org.netbeans.lib.awtextra.AbsoluteConstraints(298, 40, 86, 35));
 
         lblCSTP.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
@@ -1552,7 +1562,14 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         txtCSTP.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtCSTP.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtCSTP.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        txtCSTP.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        txtCSTP.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtCSTPFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtCSTPFocusLost(evt);
+            }
+        });
         panelAntecedentesGino.add(txtCSTP, new org.netbeans.lib.awtextra.AbsoluteConstraints(394, 40, 86, 35));
 
         lblHV.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
@@ -1562,16 +1579,32 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         txtHV.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtHV.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtHV.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtHV.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtHVFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtHVFocusLost(evt);
+            }
+        });
         panelAntecedentesGino.add(txtHV, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 100, 86, 35));
 
         lblHM.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblHM.setText("HM");
-        panelAntecedentesGino.add(lblHM, new org.netbeans.lib.awtextra.AbsoluteConstraints(103, 80, -1, 20));
+        panelAntecedentesGino.add(lblHM, new org.netbeans.lib.awtextra.AbsoluteConstraints(106, 80, -1, 20));
 
         txtHM.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtHM.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtHM.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        panelAntecedentesGino.add(txtHM, new org.netbeans.lib.awtextra.AbsoluteConstraints(103, 100, 86, 35));
+        txtHM.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtHMFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtHMFocusLost(evt);
+            }
+        });
+        panelAntecedentesGino.add(txtHM, new org.netbeans.lib.awtextra.AbsoluteConstraints(106, 100, 86, 35));
 
         lblAB.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblAB.setText("AB");
@@ -1580,16 +1613,15 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         txtAB.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtAB.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtAB.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtAB.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtABFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtABFocusLost(evt);
+            }
+        });
         panelAntecedentesGino.add(txtAB, new org.netbeans.lib.awtextra.AbsoluteConstraints(202, 100, 86, 35));
-
-        lblMPF.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblMPF.setText("MPF");
-        panelAntecedentesGino.add(lblMPF, new org.netbeans.lib.awtextra.AbsoluteConstraints(298, 80, -1, 20));
-
-        txtMPF.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtMPF.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtMPF.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        panelAntecedentesGino.add(txtMPF, new org.netbeans.lib.awtextra.AbsoluteConstraints(298, 100, 182, 35));
 
         panelFormulario.add(panelAntecedentesGino, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 225, 490, 150));
 
@@ -1602,110 +1634,6 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         lbl_AntecedentesGenerales.setForeground(new java.awt.Color(31, 78, 121));
         lbl_AntecedentesGenerales.setText("ANTECEDENTES GENERALES");
         panelPagina1.add(lbl_AntecedentesGenerales, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, -1, -1));
-
-        lbl_Familiares.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lbl_Familiares.setText("Familiares");
-        panelPagina1.add(lbl_Familiares, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, -1, 20));
-
-        jScrollPane3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        txtAreaFamiliares.setColumns(20);
-        txtAreaFamiliares.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
-        txtAreaFamiliares.setRows(5);
-        jScrollPane3.setViewportView(txtAreaFamiliares);
-
-        panelPagina1.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 260, 35));
-
-        lbl_Medicos.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lbl_Medicos.setText("Médicos");
-        panelPagina1.add(lbl_Medicos, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, -1, 20));
-
-        jScrollPane4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        txtAreaMedicos.setColumns(20);
-        txtAreaMedicos.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
-        txtAreaMedicos.setRows(5);
-        jScrollPane4.setViewportView(txtAreaMedicos);
-
-        panelPagina1.add(jScrollPane4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 110, 260, 35));
-
-        lbl_Tratamientos.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lbl_Tratamientos.setText("Tratamientos o medicamentos actuales");
-        panelPagina1.add(lbl_Tratamientos, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, -1, 20));
-
-        jScrollPane5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        txtAreaTratamientos.setColumns(20);
-        txtAreaTratamientos.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
-        txtAreaTratamientos.setRows(5);
-        jScrollPane5.setViewportView(txtAreaTratamientos);
-
-        panelPagina1.add(jScrollPane5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, 260, 35));
-
-        lbl_Laboratorios.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lbl_Laboratorios.setText("Laboratorios o estudios recientes");
-        panelPagina1.add(lbl_Laboratorios, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 210, -1, 20));
-
-        jScrollPane7.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        txtAreaLaboratorios.setColumns(20);
-        txtAreaLaboratorios.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
-        txtAreaLaboratorios.setRows(5);
-        jScrollPane7.setViewportView(txtAreaLaboratorios);
-
-        panelPagina1.add(jScrollPane7, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 230, 260, 35));
-
-        lbl_Quirurgicos.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lbl_Quirurgicos.setText("Quirúrgicos");
-        panelPagina1.add(lbl_Quirurgicos, new org.netbeans.lib.awtextra.AbsoluteConstraints(283, 30, -1, 20));
-
-        jScrollPane8.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        txtAreaQuirurgicos.setColumns(20);
-        txtAreaQuirurgicos.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
-        txtAreaQuirurgicos.setRows(5);
-        jScrollPane8.setViewportView(txtAreaQuirurgicos);
-
-        panelPagina1.add(jScrollPane8, new org.netbeans.lib.awtextra.AbsoluteConstraints(283, 50, 260, 35));
-
-        lbl_Traumaticos.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lbl_Traumaticos.setText("Traumáticos");
-        panelPagina1.add(lbl_Traumaticos, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 90, -1, 20));
-
-        jScrollPane9.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        txtAreaTraumaticos.setColumns(20);
-        txtAreaTraumaticos.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
-        txtAreaTraumaticos.setRows(5);
-        jScrollPane9.setViewportView(txtAreaTraumaticos);
-
-        panelPagina1.add(jScrollPane9, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 110, 260, 35));
-
-        lbl_Alergicos.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lbl_Alergicos.setText("Alérgicos");
-        panelPagina1.add(lbl_Alergicos, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 150, -1, 20));
-
-        jScrollPane10.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        txtAreaAlergicos.setColumns(20);
-        txtAreaAlergicos.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
-        txtAreaAlergicos.setRows(5);
-        jScrollPane10.setViewportView(txtAreaAlergicos);
-
-        panelPagina1.add(jScrollPane10, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 170, 260, 35));
-
-        lbl_Vicios.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lbl_Vicios.setText("Vicios y manías");
-        panelPagina1.add(lbl_Vicios, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 210, -1, 20));
-
-        jScrollPane11.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        txtAreaVicios.setColumns(20);
-        txtAreaVicios.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
-        txtAreaVicios.setRows(5);
-        jScrollPane11.setViewportView(txtAreaVicios);
-
-        panelPagina1.add(jScrollPane11, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 230, 260, 35));
 
         btn_Pagina1_2.setBackground(new java.awt.Color(204, 204, 235));
         btn_Pagina1_2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
@@ -1730,6 +1658,110 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
 
         panelPagina1.add(btn_Pagina1_2, new org.netbeans.lib.awtextra.AbsoluteConstraints(293, 320, 106, 35));
 
+        lbl_Familiares.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lbl_Familiares.setText("Familiares");
+        panelPagina1.add(lbl_Familiares, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, -1, 20));
+
+        jScrollPane3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        txtAreaFamiliares.setColumns(20);
+        txtAreaFamiliares.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        txtAreaFamiliares.setRows(5);
+        jScrollPane3.setViewportView(txtAreaFamiliares);
+
+        panelPagina1.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 260, 40));
+
+        lbl_Medicos.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lbl_Medicos.setText("Médicos");
+        panelPagina1.add(lbl_Medicos, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 100, -1, 20));
+
+        jScrollPane4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        txtAreaMedicos.setColumns(20);
+        txtAreaMedicos.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        txtAreaMedicos.setRows(5);
+        jScrollPane4.setViewportView(txtAreaMedicos);
+
+        panelPagina1.add(jScrollPane4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, 260, 40));
+
+        lbl_Tratamientos.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lbl_Tratamientos.setText("Tratamientos o medicamentos actuales");
+        panelPagina1.add(lbl_Tratamientos, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, -1, 20));
+
+        jScrollPane5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        txtAreaTratamientos.setColumns(20);
+        txtAreaTratamientos.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        txtAreaTratamientos.setRows(5);
+        jScrollPane5.setViewportView(txtAreaTratamientos);
+
+        panelPagina1.add(jScrollPane5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, 260, 40));
+
+        lbl_Laboratorios.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lbl_Laboratorios.setText("Laboratorios o estudios recientes");
+        panelPagina1.add(lbl_Laboratorios, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 240, -1, 20));
+
+        jScrollPane12.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        txtAreaLaboratorios.setColumns(20);
+        txtAreaLaboratorios.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        txtAreaLaboratorios.setRows(5);
+        jScrollPane12.setViewportView(txtAreaLaboratorios);
+
+        panelPagina1.add(jScrollPane12, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 260, 260, 40));
+
+        lbl_Quirurgicos.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lbl_Quirurgicos.setText("Quirúrgicos");
+        panelPagina1.add(lbl_Quirurgicos, new org.netbeans.lib.awtextra.AbsoluteConstraints(283, 30, -1, 20));
+
+        jScrollPane7.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        txtAreaQuirurgicos.setColumns(20);
+        txtAreaQuirurgicos.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        txtAreaQuirurgicos.setRows(5);
+        jScrollPane7.setViewportView(txtAreaQuirurgicos);
+
+        panelPagina1.add(jScrollPane7, new org.netbeans.lib.awtextra.AbsoluteConstraints(283, 50, 260, 40));
+
+        lbl_Traumaticos.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lbl_Traumaticos.setText("Traumáticos");
+        panelPagina1.add(lbl_Traumaticos, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 100, -1, 20));
+
+        jScrollPane8.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        txtAreaTraumaticos.setColumns(20);
+        txtAreaTraumaticos.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        txtAreaTraumaticos.setRows(5);
+        jScrollPane8.setViewportView(txtAreaTraumaticos);
+
+        panelPagina1.add(jScrollPane8, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 120, 260, 40));
+
+        lbl_Alergicos.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lbl_Alergicos.setText("Alérgicos");
+        panelPagina1.add(lbl_Alergicos, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 170, -1, 20));
+
+        jScrollPane9.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        txtAreaAlergicos.setColumns(20);
+        txtAreaAlergicos.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        txtAreaAlergicos.setRows(5);
+        jScrollPane9.setViewportView(txtAreaAlergicos);
+
+        panelPagina1.add(jScrollPane9, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 190, 260, 40));
+
+        lbl_Vicios.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lbl_Vicios.setText("Vicios y manías");
+        panelPagina1.add(lbl_Vicios, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 240, -1, 20));
+
+        jScrollPane10.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        txtAreaVicios.setColumns(20);
+        txtAreaVicios.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        txtAreaVicios.setRows(5);
+        jScrollPane10.setViewportView(txtAreaVicios);
+
+        panelPagina1.add(jScrollPane10, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 260, 260, 40));
+
         panelCartas.add(panelPagina1, "card2");
 
         panelPagina2.setBackground(new java.awt.Color(255, 255, 255));
@@ -1740,6 +1772,52 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         lbl_RevisionPorSistemas.setForeground(new java.awt.Color(31, 78, 121));
         lbl_RevisionPorSistemas.setText("EXAMEN FÍSICO");
         panelPagina2.add(lbl_RevisionPorSistemas, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, -1, -1));
+
+        btn_Pagina2_1.setBackground(new java.awt.Color(204, 204, 235));
+        btn_Pagina2_1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        btn_Pagina2_1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lbl_btn_Pagina2_1.setFont(new java.awt.Font("Roboto", 0, 11)); // NOI18N
+        lbl_btn_Pagina2_1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbl_btn_Pagina2_1.setText("<- Página 1");
+        lbl_btn_Pagina2_1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbl_btn_Pagina2_1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbl_btn_Pagina2_1MouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lbl_btn_Pagina2_1MouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lbl_btn_Pagina2_1MouseExited(evt);
+            }
+        });
+        btn_Pagina2_1.add(lbl_btn_Pagina2_1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 106, 35));
+
+        panelPagina2.add(btn_Pagina2_1, new org.netbeans.lib.awtextra.AbsoluteConstraints(167, 320, 106, 35));
+
+        btn_Pagina2_3.setBackground(new java.awt.Color(204, 204, 235));
+        btn_Pagina2_3.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        btn_Pagina2_3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lbl_btn_Pagina2_3.setFont(new java.awt.Font("Roboto", 0, 11)); // NOI18N
+        lbl_btn_Pagina2_3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbl_btn_Pagina2_3.setText("Página 3 ->");
+        lbl_btn_Pagina2_3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbl_btn_Pagina2_3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbl_btn_Pagina2_3MouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lbl_btn_Pagina2_3MouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lbl_btn_Pagina2_3MouseExited(evt);
+            }
+        });
+        btn_Pagina2_3.add(lbl_btn_Pagina2_3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 106, 35));
+
+        panelPagina2.add(btn_Pagina2_3, new org.netbeans.lib.awtextra.AbsoluteConstraints(293, 320, 106, 35));
 
         lblTemperatura.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblTemperatura.setText("Temperatura");
@@ -1756,6 +1834,38 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
             }
         });
         panelPagina2.add(txtTemperatura, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 175, 35));
+
+        lblGlicemia.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblGlicemia.setText("Glicemia");
+        panelPagina2.add(lblGlicemia, new org.netbeans.lib.awtextra.AbsoluteConstraints(195, 30, -1, 20));
+
+        txtGlicemia.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtGlicemia.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtGlicemia.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtGlicemiaFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtGlicemiaFocusLost(evt);
+            }
+        });
+        panelPagina2.add(txtGlicemia, new org.netbeans.lib.awtextra.AbsoluteConstraints(195, 50, 175, 35));
+
+        lblPA.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblPA.setText("P/A");
+        panelPagina2.add(lblPA, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 30, -1, -1));
+
+        txtPA.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtPA.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtPA.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtPAFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtPAFocusLost(evt);
+            }
+        });
+        panelPagina2.add(txtPA, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 50, 175, 35));
 
         lblPulso.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblPulso.setText("Pulso");
@@ -1805,21 +1915,21 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         });
         panelPagina2.add(txtFR, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 120, 175, 35));
 
-        lblGlicemia.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblGlicemia.setText("Glicemia");
-        panelPagina2.add(lblGlicemia, new org.netbeans.lib.awtextra.AbsoluteConstraints(195, 30, -1, 20));
+        lblIMC.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblIMC.setText("IMC");
+        panelPagina2.add(lblIMC, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, -1, 20));
 
-        txtGlicemia.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtGlicemia.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtGlicemia.addFocusListener(new java.awt.event.FocusAdapter() {
+        txtIMC.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtIMC.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtIMC.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                txtGlicemiaFocusGained(evt);
+                txtIMCFocusGained(evt);
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
-                txtGlicemiaFocusLost(evt);
+                txtIMCFocusLost(evt);
             }
         });
-        panelPagina2.add(txtGlicemia, new org.netbeans.lib.awtextra.AbsoluteConstraints(195, 50, 175, 35));
+        panelPagina2.add(txtIMC, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, 175, 35));
 
         lblPeso.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblPeso.setText("Peso");
@@ -1841,46 +1951,21 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         lblTalla.setText("Talla");
         panelPagina2.add(lblTalla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 170, -1, 20));
 
-        combo_Talla.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        combo_Talla.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "S", "M", "L", "XL", "XXL" }));
-        combo_Talla.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelPagina2.add(combo_Talla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 190, 175, 35));
-
-        lblIMC.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblIMC.setText("IMC");
-        panelPagina2.add(lblIMC, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, -1, 20));
-
-        txtIMC.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtIMC.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtIMC.addFocusListener(new java.awt.event.FocusAdapter() {
+        txtTalla.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtTalla.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtTalla.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                txtIMCFocusGained(evt);
+                txtTallaFocusGained(evt);
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
-                txtIMCFocusLost(evt);
+                txtTallaFocusLost(evt);
             }
         });
-        panelPagina2.add(txtIMC, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, 175, 35));
+        panelPagina2.add(txtTalla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 190, 175, 35));
 
-        lblPA.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblPA.setText("P/A");
-        panelPagina2.add(lblPA, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 30, -1, -1));
-
-        txtPA.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtPA.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtPA.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                txtPAFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtPAFocusLost(evt);
-            }
-        });
-        panelPagina2.add(txtPA, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 50, 175, 35));
-
-        jLabel2.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        jLabel2.setText("Ruffier");
-        panelPagina2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 240, -1, 20));
+        lblRuffier.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblRuffier.setText("Ruffier");
+        panelPagina2.add(lblRuffier, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 240, -1, 20));
 
         txtRuffier.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtRuffier.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -1890,68 +1975,38 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         lblOjoDerecho.setText("Agudeza ojo derecho");
         panelPagina2.add(lblOjoDerecho, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 240, -1, 20));
 
-        txtOjoDerecho.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtOjoDerecho.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelPagina2.add(txtOjoDerecho, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 260, 143, 35));
+        txtOjoDerechoNumerador.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtOjoDerechoNumerador.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        panelPagina2.add(txtOjoDerechoNumerador, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 260, 40, 35));
+
+        lblFraccion1.setFont(new java.awt.Font("Roboto", 0, 36)); // NOI18N
+        lblFraccion1.setText("/");
+        panelPagina2.add(lblFraccion1, new org.netbeans.lib.awtextra.AbsoluteConstraints(203, 260, -1, 35));
+
+        txtOjoDerechoDenominador.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtOjoDerechoDenominador.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        panelPagina2.add(txtOjoDerechoDenominador, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 260, 40, 35));
 
         lblOjoIzquierdo.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblOjoIzquierdo.setText("Agudeza ojo izquierdo");
         panelPagina2.add(lblOjoIzquierdo, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 240, -1, 20));
 
-        txtOjoIzquierdo.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtOjoIzquierdo.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelPagina2.add(txtOjoIzquierdo, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 260, 143, 35));
+        txtOjoIzquierdoNumerador.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtOjoIzquierdoNumerador.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        panelPagina2.add(txtOjoIzquierdoNumerador, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 260, 40, 35));
+
+        lblFraccion2.setFont(new java.awt.Font("Roboto", 0, 36)); // NOI18N
+        lblFraccion2.setText("/");
+        panelPagina2.add(lblFraccion2, new org.netbeans.lib.awtextra.AbsoluteConstraints(353, 260, -1, 35));
+
+        txtOjoIzquierdoDenominador.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtOjoIzquierdoDenominador.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        panelPagina2.add(txtOjoIzquierdoDenominador, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 260, 40, 35));
 
         checkLentes.setBackground(new java.awt.Color(255, 255, 255));
         checkLentes.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         checkLentes.setText("Usa Lentes");
         panelPagina2.add(checkLentes, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 260, -1, 35));
-
-        btn_Pagina2_1.setBackground(new java.awt.Color(204, 204, 235));
-        btn_Pagina2_1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        btn_Pagina2_1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        lbl_btn_Pagina2_1.setFont(new java.awt.Font("Roboto", 0, 11)); // NOI18N
-        lbl_btn_Pagina2_1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbl_btn_Pagina2_1.setText("<- Página 1");
-        lbl_btn_Pagina2_1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        lbl_btn_Pagina2_1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lbl_btn_Pagina2_1MouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                lbl_btn_Pagina2_1MouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                lbl_btn_Pagina2_1MouseExited(evt);
-            }
-        });
-        btn_Pagina2_1.add(lbl_btn_Pagina2_1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 106, 35));
-
-        panelPagina2.add(btn_Pagina2_1, new org.netbeans.lib.awtextra.AbsoluteConstraints(167, 320, 106, 35));
-
-        btn_Pagina2_3.setBackground(new java.awt.Color(204, 204, 235));
-        btn_Pagina2_3.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        btn_Pagina2_3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        lbl_btn_Pagina2_3.setFont(new java.awt.Font("Roboto", 0, 11)); // NOI18N
-        lbl_btn_Pagina2_3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbl_btn_Pagina2_3.setText("Página 3 ->");
-        lbl_btn_Pagina2_3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        lbl_btn_Pagina2_3.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lbl_btn_Pagina2_3MouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                lbl_btn_Pagina2_3MouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                lbl_btn_Pagina2_3MouseExited(evt);
-            }
-        });
-        btn_Pagina2_3.add(lbl_btn_Pagina2_3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 106, 35));
-
-        panelPagina2.add(btn_Pagina2_3, new org.netbeans.lib.awtextra.AbsoluteConstraints(293, 320, 106, 35));
 
         panelCartas.add(panelPagina2, "card3");
 
@@ -1974,7 +2029,7 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
 
         lblPielFaneras.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblPielFaneras.setText("Piel y Faneras");
-        panelPagina3.add(lblPielFaneras, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, -1, 20));
+        panelPagina3.add(lblPielFaneras, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, -1, -1));
 
         jScrollPane14.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -2038,40 +2093,41 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         panelPagina3.add(jScrollPane18, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 90, 260, 35));
 
         lblRespiratorio.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblRespiratorio.setText("Sistema Respiratorio");
+        lblRespiratorio.setText("Cardiopulmonar");
         panelPagina3.add(lblRespiratorio, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 130, -1, 20));
 
         jScrollPane19.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        txtAreaRespiratorio.setColumns(20);
-        txtAreaRespiratorio.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
-        txtAreaRespiratorio.setRows(5);
-        jScrollPane19.setViewportView(txtAreaRespiratorio);
+        txtAreaCardiopulmonar.setColumns(20);
+        txtAreaCardiopulmonar.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        txtAreaCardiopulmonar.setRows(5);
+        jScrollPane19.setViewportView(txtAreaCardiopulmonar);
 
         panelPagina3.add(jScrollPane19, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 150, 260, 35));
 
         lblCardiovascular.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblCardiovascular.setText("Sistema Cardiovascular");
+        lblCardiovascular.setText("Torax");
         panelPagina3.add(lblCardiovascular, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 190, -1, 20));
 
         jScrollPane20.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        txtAreaCardiovascular.setColumns(20);
-        txtAreaCardiovascular.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
-        txtAreaCardiovascular.setRows(5);
-        jScrollPane20.setViewportView(txtAreaCardiovascular);
+        txtAreaTorax.setColumns(20);
+        txtAreaTorax.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        txtAreaTorax.setRows(5);
+        jScrollPane20.setViewportView(txtAreaTorax);
 
         panelPagina3.add(jScrollPane20, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 210, 260, 35));
 
         lblGastrointestinal.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblGastrointestinal.setText("Sistema Gastrointestinal");
+        lblGastrointestinal.setText("Abdomen");
         panelPagina3.add(lblGastrointestinal, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 250, -1, 20));
 
         jScrollPane21.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        txtAreaGastrointestinal.setColumns(20);
-        txtAreaGastrointestinal.setRows(5);
-        jScrollPane21.setViewportView(txtAreaGastrointestinal);
+        txtAreaAbdomen.setColumns(20);
+        txtAreaAbdomen.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        txtAreaAbdomen.setRows(5);
+        jScrollPane21.setViewportView(txtAreaAbdomen);
 
         panelPagina3.add(jScrollPane21, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 270, 260, 35));
 
@@ -2082,6 +2138,7 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         jScrollPane23.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         txtAreaExtremidades.setColumns(20);
+        txtAreaExtremidades.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         txtAreaExtremidades.setRows(5);
         jScrollPane23.setViewportView(txtAreaExtremidades);
 
@@ -2186,7 +2243,7 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
 
         panelPagina4.add(jScrollPane26, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 90, 260, 35));
 
-        lblAptitud.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblAptitud.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblAptitud.setForeground(new java.awt.Color(31, 78, 121));
         lblAptitud.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblAptitud.setText("APTITUD");
@@ -2196,29 +2253,43 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         grbtn_Aptitud.add(rbtn_Aptitud1);
         rbtn_Aptitud1.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         rbtn_Aptitud1.setText("Apto");
-        panelPagina4.add(rbtn_Aptitud1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, -1, 30));
+        panelPagina4.add(rbtn_Aptitud1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 165, -1, 30));
 
         rbtn_Aptitud2.setBackground(new java.awt.Color(255, 255, 255));
         grbtn_Aptitud.add(rbtn_Aptitud2);
         rbtn_Aptitud2.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         rbtn_Aptitud2.setText("Apto con restricciones");
-        panelPagina4.add(rbtn_Aptitud2, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 170, -1, 30));
+        rbtn_Aptitud2.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                rbtn_Aptitud2StateChanged(evt);
+            }
+        });
+        panelPagina4.add(rbtn_Aptitud2, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 165, -1, 30));
 
         rbtn_Aptitud3.setBackground(new java.awt.Color(255, 255, 255));
         grbtn_Aptitud.add(rbtn_Aptitud3);
         rbtn_Aptitud3.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         rbtn_Aptitud3.setText("Reevaluación");
-        panelPagina4.add(rbtn_Aptitud3, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 170, -1, 30));
+        panelPagina4.add(rbtn_Aptitud3, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 165, -1, 30));
 
         rbtn_Aptitud4.setBackground(new java.awt.Color(255, 255, 255));
         grbtn_Aptitud.add(rbtn_Aptitud4);
         rbtn_Aptitud4.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        rbtn_Aptitud4.setText("Valorar cambio de puesto");
-        panelPagina4.add(rbtn_Aptitud4, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 170, -1, 30));
+        rbtn_Aptitud4.setText("No apto para el puesto");
+        panelPagina4.add(rbtn_Aptitud4, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 165, -1, 30));
 
-        lblResponsable.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblResponsable.setText("Responsable:");
-        panelPagina4.add(lblResponsable, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 320, -1, 20));
+        lblRestricciones.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblRestricciones.setText("Restricciones");
+        panelPagina4.add(lblRestricciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 210, -1, 20));
+
+        jScrollPane11.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        txtAreaRestricciones.setColumns(20);
+        txtAreaRestricciones.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        txtAreaRestricciones.setRows(5);
+        jScrollPane11.setViewportView(txtAreaRestricciones);
+
+        panelPagina4.add(jScrollPane11, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 230, 546, 35));
 
         btn_Pagina4_3.setBackground(new java.awt.Color(204, 204, 235));
         btn_Pagina4_3.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
@@ -2242,6 +2313,10 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         btn_Pagina4_3.add(lbl_btn_Pagina4_3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 106, 35));
 
         panelPagina4.add(btn_Pagina4_3, new org.netbeans.lib.awtextra.AbsoluteConstraints(167, 320, 106, 35));
+
+        lblResponsable.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblResponsable.setText("Responsable:");
+        panelPagina4.add(lblResponsable, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 320, -1, 20));
 
         panelCartas.add(panelPagina4, "card5");
 
@@ -2376,7 +2451,7 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
             if (verificarRevisionSistemas()){
                 if (verificarEmpleado()){
                     if (verificarAntecedentes()){
-                        if (verificarevaluacionPeriodica()){
+                        if (verificarEvaluacionPeriodica()){
                             try {
                             getAntecedentes();
                             getRevisionSistemas();
@@ -2649,13 +2724,45 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
     }//GEN-LAST:event_txtTemperaturaFocusGained
 
     private void txtTemperaturaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTemperaturaFocusLost
-        if (!(util.verificarNumero(txtTemperatura.getText())) && (txtTemperatura.getText().length() > 0))
+        if (!(util.verificarFlotante(txtTemperatura.getText())) && (txtTemperatura.getText().length() > 0))
         txtTemperatura.requestFocus();
         if (txtTemperatura.getText().isEmpty()){
             txtTemperatura.setText("°C");
             txtTemperatura.setForeground(Color.gray);
         }
     }//GEN-LAST:event_txtTemperaturaFocusLost
+
+    private void txtGlicemiaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtGlicemiaFocusGained
+        if (String.valueOf(txtGlicemia.getText()).equals("mg/dl")){
+            txtGlicemia.setText("");
+            txtGlicemia.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtGlicemiaFocusGained
+
+    private void txtGlicemiaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtGlicemiaFocusLost
+        if (!(util.verificarFlotante(txtGlicemia.getText())) && (txtGlicemia.getText().length() > 0))
+        txtGlicemia.requestFocus();
+        if (txtGlicemia.getText().isEmpty()){
+            txtGlicemia.setText("mg/dl");
+            txtGlicemia.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtGlicemiaFocusLost
+
+    private void txtPAFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPAFocusGained
+        if (String.valueOf(txtPA.getText()).equals("mmHg")){
+            txtPA.setText("");
+            txtPA.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtPAFocusGained
+
+    private void txtPAFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPAFocusLost
+        if (!(util.verificarFlotante(txtPA.getText())) && (txtPA.getText().length() > 0))
+        txtPA.requestFocus();
+        if (txtPA.getText().isEmpty()){
+            txtPA.setText("mmHg");
+            txtPA.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtPAFocusLost
 
     private void txtPulsoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPulsoFocusGained
         if (String.valueOf(txtPulso.getText()).equals("LPM")){
@@ -2665,7 +2772,7 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
     }//GEN-LAST:event_txtPulsoFocusGained
 
     private void txtPulsoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPulsoFocusLost
-        if (!(util.verificarNumero(txtPulso.getText())) && (txtPulso.getText().length() > 0))
+        if (!(util.verificarFlotante(txtPulso.getText())) && (txtPulso.getText().length() > 0))
         txtPulso.requestFocus();
         if (txtPulso.getText().isEmpty()){
             txtPulso.setText("LPM");
@@ -2681,7 +2788,7 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
     }//GEN-LAST:event_txtSPO2FocusGained
 
     private void txtSPO2FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtSPO2FocusLost
-        if (!(util.verificarNumero(txtSPO2.getText())) && (txtSPO2.getText().length() > 0))
+        if (!(util.verificarFlotante(txtSPO2.getText())) && (txtSPO2.getText().length() > 0))
         txtSPO2.requestFocus();
         if (txtSPO2.getText().isEmpty()){
             txtSPO2.setText("%");
@@ -2697,45 +2804,13 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
     }//GEN-LAST:event_txtFRFocusGained
 
     private void txtFRFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFRFocusLost
-        if (!(util.verificarNumero(txtFR.getText())) && (txtFR.getText().length() > 0))
+        if (!(util.verificarFlotante(txtFR.getText())) && (txtFR.getText().length() > 0))
         txtFR.requestFocus();
         if (txtFR.getText().isEmpty()){
             txtFR.setText("RPM");
             txtFR.setForeground(Color.gray);
         }
     }//GEN-LAST:event_txtFRFocusLost
-
-    private void txtGlicemiaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtGlicemiaFocusGained
-        if (String.valueOf(txtGlicemia.getText()).equals("mg/dl")){
-            txtGlicemia.setText("");
-            txtGlicemia.setForeground(Color.black);
-        }
-    }//GEN-LAST:event_txtGlicemiaFocusGained
-
-    private void txtGlicemiaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtGlicemiaFocusLost
-        if (!(util.verificarNumero(txtGlicemia.getText())) && (txtGlicemia.getText().length() > 0))
-        txtGlicemia.requestFocus();
-        if (txtGlicemia.getText().isEmpty()){
-            txtGlicemia.setText("mg/dl");
-            txtGlicemia.setForeground(Color.gray);
-        }
-    }//GEN-LAST:event_txtGlicemiaFocusLost
-
-    private void txtPesoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPesoFocusGained
-        if (String.valueOf(txtPeso.getText()).equals("lb")){
-            txtPeso.setText("");
-            txtPeso.setForeground(Color.black);
-        }
-    }//GEN-LAST:event_txtPesoFocusGained
-
-    private void txtPesoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPesoFocusLost
-        if (!(util.verificarNumero(txtPeso.getText())) && (txtPeso.getText().length() > 0))
-        txtPeso.requestFocus();
-        if (txtPeso.getText().isEmpty()){
-            txtPeso.setText("lb");
-            txtPeso.setForeground(Color.gray);
-        }
-    }//GEN-LAST:event_txtPesoFocusLost
 
     private void txtIMCFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtIMCFocusGained
         if (String.valueOf(txtIMC.getText()).equals("Kg/m^2")){
@@ -2745,7 +2820,7 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
     }//GEN-LAST:event_txtIMCFocusGained
 
     private void txtIMCFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtIMCFocusLost
-        if (!(util.verificarNumero(txtIMC.getText())) && (txtIMC.getText().length() > 0))
+        if (!(util.verificarFlotante(txtIMC.getText())) && (txtIMC.getText().length() > 0))
         txtIMC.requestFocus();
         if (txtIMC.getText().isEmpty()){
             txtIMC.setText("Kg/m^2");
@@ -2753,21 +2828,158 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         }
     }//GEN-LAST:event_txtIMCFocusLost
 
-    private void txtPAFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPAFocusGained
-        if (String.valueOf(txtPA.getText()).equals("mmHg")){
-            txtPA.setText("");
-            txtPA.setForeground(Color.black);
+    private void txtPesoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPesoFocusGained
+        if (String.valueOf(txtPeso.getText()).equals("lb")){
+            txtPeso.setText("");
+            txtPeso.setForeground(Color.black);
         }
-    }//GEN-LAST:event_txtPAFocusGained
+    }//GEN-LAST:event_txtPesoFocusGained
 
-    private void txtPAFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPAFocusLost
-        if (!(util.verificarNumero(txtPA.getText())) && (txtPA.getText().length() > 0))
-        txtPA.requestFocus();
-        if (txtPA.getText().isEmpty()){
-            txtPA.setText("mmHg");
-            txtPA.setForeground(Color.gray);
+    private void txtPesoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPesoFocusLost
+        if (!(util.verificarFlotante(txtPeso.getText())) && (txtPeso.getText().length() > 0))
+        txtPeso.requestFocus();
+        if (txtPeso.getText().isEmpty()){
+            txtPeso.setText("lb");
+            txtPeso.setForeground(Color.gray);
         }
-    }//GEN-LAST:event_txtPAFocusLost
+    }//GEN-LAST:event_txtPesoFocusLost
+
+    private void txtTallaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTallaFocusGained
+        if (String.valueOf(txtTalla.getText()).equals("m")){
+            txtTalla.setText("");
+            txtTalla.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtTallaFocusGained
+
+    private void txtTallaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTallaFocusLost
+        if (!(util.verificarFlotante(txtTalla.getText())) && (txtTalla.getText().length() > 0))
+        txtTalla.requestFocus();
+        if (txtTalla.getText().isEmpty()){
+            txtTalla.setText("m");
+            txtTalla.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtTallaFocusLost
+
+    private void rbtn_Aptitud2StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_rbtn_Aptitud2StateChanged
+        if(rbtn_Aptitud2.isSelected())
+        txtAreaRestricciones.setEnabled(true);
+        else{
+            txtAreaRestricciones.setEnabled(false);
+            txtAreaRestricciones.setText("");
+        }
+    }//GEN-LAST:event_rbtn_Aptitud2StateChanged
+
+    private void txtMenarquiaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtMenarquiaFocusGained
+        if (String.valueOf(txtMenarquia.getText()).equals("años")){
+            txtMenarquia.setText("");
+            txtMenarquia.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtMenarquiaFocusGained
+
+    private void txtMenarquiaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtMenarquiaFocusLost
+        if (!(util.verificarEntero(txtMenarquia.getText())) && (txtMenarquia.getText().length() > 0))
+        txtMenarquia.requestFocus();
+        if (txtMenarquia.getText().isEmpty()){
+            txtMenarquia.setText("años");
+            txtMenarquia.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtMenarquiaFocusLost
+
+    private void txtGFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtGFocusGained
+        if (String.valueOf(txtG.getText()).equals("Gestaciones")){
+            txtG.setText("");
+            txtG.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtGFocusGained
+
+    private void txtGFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtGFocusLost
+        if (!(util.verificarEntero(txtG.getText())) && (txtG.getText().length() > 0))
+        txtG.requestFocus();
+        if (txtG.getText().isEmpty()){
+            txtG.setText("Gestaciones");
+            txtG.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtGFocusLost
+
+    private void txtPFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPFocusGained
+        if (String.valueOf(txtP.getText()).equals("Partos")){
+            txtP.setText("");
+            txtP.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtPFocusGained
+
+    private void txtPFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPFocusLost
+        if (!(util.verificarEntero(txtP.getText())) && (txtP.getText().length() > 0))
+        txtP.requestFocus();
+        if (txtP.getText().isEmpty()){
+            txtP.setText("Partos");
+            txtP.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtPFocusLost
+
+    private void txtCSTPFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCSTPFocusGained
+        if (String.valueOf(txtCSTP.getText()).equals("Cesáreas")){
+            txtCSTP.setText("");
+            txtCSTP.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtCSTPFocusGained
+
+    private void txtCSTPFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCSTPFocusLost
+        if (!(util.verificarEntero(txtCSTP.getText())) && (txtCSTP.getText().length() > 0))
+        txtCSTP.requestFocus();
+        if (txtCSTP.getText().isEmpty()){
+            txtCSTP.setText("Cesáreas");
+            txtCSTP.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtCSTPFocusLost
+
+    private void txtHVFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtHVFocusGained
+        if (String.valueOf(txtHV.getText()).equals("Hijos vivos")){
+            txtHV.setText("");
+            txtHV.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtHVFocusGained
+
+    private void txtHVFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtHVFocusLost
+        if (!(util.verificarEntero(txtHV.getText())) && (txtHV.getText().length() > 0))
+        txtHV.requestFocus();
+        if (txtHV.getText().isEmpty()){
+            txtHV.setText("Hijos vivos");
+            txtHV.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtHVFocusLost
+
+    private void txtHMFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtHMFocusGained
+        if (String.valueOf(txtHM.getText()).equals("Hijos muertos")){
+            txtHM.setText("");
+            txtHM.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtHMFocusGained
+
+    private void txtHMFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtHMFocusLost
+        if (!(util.verificarEntero(txtHM.getText())) && (txtHM.getText().length() > 0))
+        txtHM.requestFocus();
+        if (txtHM.getText().isEmpty()){
+            txtHM.setText("Hijos muertos");
+            txtHM.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtHMFocusLost
+
+    private void txtABFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtABFocusGained
+        if (String.valueOf(txtAB.getText()).equals("Abortos")){
+            txtAB.setText("");
+            txtAB.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtABFocusGained
+
+    private void txtABFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtABFocusLost
+        if (!(util.verificarEntero(txtAB.getText())) && (txtAB.getText().length() > 0))
+        txtAB.requestFocus();
+        if (txtAB.getText().isEmpty()){
+            txtAB.setText("Abortos");
+            txtAB.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtABFocusLost
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JPanel btn_Actualizar;
@@ -2784,7 +2996,6 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
     private javax.swing.JPanel btn_Pagina4_3;
     private javax.swing.JPanel btn_SeleccionEmpleado;
     private javax.swing.JCheckBox checkLentes;
-    private javax.swing.JComboBox<String> combo_Talla;
     private javax.swing.JPanel cont_EvaluacionPeriodica;
     private com.raven.datechooser.DateChooser fechaCSTP;
     private com.raven.datechooser.DateChooser fechaFUR;
@@ -2792,11 +3003,11 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
     private javax.swing.ButtonGroup grbtn_Aptitud;
     public static javax.swing.ButtonGroup grbtn_Sexo;
     public javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     public javax.swing.JLabel jLabel3;
     public javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane10;
     private javax.swing.JScrollPane jScrollPane11;
+    private javax.swing.JScrollPane jScrollPane12;
     private javax.swing.JScrollPane jScrollPane13;
     private javax.swing.JScrollPane jScrollPane14;
     private javax.swing.JScrollPane jScrollPane15;
@@ -2838,6 +3049,8 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
     private javax.swing.JLabel lblExtremidades;
     public javax.swing.JLabel lblFR;
     public javax.swing.JLabel lblFechaMod;
+    private javax.swing.JLabel lblFraccion1;
+    private javax.swing.JLabel lblFraccion2;
     public javax.swing.JLabel lblFur;
     public javax.swing.JLabel lblG;
     private javax.swing.JLabel lblGastrointestinal;
@@ -2866,6 +3079,8 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
     public javax.swing.JLabel lblPulso;
     private javax.swing.JLabel lblRespiratorio;
     private javax.swing.JLabel lblResponsable;
+    private javax.swing.JLabel lblRestricciones;
+    private javax.swing.JLabel lblRuffier;
     public javax.swing.JLabel lblSPO2;
     public javax.swing.JLabel lblSeguridad;
     public javax.swing.JLabel lblSexo;
@@ -2932,14 +3147,14 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
     private com.raven.swing.TimePicker timeHora;
     public javax.swing.JTextField txtAB;
     public javax.swing.JTextField txtArea;
+    private javax.swing.JTextArea txtAreaAbdomen;
     private javax.swing.JTextArea txtAreaAlergicos;
     private javax.swing.JTextArea txtAreaAlteraciones;
     private javax.swing.JTextArea txtAreaCabeza;
-    private javax.swing.JTextArea txtAreaCardiovascular;
+    private javax.swing.JTextArea txtAreaCardiopulmonar;
     private javax.swing.JTextArea txtAreaCuello;
     private javax.swing.JTextArea txtAreaExtremidades;
     private javax.swing.JTextArea txtAreaFamiliares;
-    private javax.swing.JTextArea txtAreaGastrointestinal;
     private javax.swing.JTextArea txtAreaGenitourinario;
     private javax.swing.JTextArea txtAreaImpresionClinica;
     private javax.swing.JTextArea txtAreaLaboratorios;
@@ -2950,7 +3165,8 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
     private javax.swing.JTextArea txtAreaOrofaringe;
     private javax.swing.JTextArea txtAreaPielFaneras;
     private javax.swing.JTextArea txtAreaQuirurgicos;
-    private javax.swing.JTextArea txtAreaRespiratorio;
+    private javax.swing.JTextArea txtAreaRestricciones;
+    private javax.swing.JTextArea txtAreaTorax;
     private javax.swing.JTextArea txtAreaTratamientos;
     private javax.swing.JTextArea txtAreaTraumaticos;
     private javax.swing.JTextArea txtAreaVicios;
@@ -2970,8 +3186,10 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
     public javax.swing.JTextField txtMPF;
     public javax.swing.JTextField txtMenarquia;
     public javax.swing.JTextField txtNombre;
-    private javax.swing.JTextField txtOjoDerecho;
-    private javax.swing.JTextField txtOjoIzquierdo;
+    private javax.swing.JTextField txtOjoDerechoDenominador;
+    private javax.swing.JTextField txtOjoDerechoNumerador;
+    private javax.swing.JTextField txtOjoIzquierdoDenominador;
+    private javax.swing.JTextField txtOjoIzquierdoNumerador;
     public javax.swing.JTextField txtP;
     private javax.swing.JTextField txtPA;
     public javax.swing.JTextField txtPeso;
@@ -2981,6 +3199,7 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
     private javax.swing.JTextField txtRuffier;
     public javax.swing.JTextField txtSPO2;
     private javax.swing.JTextField txtSeleccionEmpleado;
+    private javax.swing.JTextField txtTalla;
     public javax.swing.JTextField txtTemperatura;
     // End of variables declaration//GEN-END:variables
 

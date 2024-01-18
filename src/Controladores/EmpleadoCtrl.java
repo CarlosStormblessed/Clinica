@@ -20,7 +20,7 @@ public class EmpleadoCtrl {
         conn = conex.connect();
         try {
 
-            String sql = "INSERT INTO EMPLEADO VALUES ((SELECT IFNULL(MAX(EMP_ID), 0)+1 FROM EMPLEADO e), ?,?,?,?,?)";
+            String sql = "INSERT INTO EMPLEADO VALUES ((SELECT IFNULL(MAX(EMP_ID), 0)+1 FROM EMPLEADO e), ?,?,?,?,?,?,?)";
             conn.setAutoCommit(false);
             smt = conn.prepareStatement(sql);
             smt.setString(1, modelo.getCodigo());
@@ -28,6 +28,8 @@ public class EmpleadoCtrl {
             smt.setString(3, modelo.getSexo());
             smt.setString(4, modelo.getDireccion());
             smt.setString(5, modelo.getTelefono());
+            smt.setString(6, modelo.getAptitud());
+            smt.setString(7, modelo.getEstado());
 
             smt.executeUpdate();
 
@@ -96,16 +98,18 @@ public class EmpleadoCtrl {
         conn = conex.connect();
          int result = 0;
         try {
-            String sql = "UPDATE EMPLEADO SET EMP_NOMBRE = ?, EMP_SEXO = ?, EMP_DIRECCION = ?, TELEFONO = ? WHERE EMP_ID = ?";
+            String sql = "UPDATE EMPLEADO SET EMP_CODIGO = ?, EMP_NOMBRE = ?, EMP_SEXO = ?, EMP_DIRECCION = ?, EMP_TELEFONO = ?, EMP_APTITUD = ?, EMP_ESTADO = ? WHERE EMP_ID = ?";
             conn.setAutoCommit(false);
 
             smt = conn.prepareStatement(sql);
-
-            smt.setString(1, modelo.getNombre());
-            smt.setString(2, modelo.getSexo());
-            smt.setString(3, modelo.getDireccion());
-            smt.setString(4, modelo.getTelefono());
-            smt.setString(5, modelo.getId());
+            smt.setString(1, modelo.getCodigo());
+            smt.setString(2, modelo.getNombre());
+            smt.setString(3, modelo.getSexo());
+            smt.setString(4, modelo.getDireccion());
+            smt.setString(5, modelo.getTelefono());
+            smt.setString(6, modelo.getAptitud());
+            smt.setString(7, modelo.getEstado());
+            smt.setString(8, modelo.getId());
             smt.executeUpdate();
             conn.commit();
 
@@ -133,7 +137,7 @@ public class EmpleadoCtrl {
         conn = conex.connect();
          int result = 0;
         try {
-            String sql = "UPDATE EMPLEADO SET EMP_ESTADO = 0 WHERE EMP_ID = ?";
+            String sql = "UPDATE EMPLEADO SET EMP_ESTADO = 0, EMP_APTITUD = '' WHERE EMP_ID = ?";
             conn.setAutoCommit(false);
 
             smt = conn.prepareStatement(sql);
@@ -158,7 +162,7 @@ public class EmpleadoCtrl {
         }
     }
     
-    public List<EmpleadoMod> seleccionarTodos() throws SQLException, ConnectException {
+    public List<EmpleadoMod> seleccionarTodosActivos() throws SQLException, ConnectException {
         
         PreparedStatement smt = null;
         Connection conn;
@@ -171,7 +175,7 @@ public class EmpleadoCtrl {
 
         String sql = "";
 
-        sql = "select  * FROM EMPLEADO WHERE EMP_ESTADO = 1 ORDER BY EMP_ID ASC";
+        sql = "select  * FROM EMPLEADO WHERE EMP_ESTADO = 1 AND EMP_APTITUD NOT LIKE '' ORDER BY EMP_ID ASC";
         //+ filtro;
 
         try {
@@ -189,7 +193,8 @@ public class EmpleadoCtrl {
                 modeloBuscar.setSexo(result.getString(4));
                 modeloBuscar.setDireccion(result.getString(5));
                 modeloBuscar.setTelefono(result.getString(6));
-                modeloBuscar.setEstado(result.getString(7));
+                modeloBuscar.setAptitud(result.getString(7));
+                modeloBuscar.setEstado(result.getString(8));
                 lista.add(modeloBuscar);
             }
         } catch (Exception e) {
@@ -208,6 +213,58 @@ public class EmpleadoCtrl {
         }
         return lista;
     }
+    
+    public List<EmpleadoMod> seleccionarTodos() throws SQLException, ConnectException {
+        
+        PreparedStatement smt = null;
+        Connection conn;
+        Conexion conex = new Conexion();
+        conn = conex.connect();
+        ResultSet result = null;
+        List<EmpleadoMod> lista = new ArrayList<EmpleadoMod>();
+
+        EmpleadoMod modeloBuscar = null;
+
+        String sql = "";
+
+        sql = "select  * FROM EMPLEADO ORDER BY EMP_ID ASC";
+        //+ filtro;
+
+        try {
+            
+            smt = conn.prepareStatement(sql);
+
+            result = smt.executeQuery();
+
+            while (result.next()) {
+                modeloBuscar = new EmpleadoMod();
+
+                modeloBuscar.setId(result.getString(1));
+                modeloBuscar.setCodigo(result.getString(2));
+                modeloBuscar.setNombre(result.getString(3));
+                modeloBuscar.setSexo(result.getString(4));
+                modeloBuscar.setDireccion(result.getString(5));
+                modeloBuscar.setTelefono(result.getString(6));
+                modeloBuscar.setAptitud(result.getString(7));
+                modeloBuscar.setEstado(result.getString(8));
+                lista.add(modeloBuscar);
+            }
+        } catch (Exception e) {
+        } finally {
+            if (smt != null) {
+                smt.close();
+            }
+            if (result != null) {
+                smt.close();
+            }
+            if (conn != null) {
+                conex.disconnect(conn);
+                conn.close();
+                conn = null;
+            }
+        }
+        return lista;
+    } 
     
     public EmpleadoMod buscarFila(String id) throws SQLException, ConnectException {
         
@@ -238,7 +295,57 @@ public class EmpleadoCtrl {
                 modeloBuscar.setSexo(result.getString(4));
                 modeloBuscar.setDireccion(result.getString(5));
                 modeloBuscar.setTelefono(result.getString(6));
-                modeloBuscar.setEstado(result.getString(7));
+                modeloBuscar.setAptitud(result.getString(7));
+                modeloBuscar.setEstado(result.getString(8));
+            }
+        } catch (Exception e) {
+        } finally {
+            if (smt != null) {
+                smt.close();
+            }
+            if (result != null) {
+                smt.close();
+            }
+            if (conn != null) {
+                conex.disconnect(conn);
+                conn.close();
+                conn = null;
+            }
+        }
+        return modeloBuscar;
+    }
+    
+    public EmpleadoMod buscarFilaPorCodigo(String codigo) throws SQLException, ConnectException {
+        
+        PreparedStatement smt = null;
+        Connection conn;
+        Conexion conex = new Conexion();
+        conn = conex.connect();
+        ResultSet result = null;
+
+        EmpleadoMod modeloBuscar = null;
+
+        String sql = "";
+
+        sql = "select * FROM EMPLEADO where EMP_CODIGO = ?";
+
+        try {
+            smt = conn.prepareStatement(sql);
+            smt.setString(1, codigo);
+
+            result = smt.executeQuery();
+
+            while (result.next()) {
+                modeloBuscar = new EmpleadoMod();
+
+                modeloBuscar.setId(result.getString(1));
+                modeloBuscar.setCodigo(result.getString(2));
+                modeloBuscar.setNombre(result.getString(3));
+                modeloBuscar.setSexo(result.getString(4));
+                modeloBuscar.setDireccion(result.getString(5));
+                modeloBuscar.setTelefono(result.getString(6));
+                modeloBuscar.setAptitud(result.getString(7));
+                modeloBuscar.setEstado(result.getString(8));
             }
         } catch (Exception e) {
         } finally {

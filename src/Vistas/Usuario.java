@@ -46,7 +46,7 @@ public class Usuario extends javax.swing.JFrame implements ActionListener, Table
     //Controladores
     private UsuarioCtrl usrCtrl = new UsuarioCtrl();
     
-    private PaginadorTabla <ConsultaGeneral> paginadorUsuario;
+    private PaginadorTabla <Usuario> paginadorUsuario;
     public Usuario() {
         initComponents();
         contenidoActual = "Inicio";
@@ -931,7 +931,10 @@ public class Usuario extends javax.swing.JFrame implements ActionListener, Table
     }//GEN-LAST:event_lbl_btn_ConfirmarMouseExited
 
     private void txtExitMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtExitMouseClicked
-        System.exit(0);
+        Login login = new Login();
+        login.setLocationRelativeTo(null);
+        login.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_txtExitMouseClicked
 
     private void txtExitMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtExitMouseEntered

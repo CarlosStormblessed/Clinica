@@ -8,6 +8,7 @@ public class EvaluacionPeriodicaMod {
     private String area;
     private String puesto;
     private String aptitud;
+    private String restricciones;
     private String empleadoId;
     private String clinicaId;
     private String antecedentesId;
@@ -71,6 +72,14 @@ public class EvaluacionPeriodicaMod {
         this.aptitud = aptitud;
     }
 
+    public String getRestricciones() {
+        return restricciones;
+    }
+
+    public void setRestricciones(String restricciones) {
+        this.restricciones = restricciones;
+    }
+    
     public String getEmpleadoId() {
         return empleadoId;
     }

@@ -12,7 +12,7 @@ public class FichaClinicaMod {
     private String tratamiento;
     private String referencia;
     private String traslado;
-    private String patologia;
+    private String suspension;
     private String clinicaId;
     private String empleadoId;
     private String revisionSistemasId;
@@ -110,12 +110,12 @@ public class FichaClinicaMod {
         this.traslado = traslado;
     }
 
-    public String getPatologia() {
-        return patologia;
+    public String getSuspension() {
+        return suspension;
     }
 
-    public void setPatologia(String patologia) {
-        this.patologia = patologia;
+    public void setSuspension(String patologia) {
+        this.suspension = patologia;
     }
 
     public String getClinicaId() {

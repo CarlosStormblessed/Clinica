@@ -8,9 +8,9 @@ public class RevisionSistemasMod {
     private String ojoOidoNarizBoca;
     private String Orofarinje;
     private String cuello;
-    private String respiratorio;
-    private String cardiovascular;
-    private String gastrointestinal;
+    private String cardiopulmonar;
+    private String torax;
+    private String abdomen;
     private String genitourinario;
     private String extremidades;
     private String neurologico;
@@ -87,28 +87,28 @@ public class RevisionSistemasMod {
         this.cuello = cuello;
     }
 
-    public String getRespiratorio() {
-        return respiratorio;
+    public String getCardiopulmonar() {
+        return cardiopulmonar;
     }
 
-    public void setRespiratorio(String respiratorio) {
-        this.respiratorio = respiratorio;
+    public void setCardiopulmonar(String cardiopulmonar) {
+        this.cardiopulmonar = cardiopulmonar;
     }
 
-    public String getCardiovascular() {
-        return cardiovascular;
+    public String getTorax() {
+        return torax;
     }
 
-    public void setCardiovascular(String cardiovascular) {
-        this.cardiovascular = cardiovascular;
+    public void setTorax(String torax) {
+        this.torax = torax;
     }
 
-    public String getGastrointestinal() {
-        return gastrointestinal;
+    public String getAbdomen() {
+        return abdomen;
     }
 
-    public void setGastrointestinal(String gastrointestinal) {
-        this.gastrointestinal = gastrointestinal;
+    public void setAbdomen(String abdomen) {
+        this.abdomen = abdomen;
     }
 
     public String getGenitourinario() {

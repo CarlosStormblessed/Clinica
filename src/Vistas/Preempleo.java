@@ -9,11 +9,13 @@ import javax.swing.table.DefaultTableModel;
 import Controladores.PreempleoCtrl;
 import Controladores.AntecedentesCtrl;
 import Controladores.RevisionSistemasCtrl;
+import Controladores.EmpleadoCtrl;
 import Controladores.UsuarioCtrl;
 import Controladores.PaginadorTabla;
 import Modelos.AntecedentesMod;
 import Modelos.PreempleoMod;
 import Modelos.RevisionSistemasMod;
+import Modelos.EmpleadoMod;
 import Modelos.UsuarioMod;
 import Utilitarios.DatosPaginacion;
 import Utilitarios.ModeloTabla;
@@ -51,11 +53,13 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     public String nombreContenido = "Preempleo", responsable = "";
     public JComboBox<Integer> filasPermitidas;
     private PreempleoMod preempleo = new PreempleoMod();
+    private EmpleadoMod empleado = new EmpleadoMod();
     private AntecedentesMod antecedentes = new AntecedentesMod();
     private RevisionSistemasMod revisionSistemas = new RevisionSistemasMod();
     private UsuarioMod usuario = new UsuarioMod();
     private PreempleoCtrl preempCtrl = new PreempleoCtrl();
     private AntecedentesCtrl antCtrl = new AntecedentesCtrl();
+    private EmpleadoCtrl empCtrl = new EmpleadoCtrl();
     private RevisionSistemasCtrl revSisCtrl = new RevisionSistemasCtrl();
     private UsuarioCtrl usuarioCtrl = new UsuarioCtrl();
     private PaginadorTabla <Preempleo> paginador;
@@ -95,12 +99,13 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         txtPreempleoId.setText("");
         txtNombre.setText("");
         setSexo("");
-        txtIdentificacion.setText("");
+        txtIdentificacion.setForeground(Color.gray);
+        txtIdentificacion.setText("Número sin espacios");
         txtEdad.setText("");
-        txtEstadoCivil.setText("");
+        comboEstadoCivil.setSelectedIndex(0);
         txtDireccion.setText("");
         txtTelefono.setText("");
-        txtNivelAcademico.setText("");
+        comboNivelAcademico.setSelectedIndex(0);
         txtPuestoAplica.setText("");
         txtEmpresa1.setText("");
         txtEmpresa2.setText("");
@@ -124,6 +129,8 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         txtPuesto2.setEnabled(false);
         txtEmpresa3.setEnabled(false);
         txtPuesto3.setEnabled(false);
+        txtAreaRestricciones.setText("");
+        txtAreaRestricciones.setEnabled(false);
         
         preempleo.setId("");
         preempleo.setFecha("");
@@ -158,14 +165,21 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     }
     
     private void resetAntecedentes(){
-        txtMenarquia.setText("");
+        txtMenarquia.setForeground(Color.gray);
+        txtMenarquia.setText("años");
         txtFUR.setText("");
-        txtCSTP.setText("");
-        txtHV.setText("");
-        txtHM.setText("");
-        txtG.setText("");
-        txtP.setText("");
-        txtAB.setText("");
+        txtCSTP.setForeground(Color.gray);
+        txtCSTP.setText("Cesáreas");
+        txtHV.setForeground(Color.gray);
+        txtHV.setText("Hijos vivos");
+        txtHM.setForeground(Color.gray);
+        txtHM.setText("Hijos muertos");
+        txtG.setForeground(Color.gray);
+        txtG.setText("Gestaciones");
+        txtP.setForeground(Color.gray);
+        txtP.setText("Partos");
+        txtAB.setForeground(Color.gray);
+        txtAB.setText("Abortos");
         txtMPF.setText("");
         txtDiagnostico.setText("");
         
@@ -198,9 +212,9 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         txtAreaOjoidos.setText("");
         txtAreaOrofaringe.setText("");
         txtAreaCuello.setText("");
-        txtAreaRespiratorio.setText("");
-        txtAreaCardiovascular.setText("");
-        txtAreaGastrointestinal.setText("");
+        txtAreaCardiopulmonar.setText("");
+        txtAreaTorax.setText("");
+        txtAreaAbdomen.setText("");
         txtAreaGenitourinario.setText("");
         txtAreaExtremidades.setText("");
         txtAreaNeurologico.setText("");
@@ -220,9 +234,13 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         txtPeso.setForeground(Color.gray);
         txtIMC.setText("Kg/m^2");
         txtIMC.setForeground(Color.gray);
-        combo_Talla.setSelectedIndex(0);
-        txtOjoDerecho.setText("");
-        txtOjoIzquierdo.setText("");
+        txtTalla.setText("m");
+        txtTalla.setForeground(Color.gray);
+        txtRuffier.setText("");
+        txtOjoDerechoNumerador.setText("");
+        txtOjoIzquierdoNumerador.setText("");
+        txtOjoDerechoDenominador.setText("");
+        txtOjoIzquierdoDenominador.setText("");
         checkLentes.setSelected(false);
         txtAreaImpresionClinica.setText("");
         
@@ -232,9 +250,9 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         revisionSistemas.setOjoOidoNarizBoca("");
         revisionSistemas.setOrofarinje("");
         revisionSistemas.setCuello("");
-        revisionSistemas.setRespiratorio("");
-        revisionSistemas.setCardiovascular("");
-        revisionSistemas.setGastrointestinal("");
+        revisionSistemas.setCardiopulmonar("");
+        revisionSistemas.setTorax("");
+        revisionSistemas.setAbdomen("");
         revisionSistemas.setGenitourinario("");
         revisionSistemas.setExtremidades("");
         revisionSistemas.setNeurologico("");
@@ -258,6 +276,9 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     
     private void resetUsuarios(){
         try {
+            combo_Autorizado.removeAllItems();
+            combo_Realizado.removeAllItems();
+            combo_Revisado.removeAllItems();
             List<UsuarioMod> listaUsuarios = new ArrayList<UsuarioMod>();
             listaUsuarios = usuarioCtrl.seleccionarTodos();
             List<String> nombresUsuarios = new ArrayList<String>();
@@ -278,8 +299,8 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     private void construirEtiquetas(){
         try {
             String codigo = preempCtrl.getMaxId();
-            lblTitulos.setText("<html><center>Formato<br><b>FICHA MÉDICA PRE-EMPLEO</b><br>CÓDIGO " + codigo + "</center></html>");
-            lblSeguridad.setText("<html><center>Seguridad Industrial y Salud Ocupacional</center></html>");
+            lblTitulos.setText("<html><center>Formato<br><b>FICHA MÉDICA PRE-EMPLEO</b><br>CORRELATIVO:  " + codigo + "</center></html>");
+            lblSeguridad.setText("<html><center>Salud Ocupacional</center></html>");
             lblFechaMod.setText("<html><center>Fecha de<br>modificacion:<br>"+ util.convertirFechaGUI(now.format(dtf)) + "</center></html>");
             lbl_SeleccionPreempleo.setText("");
             txtFecha.setText(util.convertirFechaGUI(now.format(dtf)));
@@ -316,9 +337,18 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         return valido;
     }
     
+    private boolean verificarAptitud(){
+        boolean valido = false;
+        if((rbtn_Aptitud1.isSelected()) || ((rbtn_Aptitud2.isSelected()) && (txtAreaRestricciones.getText().length()>0)) || (rbtn_Aptitud3.isSelected()) || (rbtn_Aptitud4.isSelected()))
+            valido = true;
+        return valido;
+    }
+    
     private boolean verificarPreempleado(){
         boolean valido = false;
-        if ((txtFecha.getText().length()>0) && (txtIdentificacion.getText().length()>0) && (util.verificarNumero(txtIdentificacion.getText())) && (txtNombre.getText().length()>0) && (util.verificarNumero(txtEdad.getText())) && (txtEstadoCivil.getText().length()>0) && (txtDireccion.getText().length()>0) && (txtTelefono.getText().length()>0) && (txtNivelAcademico.getText().length()>0) && (txtPuestoAplica.getText().length()>0) && (verificarSexo()))
+        if ((txtFecha.getText().length()>0) && (txtIdentificacion.getText().length()>0) && (util.verificarNumero(txtIdentificacion.getText())) &&
+            (txtNombre.getText().length()>0) && (util.verificarEntero(txtEdad.getText())) && (txtEdad.getText().length()>0) && (txtDireccion.getText().length()>0) &&
+            (txtTelefono.getText().length()>0) && (txtPuestoAplica.getText().length()>0) && (verificarSexo()) && (verificarAptitud()))
             valido = true;
         else valido = false;
         return valido;
@@ -326,7 +356,15 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     
     private boolean verificarAntecedentes(){
         boolean valido = false;
-        if (((util.verificarNumero(txtG.getText())) || (txtG.getText().length() == 0)) && ((util.verificarNumero(txtP.getText())) || (txtP.getText().length() == 0)) && ((util.verificarNumero(txtHV.getText())) || (txtHV.getText().length() == 0)) && ((util.verificarNumero(txtHM.getText())) || (txtHM.getText().length() == 0)) && (util.verificarNumero(txtAB.getText()) || (txtAB.getText().length() == 0)) && (txtDiagnostico.getText().length()>0))
+        if ((util.verificarFlotante(txtTemperatura.getText()) || (txtTemperatura.getText().equals("°C"))) && 
+           ((util.verificarFlotante(txtPulso.getText())) || (txtPulso.getText().equals("LPM"))) && ((util.verificarFlotante(txtSPO2.getText())) || (txtSPO2.getText().equals("%"))) && 
+           ((util.verificarFlotante(txtFR.getText())) || (txtFR.getText().equals("RPM"))) && ((util.verificarFlotante(txtGlicemia.getText())) || (txtGlicemia.getText().equals("mg/dl"))) && 
+           ((util.verificarFlotante(txtPeso.getText())) || (txtPeso.getText().equals("lb"))) && (util.verificarFlotante(txtIMC.getText()) || (txtIMC.getText().equals("Kg/m^2"))) && 
+           ((util.verificarFlotante(txtRuffier.getText())) || (txtRuffier.getText().equals(""))) &&
+           (((txtOjoDerechoNumerador.getText().length()>0) && (txtOjoDerechoDenominador.getText().length()>0) && (txtOjoIzquierdoNumerador.getText().length()>0) && (txtOjoIzquierdoDenominador.getText().length()>0)) ||
+           (((txtOjoDerechoNumerador.getText().length()>0) && (txtOjoDerechoDenominador.getText().length()>0)) && !((txtOjoIzquierdoNumerador.getText().length()>0) && (txtOjoIzquierdoDenominador.getText().length()>0))) ||
+           (((txtOjoIzquierdoNumerador.getText().length()>0) && (txtOjoIzquierdoDenominador.getText().length()>0)) && !((txtOjoDerechoNumerador.getText().length()>0) && (txtOjoDerechoDenominador.getText().length()>0))) ||
+           !((txtOjoDerechoDenominador.getText().length()>0) || (txtOjoDerechoNumerador.getText().length()>0) || (txtOjoIzquierdoNumerador.getText().length()>0) || (txtOjoIzquierdoDenominador.getText().length()>0))))
                 valido = true;
         return valido;
     }
@@ -450,14 +488,35 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     }
     
     private void getAptitud(){
-        if(rbtn_Aptitud1.isSelected())
+        if(rbtn_Aptitud1.isSelected()){
+            empleado.setAptitud("APTO");
             preempleo.setAptitud("1");
-        else if (rbtn_Aptitud2.isSelected())
+        }
+        else if (rbtn_Aptitud2.isSelected()){
+            empleado.setAptitud("APTO CON RESTRICCIONES");
             preempleo.setAptitud("2");
-        else if (rbtn_Aptitud3.isSelected())
+        }
+        else if (rbtn_Aptitud3.isSelected()){
+            empleado.setAptitud("REEVALUACION");
             preempleo.setAptitud("3");
-        else if (rbtn_Aptitud4.isSelected())
+        }
+        else if (rbtn_Aptitud4.isSelected()){
+            empleado.setAptitud("NO APTO");
             preempleo.setAptitud("4");
+        }
+    }
+    
+    private String getAptitudEmpleado(){
+        String aptitud = "";
+        if(rbtn_Aptitud1.isSelected())
+            aptitud = "APTO";
+        else if (rbtn_Aptitud2.isSelected())
+            aptitud = "APTO CON RESTRICCIONES";
+        else if (rbtn_Aptitud3.isSelected())
+            aptitud = "REEVALUACION";
+        else if (rbtn_Aptitud4.isSelected())
+            aptitud = "NO APTO";
+        return aptitud;
     }
     
     private void setAptitud(String aptitud){
@@ -512,14 +571,35 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         antecedentes.setAlergicos(txtAreaAlergicos.getText());
         antecedentes.setVicios(txtAreaVicios.getText());
         
-        antecedentes.setMenarquia(util.convertirFechaSQL(txtMenarquia.getText()));
+        if(!(txtMenarquia.getText().equals("años")))
+            antecedentes.setMenarquia(util.convertirFechaSQL(txtMenarquia.getText()));
+        else
+            antecedentes.setMenarquia("");
         antecedentes.setFur(util.convertirFechaSQL(txtFUR.getText()));
-        antecedentes.setG(txtG.getText());
-        antecedentes.setP(txtP.getText());
-        antecedentes.setCstp(util.convertirFechaSQL(txtCSTP.getText()));
-        antecedentes.setHv(txtHV.getText());
-        antecedentes.setHm(txtHM.getText());
-        antecedentes.setAb(txtAB.getText());
+        if(!(txtG.getText().equals("Gestaciones")))
+            antecedentes.setG(txtG.getText());
+        else
+            antecedentes.setG("");
+        if(!(txtP.getText().equals("Partos")))
+            antecedentes.setP(txtP.getText());
+        else
+            antecedentes.setP("");
+        if(!(txtCSTP.getText().equals("Cesáreas")))
+            antecedentes.setCstp(util.convertirFechaSQL(txtCSTP.getText()));
+        else
+            antecedentes.setCstp("");
+        if(!(txtHV.getText().equals("Hijos vivos")))
+            antecedentes.setHv(txtHV.getText());
+        else
+            antecedentes.setHv("");
+        if(!(txtHM.getText().equals("Hijos muertos")))
+            antecedentes.setHm(txtHM.getText());
+        else
+            antecedentes.setHm("");
+        if(!(txtAB.getText().equals("Abortos")))
+            antecedentes.setAb(txtAB.getText());
+        else
+            antecedentes.setAb("");
         antecedentes.setMpf(txtMPF.getText());
         
         antecedentes.setDiagnostico(txtDiagnostico.getText());
@@ -538,8 +618,10 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         txtAreaTraumaticos.setText(antecedentes.getTraumaticos());
         txtAreaAlergicos.setText(antecedentes.getAlergicos());
         txtAreaVicios.setText(antecedentes.getVicios());
-        txtMenarquia.setText(util.convertirFechaGUI(antecedentes.getMenarquia()));
+        txtMenarquia.setForeground(Color.black);
+        txtMenarquia.setText(antecedentes.getMenarquia());
         txtFUR.setText(util.convertirFechaGUI(antecedentes.getFur()));
+        
         txtG.setText(antecedentes.getG());
         txtP.setText(antecedentes.getP());
         txtCSTP.setText(util.convertirFechaGUI(antecedentes.getCstp()));
@@ -560,24 +642,54 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         revisionSistemas.setOjoOidoNarizBoca(txtAreaOjoidos.getText());
         revisionSistemas.setOrofarinje(txtAreaOrofaringe.getText());
         revisionSistemas.setCuello(txtAreaCuello.getText());
-        revisionSistemas.setRespiratorio(txtAreaRespiratorio.getText());
-        revisionSistemas.setCardiovascular(txtAreaCardiovascular.getText());
-        revisionSistemas.setGastrointestinal(txtAreaGastrointestinal.getText());
+        revisionSistemas.setCardiopulmonar(txtAreaCardiopulmonar.getText());
+        revisionSistemas.setTorax(txtAreaTorax.getText());
+        revisionSistemas.setAbdomen(txtAreaAbdomen.getText());
         revisionSistemas.setGenitourinario(txtAreaGenitourinario.getText());
         revisionSistemas.setExtremidades(txtAreaExtremidades.getText());
         revisionSistemas.setNeurologico(txtAreaNeurologico.getText());
-        revisionSistemas.setTemperatura(txtTemperatura.getText());
-        revisionSistemas.setPulso(txtPulso.getText());
-        revisionSistemas.setSpo2(txtSPO2.getText());
-        revisionSistemas.setFr(txtFR.getText());
-        revisionSistemas.setPa(txtPA.getText());
-        revisionSistemas.setGlicemia(txtGlicemia.getText());
-        revisionSistemas.setPeso(txtPeso.getText());
-        revisionSistemas.setTalla(combo_Talla.getSelectedItem().toString());
-        revisionSistemas.setImc(txtIMC.getText());
+        if (!(txtTemperatura.getText().equals("°C")))
+            revisionSistemas.setTemperatura(txtTemperatura.getText());
+        else
+            revisionSistemas.setTemperatura("");
+        if (!(txtPulso.getText().equals("LPM")))
+            revisionSistemas.setPulso(txtPulso.getText());
+        else
+            revisionSistemas.setPulso("");
+        if (!(txtSPO2.getText().equals("%")))
+            revisionSistemas.setSpo2(txtSPO2.getText());
+        else
+            revisionSistemas.setSpo2("");
+        if (!(txtFR.getText().equals("RPM")))
+            revisionSistemas.setFr(txtFR.getText());
+        else
+            revisionSistemas.setFr("");
+        if (!(txtPA.getText().equals("mmHg")))
+            revisionSistemas.setPa(txtPA.getText());
+        else
+            revisionSistemas.setPa("");
+        if (!(txtGlicemia.getText().equals("mg/dl")))
+            revisionSistemas.setGlicemia(txtGlicemia.getText());
+        else
+            revisionSistemas.setGlicemia("");
+        if (!(txtPeso.getText().equals("lb")))
+            revisionSistemas.setPeso(txtPeso.getText());
+        else
+            revisionSistemas.setPeso("");
+        if (!(txtIMC.getText().equals("Kg/m^2")))
+            revisionSistemas.setImc(txtIMC.getText());
+        else
+            revisionSistemas.setImc("");
+        revisionSistemas.setTalla(txtTalla.getText());
         revisionSistemas.setRuffier(txtRuffier.getText());
-        revisionSistemas.setOjoDerecho(txtOjoDerecho.getText());
-        revisionSistemas.setOjoIzquierdo(txtOjoIzquierdo.getText());
+        if((txtOjoDerechoNumerador.getText().length()>0) && (txtOjoDerechoDenominador.getText().length()>0))
+            revisionSistemas.setOjoDerecho(txtOjoDerechoNumerador.getText() + "/" + txtOjoDerechoDenominador.getText());
+        else
+            revisionSistemas.setOjoDerecho("");
+        if((txtOjoIzquierdoNumerador.getText().length()>0) && (txtOjoIzquierdoDenominador.getText().length()>0))
+            revisionSistemas.setOjoIzquierdo(txtOjoIzquierdoNumerador.getText() + "/" + txtOjoIzquierdoDenominador.getText());
+        else
+            revisionSistemas.setOjoIzquierdo("");
         if(checkLentes.isSelected())
             revisionSistemas.setAnteojos("1");
         else
@@ -597,43 +709,94 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         txtAreaOjoidos.setText(revisionSistemas.getOjoOidoNarizBoca());
         txtAreaOrofaringe.setText(revisionSistemas.getOrofarinje());
         txtAreaCuello.setText(revisionSistemas.getCuello());
-        txtAreaRespiratorio.setText(revisionSistemas.getRespiratorio());
-        txtAreaCardiovascular.setText(revisionSistemas.getCardiovascular());
-        txtAreaGastrointestinal.setText(revisionSistemas.getGastrointestinal());
+        txtAreaCardiopulmonar.setText(revisionSistemas.getCardiopulmonar());
+        txtAreaTorax.setText(revisionSistemas.getTorax());
+        txtAreaAbdomen.setText(revisionSistemas.getAbdomen());
         txtAreaGenitourinario.setText(revisionSistemas.getGenitourinario());
         txtAreaExtremidades.setText(revisionSistemas.getExtremidades());
         txtAreaNeurologico.setText(revisionSistemas.getNeurologico());
-        txtTemperatura.setText(revisionSistemas.getTemperatura());
-        txtPulso.setText(revisionSistemas.getPulso());
-        txtSPO2.setText(revisionSistemas.getSpo2());
-        txtFR.setText(revisionSistemas.getFr());
-        txtPA.setText(revisionSistemas.getPa());
-        txtGlicemia.setText(revisionSistemas.getGlicemia());
-        txtPeso.setText(revisionSistemas.getPeso());
-        //Set Talla
-        switch(revisionSistemas.getTalla()){
-            case "S":
-                combo_Talla.setSelectedIndex(0);
-                break;
-            case "M":
-                combo_Talla.setSelectedIndex(1);
-                break;
-            case "L":
-                combo_Talla.setSelectedIndex(2);
-                break;
-            case "XL":
-                combo_Talla.setSelectedIndex(3);
-                break;
-            case "XXL":
-                combo_Talla.setSelectedIndex(4);
-                break;
-            default:
-                break;
+        if(revisionSistemas.getTemperatura().length() > 0){
+            txtTemperatura.setForeground(Color.black);
+            txtTemperatura.setText(revisionSistemas.getTemperatura());
+        }else{
+            txtTemperatura.setForeground(Color.gray);
+            txtTemperatura.setText("°C");
         }
-        txtIMC.setText(revisionSistemas.getImc());
+        if (revisionSistemas.getPulso().length() > 0){
+            txtPulso.setForeground(Color.black);
+            txtPulso.setText(revisionSistemas.getPulso());
+        }else{
+            txtPulso.setForeground(Color.gray);
+            txtPulso.setText("LPM");
+        }
+        if (revisionSistemas.getSpo2().length() > 0){
+            txtSPO2.setForeground(Color.black);
+            txtSPO2.setText(revisionSistemas.getSpo2());
+        }else{
+            txtSPO2.setForeground(Color.gray);
+            txtSPO2.setText("%");
+        }
+        if (revisionSistemas.getFr().length() > 0){
+            txtFR.setForeground(Color.black);
+            txtFR.setText(revisionSistemas.getFr());
+        }else{
+            txtFR.setForeground(Color.gray);
+            txtFR.setText("RPM");
+        }
+        if (revisionSistemas.getPa().length() > 0){
+            txtPA.setForeground(Color.black);
+            txtPA.setText(revisionSistemas.getPa());
+        }else{
+            txtPA.setForeground(Color.gray);
+            txtPA.setText("mmHg");
+        }
+        if (revisionSistemas.getGlicemia().length() > 0){
+            txtGlicemia.setForeground(Color.black);
+            txtGlicemia.setText(revisionSistemas.getGlicemia());
+        }else{
+            txtGlicemia.setForeground(Color.gray);
+            txtGlicemia.setText("mg/dl");
+        }
+        if (revisionSistemas.getPeso().length() > 0){
+            txtPeso.setForeground(Color.black);
+            txtPeso.setText(revisionSistemas.getPeso());
+        }else{
+            txtPeso.setForeground(Color.gray);
+            txtPeso.setText("lb");
+        }
+        if (revisionSistemas.getImc().length() > 0){
+            txtIMC.setForeground(Color.black);
+            txtIMC.setText(revisionSistemas.getImc());
+        }else
+        {
+            txtIMC.setForeground(Color.gray);
+            txtIMC.setText("Kg/m^2");
+        }
+        if(revisionSistemas.getTalla().length() > 0){
+            txtTalla.setForeground(Color.black);
+            txtTalla.setText(revisionSistemas.getTalla());
+        }else{
+            txtTalla.setForeground(Color.gray);
+            txtTalla.setText("m");
+        }
         txtRuffier.setText(revisionSistemas.getRuffier());
-        txtOjoDerecho.setText(revisionSistemas.getOjoDerecho());
-        txtOjoIzquierdo.setText(revisionSistemas.getOjoIzquierdo());
+        if(revisionSistemas.getOjoDerecho().length()>1){
+            String [] partesOjoDerecho = revisionSistemas.getOjoDerecho().split("/");
+            txtOjoDerechoNumerador.setText(partesOjoDerecho[0]);
+            txtOjoDerechoDenominador.setText(partesOjoDerecho[1]);
+        } else{
+            txtOjoDerechoNumerador.setText("");
+            txtOjoDerechoDenominador.setText("");
+        }
+        if(revisionSistemas.getOjoIzquierdo().length()>1){
+            String [] partesOjoIzquierdo = revisionSistemas.getOjoIzquierdo().split("/");
+            txtOjoIzquierdoNumerador.setText(partesOjoIzquierdo[0]);
+            txtOjoIzquierdoDenominador.setText(partesOjoIzquierdo[1]);
+        }else{
+            txtOjoIzquierdoNumerador.setText("");
+            txtOjoIzquierdoDenominador.setText("");
+        }
+        
         // Set Lentes
         switch(revisionSistemas.getAnteojos()){
             case "0":
@@ -656,10 +819,10 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         preempleo.setNombre(txtNombre.getText());
         preempleo.setIdentificacion(txtIdentificacion.getText());
         preempleo.setEdad(txtEdad.getText());
-        preempleo.setEstadoCivil(txtEstadoCivil.getText());
+        preempleo.setEstadoCivil(comboEstadoCivil.getSelectedItem().toString());
         preempleo.setDireccion(txtDireccion.getText());
         preempleo.setTelefono(txtTelefono.getText());
-        preempleo.setNivelAcademico(txtNivelAcademico.getText());
+        preempleo.setNivelAcademico(comboNivelAcademico.getSelectedItem().toString());
         preempleo.setPuestoAplica(txtPuestoAplica.getText());
         preempleo.setFecha(util.convertirFechaSQL(txtFecha.getText()));
         preempleo.setEmpresa1(txtEmpresa1.getText());
@@ -669,6 +832,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         preempleo.setPuesto2(txtPuesto2.getText());
         preempleo.setPuesto3(txtPuesto3.getText());
         getAptitud();
+        preempleo.setRestricciones(txtAreaRestricciones.getText());
         preempleo.setClinicaId("1");
         preempleo.setAntecedentesId(antecedentes.getId());
         preempleo.setRevisionSistemasId(revisionSistemas.getId());
@@ -696,10 +860,10 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         setSexo(preempleo.getSexo());
         txtIdentificacion.setText(preempleo.getIdentificacion());
         txtEdad.setText(preempleo.getEdad());
-        txtEstadoCivil.setText(preempleo.getEstadoCivil());
+        setEstadoCivil();
         txtDireccion.setText(preempleo.getDireccion());
         txtTelefono.setText(preempleo.getTelefono());
-        txtNivelAcademico.setText(preempleo.getNivelAcademico());
+        setNivelAcademico();
         txtPuestoAplica.setText(preempleo.getPuestoAplica());
         
         txtEmpresa1.setText(preempleo.getEmpresa1());
@@ -710,11 +874,61 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         txtPuesto3.setText(preempleo.getPuesto3());
         setTiempoLaborado();
         setAptitud(preempleo.getAptitud());
-        
+        txtAreaRestricciones.setText(preempleo.getRestricciones());
         setComboboxUsuarios();
     }
     
+    private void setEstadoCivil(){
+        switch(preempleo.getEstadoCivil()){
+            case "Soltero":
+                comboEstadoCivil.setSelectedIndex(0);
+                break;
+            case "Casado":
+                comboEstadoCivil.setSelectedIndex(1);
+                break;
+            case "Viudo":
+                comboEstadoCivil.setSelectedIndex(2);
+                break;
+            case "Divorciado":
+                comboEstadoCivil.setSelectedIndex(3);
+                break;
+            case "Unido":
+                comboEstadoCivil.setSelectedIndex(4);
+                break;
+            default:
+                comboEstadoCivil.setSelectedIndex(0);
+                break;
+            
+        }
+    }
     
+    private void setNivelAcademico(){
+        switch(preempleo.getNivelAcademico()){
+            case "Primaria":
+                comboNivelAcademico.setSelectedIndex(0);
+                break;
+            case "Básico":
+                comboNivelAcademico.setSelectedIndex(1);
+                break;
+            case "Diversificado":
+                comboNivelAcademico.setSelectedIndex(2);
+                break;
+            case "Universitario":
+                comboNivelAcademico.setSelectedIndex(3);
+                break;
+            default:
+                comboNivelAcademico.setSelectedIndex(0);
+        }
+    }
+    
+    private void getEmpleado(){
+        empleado.setCodigo("");
+        empleado.setNombre(txtNombre.getText());
+        empleado.setDireccion(txtDireccion.getText());
+        empleado.setTelefono(txtTelefono.getText());
+        empleado.setAptitud(getAptitudEmpleado());
+        empleado.setEstado("0");
+    }
     
     private void setComboboxUsuarios(){
         String[] elementos = new String[combo_Autorizado.getModel().getSize()];
@@ -847,10 +1061,10 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     /**
      * @param valorBuscar: id del formulario Preempleo en la variable preempleo
      */
-    private void setBuscarPreempleoAntecedentesRevisionSistemas(String valorBuscar) throws SQLException, ConnectException{
+    private void setBuscarPreempleoAntecedentesRevisionSistemasEmpleado(String valorBuscar) throws SQLException, ConnectException{
         
         preempleo = preempCtrl.buscarFila(valorBuscar);
-        lblTitulos.setText("<html><center>Formato<br><b>FICHA MÉDICA PRE-EMPLEO</b><br>CÓDIGO " + preempleo.getId() + "</center></html>");
+        lblTitulos.setText("<html><center>Formato<br><b>FICHA MÉDICA PRE-EMPLEO</b><br>CORRELATIVO:  " + preempleo.getId() + "</center></html>");
         setPreempleo();
         antecedentes = antCtrl.buscarFila(preempleo.getAntecedentesId());
         setAntecedentes();
@@ -860,14 +1074,16 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     
     private void crear() throws SQLException{
         try {
-            int resAntecedentes = 0, resRevisionSistemas = 0, resPreempleo = 0;
+            int resAntecedentes = 0, resRevisionSistemas = 0, resPreempleo = 0, resEmpleado = 0;
             resAntecedentes = antCtrl.Crear(antecedentes);
             if (resAntecedentes > 0){
                 resRevisionSistemas = revSisCtrl.Crear(revisionSistemas);
                 if (resRevisionSistemas > 0){
-                    preempleo.setAntecedentesId(antCtrl.getMaxId());
-                    preempleo.setRevisionSistemasId(revSisCtrl.getMaxId());
-                    resPreempleo = preempCtrl.Crear(preempleo);
+
+                        preempleo.setAntecedentesId(antCtrl.getMaxId());
+                        preempleo.setRevisionSistemasId(revSisCtrl.getMaxId());
+                        preempleo.setEmpleadoId(empCtrl.getMaxId());
+                        resPreempleo = preempCtrl.Crear(preempleo);
                 }
             }
             if ((resAntecedentes > 0) && (resRevisionSistemas > 0) && (resPreempleo > 0)) {
@@ -887,10 +1103,8 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
             int resAntecedentes = 0, resRevisionSistemas = 0, resPreempleo = 0;
             resAntecedentes = antCtrl.Actualizar(antecedentes);
             if (resAntecedentes > 0){
-                
                 resRevisionSistemas = revSisCtrl.Actualizar(revisionSistemas);
-                if (resRevisionSistemas > 0){
-                    
+                if(resRevisionSistemas > 0){
                     resPreempleo = preempCtrl.Actualizar(preempleo);
                 }
             }
@@ -943,9 +1157,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         grbtn_empresa1 = new javax.swing.ButtonGroup();
         grbtn_empresa2 = new javax.swing.ButtonGroup();
         grbtn_empresa3 = new javax.swing.ButtonGroup();
-        fechaMenarquia = new com.raven.datechooser.DateChooser();
         fechaFUR = new com.raven.datechooser.DateChooser();
-        fechaCSTP = new com.raven.datechooser.DateChooser();
         grbtn_Aptitud = new javax.swing.ButtonGroup();
         cont_Preempleo = new javax.swing.JPanel();
         panelBotonesCRUD = new javax.swing.JPanel();
@@ -985,19 +1197,21 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         lblIdentificacion = new javax.swing.JLabel();
         txtIdentificacion = new javax.swing.JTextField();
         lblEstadoCivil = new javax.swing.JLabel();
-        txtEstadoCivil = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         txtDireccion = new javax.swing.JTextField();
         txtTelefono = new javax.swing.JTextField();
         lblTelefono = new javax.swing.JLabel();
         lblNivelAcademico = new javax.swing.JLabel();
-        txtNivelAcademico = new javax.swing.JTextField();
         lblPuestoAplica = new javax.swing.JLabel();
         txtPuestoAplica = new javax.swing.JTextField();
         rbtn_SexoM = new javax.swing.JRadioButton();
         rbtn_SexoF = new javax.swing.JRadioButton();
+        comboNivelAcademico = new javax.swing.JComboBox<>();
+        comboEstadoCivil = new javax.swing.JComboBox<>();
         panelCartas = new javax.swing.JPanel();
         panelPagina1 = new javax.swing.JPanel();
+        btn_Pagina1_2 = new javax.swing.JPanel();
+        lbl_btn_Pagina1_2 = new javax.swing.JLabel();
         panelAntecedentesGino = new javax.swing.JPanel();
         lblAntecedentesGi = new javax.swing.JLabel();
         lblMenarquia = new javax.swing.JLabel();
@@ -1018,8 +1232,6 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         txtAB = new javax.swing.JTextField();
         lblMPF = new javax.swing.JLabel();
         txtMPF = new javax.swing.JTextField();
-        btn_Pagina1_2 = new javax.swing.JPanel();
-        lbl_btn_Pagina1_2 = new javax.swing.JLabel();
         panelAntecedentesLaborales = new javax.swing.JPanel();
         lblAntecedentesLaborales = new javax.swing.JLabel();
         lblEmpresa = new javax.swing.JLabel();
@@ -1093,28 +1305,32 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         lbl_RevisionPorSistemas = new javax.swing.JLabel();
         lblTemperatura = new javax.swing.JLabel();
         txtTemperatura = new javax.swing.JTextField();
+        lblGlicemia = new javax.swing.JLabel();
+        txtGlicemia = new javax.swing.JTextField();
+        lblPA = new javax.swing.JLabel();
+        txtPA = new javax.swing.JTextField();
         lblPulso = new javax.swing.JLabel();
         txtPulso = new javax.swing.JTextField();
         lblSPO2 = new javax.swing.JLabel();
         txtSPO2 = new javax.swing.JTextField();
         lblFR = new javax.swing.JLabel();
         txtFR = new javax.swing.JTextField();
-        lblGlicemia = new javax.swing.JLabel();
-        txtGlicemia = new javax.swing.JTextField();
+        lblIMC = new javax.swing.JLabel();
+        txtIMC = new javax.swing.JTextField();
         lblPeso = new javax.swing.JLabel();
         txtPeso = new javax.swing.JTextField();
         lblTalla = new javax.swing.JLabel();
-        combo_Talla = new javax.swing.JComboBox<>();
-        lblIMC = new javax.swing.JLabel();
-        txtIMC = new javax.swing.JTextField();
-        lblPA = new javax.swing.JLabel();
-        txtPA = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
+        txtTalla = new javax.swing.JTextField();
+        lblRuffier = new javax.swing.JLabel();
         txtRuffier = new javax.swing.JTextField();
         lblOjoDerecho = new javax.swing.JLabel();
-        txtOjoDerecho = new javax.swing.JTextField();
+        txtOjoDerechoNumerador = new javax.swing.JTextField();
+        lblFraccion1 = new javax.swing.JLabel();
+        txtOjoDerechoDenominador = new javax.swing.JTextField();
         lblOjoIzquierdo = new javax.swing.JLabel();
-        txtOjoIzquierdo = new javax.swing.JTextField();
+        txtOjoIzquierdoNumerador = new javax.swing.JTextField();
+        lblFraccion2 = new javax.swing.JLabel();
+        txtOjoIzquierdoDenominador = new javax.swing.JTextField();
         checkLentes = new javax.swing.JCheckBox();
         btn_Pagina3_2 = new javax.swing.JPanel();
         lbl_btn_Pagina3_2 = new javax.swing.JLabel();
@@ -1141,20 +1357,20 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         txtAreaCuello = new javax.swing.JTextArea();
         lblRespiratorio = new javax.swing.JLabel();
         jScrollPane19 = new javax.swing.JScrollPane();
-        txtAreaRespiratorio = new javax.swing.JTextArea();
+        txtAreaCardiopulmonar = new javax.swing.JTextArea();
         lblCardiovascular = new javax.swing.JLabel();
         jScrollPane20 = new javax.swing.JScrollPane();
-        txtAreaCardiovascular = new javax.swing.JTextArea();
+        txtAreaTorax = new javax.swing.JTextArea();
+        lblGastrointestinal = new javax.swing.JLabel();
+        jScrollPane21 = new javax.swing.JScrollPane();
+        txtAreaAbdomen = new javax.swing.JTextArea();
+        lblExtremidades = new javax.swing.JLabel();
+        jScrollPane23 = new javax.swing.JScrollPane();
+        txtAreaExtremidades = new javax.swing.JTextArea();
         btn_Pagina4_3 = new javax.swing.JPanel();
         lbl_btn_Pagina4_3 = new javax.swing.JLabel();
         btn_Pagina4_5 = new javax.swing.JPanel();
         lbl_btn_Pagina4_5 = new javax.swing.JLabel();
-        lblGastrointestinal = new javax.swing.JLabel();
-        jScrollPane21 = new javax.swing.JScrollPane();
-        txtAreaGastrointestinal = new javax.swing.JTextArea();
-        lblExtremidades = new javax.swing.JLabel();
-        jScrollPane23 = new javax.swing.JScrollPane();
-        txtAreaExtremidades = new javax.swing.JTextArea();
         panelPagina5 = new javax.swing.JPanel();
         btn_Pagina5_4 = new javax.swing.JPanel();
         lbl_btn_Pagina5_4 = new javax.swing.JLabel();
@@ -1182,6 +1398,9 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         combo_Revisado = new javax.swing.JComboBox<>();
         lbl_Autorizado = new javax.swing.JLabel();
         combo_Autorizado = new javax.swing.JComboBox<>();
+        jLabel6 = new javax.swing.JLabel();
+        jScrollPane11 = new javax.swing.JScrollPane();
+        txtAreaRestricciones = new javax.swing.JTextArea();
         panel_Diagnostico = new javax.swing.JPanel();
         lblDiagnostico = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -1197,17 +1416,9 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         lbl_SeleccionPreempleo = new javax.swing.JLabel();
         lbl_TituloSeleccion = new javax.swing.JLabel();
 
-        fechaMenarquia.setForeground(new java.awt.Color(87, 87, 238));
-        fechaMenarquia.setDateFormat("dd/MM/yyyy");
-        fechaMenarquia.setTextRefernce(txtMenarquia);
-
         fechaFUR.setForeground(new java.awt.Color(87, 87, 238));
         fechaFUR.setDateFormat("dd/MM/yyyy");
         fechaFUR.setTextRefernce(txtFUR);
-
-        fechaCSTP.setForeground(new java.awt.Color(87, 87, 238));
-        fechaCSTP.setDateFormat("dd/MM/yyyy");
-        fechaCSTP.setTextRefernce(txtCSTP);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -1489,7 +1700,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         txtNombre.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         panelMenu1.add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, 450, 35));
 
-        lblNombre.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblNombre.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblNombre.setText("Nombre");
         panelMenu1.add(lblNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, -1, 20));
 
@@ -1497,6 +1708,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         lblClinica.setText("Clínica de Atención: Sidegua");
         panelMenu1.add(lblClinica, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 268, 38));
 
+        txtFecha.setEditable(false);
         txtFecha.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtFecha.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtFecha.setDisabledTextColor(new java.awt.Color(0, 0, 0));
@@ -1507,38 +1719,46 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         jLabel3.setText("Fecha");
         panelMenu1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, -1, 20));
 
-        lblSexo.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblSexo.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblSexo.setText("Sexo");
         panelMenu1.add(lblSexo, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 180, -1, 20));
 
-        jLabel4.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        jLabel4.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         jLabel4.setText("Edad");
         panelMenu1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 180, -1, 20));
 
         txtEdad.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtEdad.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtEdad.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtEdad.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtEdadFocusLost(evt);
+            }
+        });
         panelMenu1.add(txtEdad, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 200, 67, 35));
 
-        lblIdentificacion.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblIdentificacion.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblIdentificacion.setText("No. de Identificación");
         panelMenu1.add(lblIdentificacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 60, -1, 20));
 
         txtIdentificacion.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtIdentificacion.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtIdentificacion.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtIdentificacion.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtIdentificacionFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtIdentificacionFocusLost(evt);
+            }
+        });
         panelMenu1.add(txtIdentificacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 80, 300, 35));
 
-        lblEstadoCivil.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblEstadoCivil.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblEstadoCivil.setText("Estado Civil");
         panelMenu1.add(lblEstadoCivil, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 180, -1, 20));
 
-        txtEstadoCivil.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtEstadoCivil.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtEstadoCivil.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        panelMenu1.add(txtEstadoCivil, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 200, 290, 35));
-
-        jLabel5.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        jLabel5.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         jLabel5.setText("Dirección");
         panelMenu1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 240, -1, 20));
 
@@ -1550,22 +1770,22 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         txtTelefono.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtTelefono.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtTelefono.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtTelefono.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtTelefonoFocusLost(evt);
+            }
+        });
         panelMenu1.add(txtTelefono, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 260, 90, 35));
 
-        lblTelefono.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblTelefono.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblTelefono.setText("Teléfono");
         panelMenu1.add(lblTelefono, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 240, -1, 20));
 
-        lblNivelAcademico.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblNivelAcademico.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblNivelAcademico.setText("Nivel Académico");
         panelMenu1.add(lblNivelAcademico, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 300, -1, -1));
 
-        txtNivelAcademico.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtNivelAcademico.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtNivelAcademico.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        panelMenu1.add(txtNivelAcademico, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 320, 207, 35));
-
-        lblPuestoAplica.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblPuestoAplica.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblPuestoAplica.setText("Puesto al que aplica");
         panelMenu1.add(lblPuestoAplica, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 300, -1, 20));
 
@@ -1596,106 +1816,22 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         });
         panelMenu1.add(rbtn_SexoF, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 200, -1, -1));
 
+        comboNivelAcademico.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        comboNivelAcademico.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Primaria", "Básico", "Diversificado", "Universitario" }));
+        comboNivelAcademico.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        panelMenu1.add(comboNivelAcademico, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 320, 207, 35));
+
+        comboEstadoCivil.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        comboEstadoCivil.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Soltero", "Casado", "Viudo", "Divorciado", "Unido" }));
+        comboEstadoCivil.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        panelMenu1.add(comboEstadoCivil, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 200, 290, 35));
+
         panelFormulario.add(panelMenu1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 490, 370));
 
         panelCartas.setLayout(new java.awt.CardLayout());
 
         panelPagina1.setBackground(new java.awt.Color(255, 255, 255));
         panelPagina1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        panelAntecedentesGino.setBackground(new java.awt.Color(255, 255, 255));
-        panelAntecedentesGino.setMinimumSize(new java.awt.Dimension(566, 0));
-        panelAntecedentesGino.setPreferredSize(new java.awt.Dimension(556, 100));
-        panelAntecedentesGino.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        lblAntecedentesGi.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblAntecedentesGi.setForeground(new java.awt.Color(31, 78, 121));
-        lblAntecedentesGi.setText("ANTECEDENTES GINOCOBSTÉTRICOS");
-        panelAntecedentesGino.add(lblAntecedentesGi, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, -1, -1));
-
-        lblMenarquia.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblMenarquia.setText("Menarquia");
-        panelAntecedentesGino.add(lblMenarquia, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, -1, 20));
-
-        txtMenarquia.setBackground(new java.awt.Color(255, 255, 255));
-        txtMenarquia.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtMenarquia.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtMenarquia.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        panelAntecedentesGino.add(txtMenarquia, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 209, 35));
-
-        lblFur.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblFur.setText("FUR");
-        panelAntecedentesGino.add(lblFur, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 20, -1, 20));
-
-        txtFUR.setBackground(new java.awt.Color(255, 255, 255));
-        txtFUR.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtFUR.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtFUR.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        panelAntecedentesGino.add(txtFUR, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 40, 103, 35));
-
-        lblG.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblG.setText("G");
-        panelAntecedentesGino.add(lblG, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 20, -1, 20));
-
-        txtG.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtG.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtG.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        panelAntecedentesGino.add(txtG, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 40, 103, 35));
-
-        lblP.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblP.setText("P");
-        panelAntecedentesGino.add(lblP, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 20, -1, 20));
-
-        txtP.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtP.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtP.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        panelAntecedentesGino.add(txtP, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 40, 106, 35));
-
-        lblCSTP.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblCSTP.setText("CSTP");
-        panelAntecedentesGino.add(lblCSTP, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, -1, 20));
-
-        txtCSTP.setBackground(new java.awt.Color(255, 255, 255));
-        txtCSTP.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtCSTP.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtCSTP.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        panelAntecedentesGino.add(txtCSTP, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 100, 209, 35));
-
-        lblHV.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblHV.setText("HV");
-        panelAntecedentesGino.add(lblHV, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 80, -1, 20));
-
-        txtHV.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtHV.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtHV.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        panelAntecedentesGino.add(txtHV, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 100, 103, 35));
-
-        lblHM.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblHM.setText("HM");
-        panelAntecedentesGino.add(lblHM, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 80, -1, 20));
-
-        txtHM.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtHM.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtHM.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        panelAntecedentesGino.add(txtHM, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 100, 103, 35));
-
-        lblAB.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblAB.setText("AB");
-        panelAntecedentesGino.add(lblAB, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 80, -1, 20));
-
-        txtAB.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtAB.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtAB.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        panelAntecedentesGino.add(txtAB, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 100, 106, 35));
-
-        lblMPF.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblMPF.setText("MPF");
-        panelAntecedentesGino.add(lblMPF, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, -1, 20));
-
-        txtMPF.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtMPF.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtMPF.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        panelAntecedentesGino.add(txtMPF, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 160, 423, 35));
 
         btn_Pagina1_2.setBackground(new java.awt.Color(204, 204, 235));
         btn_Pagina1_2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
@@ -1718,7 +1854,154 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         });
         btn_Pagina1_2.add(lbl_btn_Pagina1_2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 106, 35));
 
-        panelAntecedentesGino.add(btn_Pagina1_2, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 160, 106, 35));
+        panelPagina1.add(btn_Pagina1_2, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 160, 106, 35));
+
+        panelAntecedentesGino.setBackground(new java.awt.Color(255, 255, 255));
+        panelAntecedentesGino.setMinimumSize(new java.awt.Dimension(566, 0));
+        panelAntecedentesGino.setPreferredSize(new java.awt.Dimension(556, 100));
+        panelAntecedentesGino.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lblAntecedentesGi.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblAntecedentesGi.setForeground(new java.awt.Color(31, 78, 121));
+        lblAntecedentesGi.setText("ANTECEDENTES GINOCOBSTÉTRICOS");
+        panelAntecedentesGino.add(lblAntecedentesGi, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, -1, -1));
+
+        lblMenarquia.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblMenarquia.setText("Menarquia (edad)");
+        panelAntecedentesGino.add(lblMenarquia, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, -1, 20));
+
+        txtMenarquia.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtMenarquia.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtMenarquia.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtMenarquia.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtMenarquiaFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtMenarquiaFocusLost(evt);
+            }
+        });
+        panelAntecedentesGino.add(txtMenarquia, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 209, 35));
+
+        lblFur.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblFur.setText("FUR");
+        panelAntecedentesGino.add(lblFur, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 20, -1, 20));
+
+        txtFUR.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtFUR.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtFUR.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        panelAntecedentesGino.add(txtFUR, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 40, 103, 35));
+
+        lblG.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblG.setText("G");
+        panelAntecedentesGino.add(lblG, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 20, -1, 20));
+
+        txtG.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtG.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtG.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtG.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtGFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtGFocusLost(evt);
+            }
+        });
+        panelAntecedentesGino.add(txtG, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 40, 103, 35));
+
+        lblP.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblP.setText("P");
+        panelAntecedentesGino.add(lblP, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 20, -1, 20));
+
+        txtP.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtP.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtP.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtP.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtPFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtPFocusLost(evt);
+            }
+        });
+        panelAntecedentesGino.add(txtP, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 40, 106, 35));
+
+        lblCSTP.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblCSTP.setText("CSTP");
+        panelAntecedentesGino.add(lblCSTP, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, -1, 20));
+
+        txtCSTP.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtCSTP.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtCSTP.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtCSTP.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtCSTPFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtCSTPFocusLost(evt);
+            }
+        });
+        panelAntecedentesGino.add(txtCSTP, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 100, 209, 35));
+
+        lblHV.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblHV.setText("HV");
+        panelAntecedentesGino.add(lblHV, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 80, -1, 20));
+
+        txtHV.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtHV.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtHV.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtHV.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtHVFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtHVFocusLost(evt);
+            }
+        });
+        panelAntecedentesGino.add(txtHV, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 100, 103, 35));
+
+        lblHM.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblHM.setText("HM");
+        panelAntecedentesGino.add(lblHM, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 80, -1, 20));
+
+        txtHM.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtHM.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtHM.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtHM.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtHMFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtHMFocusLost(evt);
+            }
+        });
+        panelAntecedentesGino.add(txtHM, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 100, 103, 35));
+
+        lblAB.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblAB.setText("AB");
+        panelAntecedentesGino.add(lblAB, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 80, -1, 20));
+
+        txtAB.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtAB.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtAB.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtAB.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtABFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtABFocusLost(evt);
+            }
+        });
+        panelAntecedentesGino.add(txtAB, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 100, 106, 35));
+
+        lblMPF.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblMPF.setText("MPF");
+        panelAntecedentesGino.add(lblMPF, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, -1, 20));
+
+        txtMPF.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtMPF.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtMPF.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        panelAntecedentesGino.add(txtMPF, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 160, 423, 35));
 
         panelPagina1.add(panelAntecedentesGino, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 566, 205));
 
@@ -2393,6 +2676,38 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         });
         panelPagina3.add(txtTemperatura, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 175, 35));
 
+        lblGlicemia.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblGlicemia.setText("Glicemia");
+        panelPagina3.add(lblGlicemia, new org.netbeans.lib.awtextra.AbsoluteConstraints(195, 30, -1, 20));
+
+        txtGlicemia.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtGlicemia.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtGlicemia.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtGlicemiaFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtGlicemiaFocusLost(evt);
+            }
+        });
+        panelPagina3.add(txtGlicemia, new org.netbeans.lib.awtextra.AbsoluteConstraints(195, 50, 175, 35));
+
+        lblPA.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblPA.setText("P/A");
+        panelPagina3.add(lblPA, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 30, -1, -1));
+
+        txtPA.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtPA.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtPA.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtPAFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtPAFocusLost(evt);
+            }
+        });
+        panelPagina3.add(txtPA, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 50, 175, 35));
+
         lblPulso.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblPulso.setText("Pulso");
         panelPagina3.add(lblPulso, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 100, -1, 20));
@@ -2441,21 +2756,21 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         });
         panelPagina3.add(txtFR, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 120, 175, 35));
 
-        lblGlicemia.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblGlicemia.setText("Glicemia");
-        panelPagina3.add(lblGlicemia, new org.netbeans.lib.awtextra.AbsoluteConstraints(195, 30, -1, 20));
+        lblIMC.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblIMC.setText("IMC");
+        panelPagina3.add(lblIMC, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, -1, 20));
 
-        txtGlicemia.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtGlicemia.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtGlicemia.addFocusListener(new java.awt.event.FocusAdapter() {
+        txtIMC.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtIMC.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtIMC.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                txtGlicemiaFocusGained(evt);
+                txtIMCFocusGained(evt);
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
-                txtGlicemiaFocusLost(evt);
+                txtIMCFocusLost(evt);
             }
         });
-        panelPagina3.add(txtGlicemia, new org.netbeans.lib.awtextra.AbsoluteConstraints(195, 50, 175, 35));
+        panelPagina3.add(txtIMC, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, 175, 35));
 
         lblPeso.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblPeso.setText("Peso");
@@ -2477,46 +2792,21 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         lblTalla.setText("Talla");
         panelPagina3.add(lblTalla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 170, -1, 20));
 
-        combo_Talla.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        combo_Talla.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "S", "M", "L", "XL", "XXL" }));
-        combo_Talla.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelPagina3.add(combo_Talla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 190, 175, 35));
-
-        lblIMC.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblIMC.setText("IMC");
-        panelPagina3.add(lblIMC, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, -1, 20));
-
-        txtIMC.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtIMC.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtIMC.addFocusListener(new java.awt.event.FocusAdapter() {
+        txtTalla.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtTalla.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtTalla.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                txtIMCFocusGained(evt);
+                txtTallaFocusGained(evt);
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
-                txtIMCFocusLost(evt);
+                txtTallaFocusLost(evt);
             }
         });
-        panelPagina3.add(txtIMC, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, 175, 35));
+        panelPagina3.add(txtTalla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 190, 175, 35));
 
-        lblPA.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblPA.setText("P/A");
-        panelPagina3.add(lblPA, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 30, -1, -1));
-
-        txtPA.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtPA.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtPA.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                txtPAFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtPAFocusLost(evt);
-            }
-        });
-        panelPagina3.add(txtPA, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 50, 175, 35));
-
-        jLabel2.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        jLabel2.setText("Ruffier");
-        panelPagina3.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 240, -1, 20));
+        lblRuffier.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblRuffier.setText("Ruffier");
+        panelPagina3.add(lblRuffier, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 240, -1, 20));
 
         txtRuffier.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtRuffier.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -2526,17 +2816,33 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         lblOjoDerecho.setText("Agudeza ojo derecho");
         panelPagina3.add(lblOjoDerecho, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 240, -1, 20));
 
-        txtOjoDerecho.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtOjoDerecho.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelPagina3.add(txtOjoDerecho, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 260, 143, 35));
+        txtOjoDerechoNumerador.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtOjoDerechoNumerador.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        panelPagina3.add(txtOjoDerechoNumerador, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 260, 40, 35));
+
+        lblFraccion1.setFont(new java.awt.Font("Roboto", 0, 36)); // NOI18N
+        lblFraccion1.setText("/");
+        panelPagina3.add(lblFraccion1, new org.netbeans.lib.awtextra.AbsoluteConstraints(203, 260, -1, 35));
+
+        txtOjoDerechoDenominador.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtOjoDerechoDenominador.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        panelPagina3.add(txtOjoDerechoDenominador, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 260, 40, 35));
 
         lblOjoIzquierdo.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblOjoIzquierdo.setText("Agudeza ojo izquierdo");
         panelPagina3.add(lblOjoIzquierdo, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 240, -1, 20));
 
-        txtOjoIzquierdo.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtOjoIzquierdo.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelPagina3.add(txtOjoIzquierdo, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 260, 143, 35));
+        txtOjoIzquierdoNumerador.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtOjoIzquierdoNumerador.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        panelPagina3.add(txtOjoIzquierdoNumerador, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 260, 40, 35));
+
+        lblFraccion2.setFont(new java.awt.Font("Roboto", 0, 36)); // NOI18N
+        lblFraccion2.setText("/");
+        panelPagina3.add(lblFraccion2, new org.netbeans.lib.awtextra.AbsoluteConstraints(353, 260, -1, 35));
+
+        txtOjoIzquierdoDenominador.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtOjoIzquierdoDenominador.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        panelPagina3.add(txtOjoIzquierdoDenominador, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 260, 40, 35));
 
         checkLentes.setBackground(new java.awt.Color(255, 255, 255));
         checkLentes.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
@@ -2673,30 +2979,56 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         panelPagina4.add(jScrollPane18, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 90, 260, 35));
 
         lblRespiratorio.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblRespiratorio.setText("Sistema Respiratorio");
+        lblRespiratorio.setText("Cardiopulmonar");
         panelPagina4.add(lblRespiratorio, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 130, -1, 20));
 
         jScrollPane19.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        txtAreaRespiratorio.setColumns(20);
-        txtAreaRespiratorio.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
-        txtAreaRespiratorio.setRows(5);
-        jScrollPane19.setViewportView(txtAreaRespiratorio);
+        txtAreaCardiopulmonar.setColumns(20);
+        txtAreaCardiopulmonar.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        txtAreaCardiopulmonar.setRows(5);
+        jScrollPane19.setViewportView(txtAreaCardiopulmonar);
 
         panelPagina4.add(jScrollPane19, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 150, 260, 35));
 
         lblCardiovascular.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblCardiovascular.setText("Sistema Cardiovascular");
+        lblCardiovascular.setText("Torax");
         panelPagina4.add(lblCardiovascular, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 190, -1, 20));
 
         jScrollPane20.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        txtAreaCardiovascular.setColumns(20);
-        txtAreaCardiovascular.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
-        txtAreaCardiovascular.setRows(5);
-        jScrollPane20.setViewportView(txtAreaCardiovascular);
+        txtAreaTorax.setColumns(20);
+        txtAreaTorax.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        txtAreaTorax.setRows(5);
+        jScrollPane20.setViewportView(txtAreaTorax);
 
         panelPagina4.add(jScrollPane20, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 210, 260, 35));
+
+        lblGastrointestinal.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblGastrointestinal.setText("Abdomen");
+        panelPagina4.add(lblGastrointestinal, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 250, -1, 20));
+
+        jScrollPane21.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        txtAreaAbdomen.setColumns(20);
+        txtAreaAbdomen.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        txtAreaAbdomen.setRows(5);
+        jScrollPane21.setViewportView(txtAreaAbdomen);
+
+        panelPagina4.add(jScrollPane21, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 270, 260, 35));
+
+        lblExtremidades.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblExtremidades.setText("Extremidades");
+        panelPagina4.add(lblExtremidades, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 250, -1, 20));
+
+        jScrollPane23.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        txtAreaExtremidades.setColumns(20);
+        txtAreaExtremidades.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        txtAreaExtremidades.setRows(5);
+        jScrollPane23.setViewportView(txtAreaExtremidades);
+
+        panelPagina4.add(jScrollPane23, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 270, 260, 35));
 
         btn_Pagina4_3.setBackground(new java.awt.Color(204, 204, 235));
         btn_Pagina4_3.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
@@ -2744,30 +3076,6 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
 
         panelPagina4.add(btn_Pagina4_5, new org.netbeans.lib.awtextra.AbsoluteConstraints(293, 320, 106, 35));
 
-        lblGastrointestinal.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblGastrointestinal.setText("Sistema Gastrointestinal");
-        panelPagina4.add(lblGastrointestinal, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 250, -1, 20));
-
-        jScrollPane21.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        txtAreaGastrointestinal.setColumns(20);
-        txtAreaGastrointestinal.setRows(5);
-        jScrollPane21.setViewportView(txtAreaGastrointestinal);
-
-        panelPagina4.add(jScrollPane21, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 270, 260, 35));
-
-        lblExtremidades.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblExtremidades.setText("Extremidades");
-        panelPagina4.add(lblExtremidades, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 250, -1, 20));
-
-        jScrollPane23.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        txtAreaExtremidades.setColumns(20);
-        txtAreaExtremidades.setRows(5);
-        jScrollPane23.setViewportView(txtAreaExtremidades);
-
-        panelPagina4.add(jScrollPane23, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 270, 260, 35));
-
         panelCartas.add(panelPagina4, "card5");
 
         panelPagina5.setBackground(new java.awt.Color(255, 255, 255));
@@ -2804,6 +3112,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         jScrollPane22.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         txtAreaGenitourinario.setColumns(20);
+        txtAreaGenitourinario.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         txtAreaGenitourinario.setRows(5);
         jScrollPane22.setViewportView(txtAreaGenitourinario);
 
@@ -2816,6 +3125,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         jScrollPane24.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         txtAreaNeurologico.setColumns(20);
+        txtAreaNeurologico.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         txtAreaNeurologico.setRows(5);
         jScrollPane24.setViewportView(txtAreaNeurologico);
 
@@ -2828,6 +3138,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         jScrollPane25.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         txtAreaImpresionClinica.setColumns(20);
+        txtAreaImpresionClinica.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         txtAreaImpresionClinica.setRows(5);
         jScrollPane25.setViewportView(txtAreaImpresionClinica);
 
@@ -2840,40 +3151,46 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         jScrollPane26.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         txtAreaObservaciones.setColumns(20);
+        txtAreaObservaciones.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         txtAreaObservaciones.setRows(5);
         jScrollPane26.setViewportView(txtAreaObservaciones);
 
         panelPagina5.add(jScrollPane26, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 90, 260, 35));
 
-        lblAptitud.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblAptitud.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblAptitud.setForeground(new java.awt.Color(31, 78, 121));
         lblAptitud.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblAptitud.setText("APTITUD");
-        panelPagina5.add(lblAptitud, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, -1, -1));
+        panelPagina5.add(lblAptitud, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 135, -1, -1));
 
         rbtn_Aptitud1.setBackground(new java.awt.Color(255, 255, 255));
         grbtn_Aptitud.add(rbtn_Aptitud1);
         rbtn_Aptitud1.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         rbtn_Aptitud1.setText("Apto");
-        panelPagina5.add(rbtn_Aptitud1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 180, -1, 30));
+        panelPagina5.add(rbtn_Aptitud1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, -1, 30));
 
         rbtn_Aptitud2.setBackground(new java.awt.Color(255, 255, 255));
         grbtn_Aptitud.add(rbtn_Aptitud2);
         rbtn_Aptitud2.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         rbtn_Aptitud2.setText("Apto con restricciones");
-        panelPagina5.add(rbtn_Aptitud2, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 180, -1, 30));
+        rbtn_Aptitud2.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                rbtn_Aptitud2StateChanged(evt);
+            }
+        });
+        panelPagina5.add(rbtn_Aptitud2, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 150, -1, 30));
 
         rbtn_Aptitud3.setBackground(new java.awt.Color(255, 255, 255));
         grbtn_Aptitud.add(rbtn_Aptitud3);
         rbtn_Aptitud3.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         rbtn_Aptitud3.setText("Reevaluación");
-        panelPagina5.add(rbtn_Aptitud3, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 180, -1, 30));
+        panelPagina5.add(rbtn_Aptitud3, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 150, -1, 30));
 
         rbtn_Aptitud4.setBackground(new java.awt.Color(255, 255, 255));
         grbtn_Aptitud.add(rbtn_Aptitud4);
         rbtn_Aptitud4.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         rbtn_Aptitud4.setText("No apto para el puesto");
-        panelPagina5.add(rbtn_Aptitud4, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 180, -1, 30));
+        panelPagina5.add(rbtn_Aptitud4, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 150, -1, 30));
 
         lblResponsable.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblResponsable.setText("Responsable:");
@@ -2881,24 +3198,37 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
 
         lbl_Realizado.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lbl_Realizado.setText("Realizado");
-        panelPagina5.add(lbl_Realizado, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 220, -1, 20));
+        panelPagina5.add(lbl_Realizado, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 255, -1, 20));
 
         combo_Realizado.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        panelPagina5.add(combo_Realizado, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 250, 175, 30));
+        panelPagina5.add(combo_Realizado, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 280, 175, 30));
 
         lbl_Revisado.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lbl_Revisado.setText("Revisado");
-        panelPagina5.add(lbl_Revisado, new org.netbeans.lib.awtextra.AbsoluteConstraints(195, 220, -1, 20));
+        panelPagina5.add(lbl_Revisado, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 255, -1, 20));
 
         combo_Revisado.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        panelPagina5.add(combo_Revisado, new org.netbeans.lib.awtextra.AbsoluteConstraints(195, 250, 175, 30));
+        panelPagina5.add(combo_Revisado, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 280, 175, 30));
 
         lbl_Autorizado.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lbl_Autorizado.setText("Autorizado");
-        panelPagina5.add(lbl_Autorizado, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 220, -1, 20));
+        panelPagina5.add(lbl_Autorizado, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 255, -1, 20));
 
         combo_Autorizado.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        panelPagina5.add(combo_Autorizado, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 250, 175, 30));
+        panelPagina5.add(combo_Autorizado, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 280, 175, 30));
+
+        jLabel6.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        jLabel6.setText("Restricciones");
+        panelPagina5.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, -1, 20));
+
+        jScrollPane11.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        txtAreaRestricciones.setColumns(20);
+        txtAreaRestricciones.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        txtAreaRestricciones.setRows(5);
+        jScrollPane11.setViewportView(txtAreaRestricciones);
+
+        panelPagina5.add(jScrollPane11, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 210, 546, 35));
 
         panelCartas.add(panelPagina5, "card6");
 
@@ -2911,7 +3241,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         lblDiagnostico.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblDiagnostico.setForeground(new java.awt.Color(31, 78, 121));
         lblDiagnostico.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblDiagnostico.setText("¿Previamente ha tenido diagnóstico de alguna enfermedad relacionada al trabajo?");
+        lblDiagnostico.setText("¿Previamente ha tenido diagnóstico de alguna enfermedad o accidente relacionado al trabajo?");
         panel_Diagnostico.add(lblDiagnostico, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1080, 25));
 
         panelFormulario.add(panel_Diagnostico, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 380, 1080, 25));
@@ -3056,6 +3386,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
                             getAntecedentes();
                             getRevisionSistemas();
                             getPreempleo();
+                            getEmpleado();
                             switch (contenidoActual){
                                 case "Eliminar":
                                     eliminar();
@@ -3284,10 +3615,12 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
 
     private void rbtn_SexoMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtn_SexoMActionPerformed
         preempleo.setSexo("M");
+        empleado.setSexo("M");
     }//GEN-LAST:event_rbtn_SexoMActionPerformed
 
     private void rbtn_SexoFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtn_SexoFActionPerformed
         preempleo.setSexo("F");
+        empleado.setSexo("F");
     }//GEN-LAST:event_rbtn_SexoFActionPerformed
 
     private void lbl_btnCrearMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btnCrearMouseEntered
@@ -3316,6 +3649,10 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
 
     private void lbl_btnCrearMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btnCrearMouseClicked
         if (!contenidoActual.equals("Formulario")){
+            rbtn_Aptitud1.setEnabled(true);
+            rbtn_Aptitud2.setEnabled(true);
+            rbtn_Aptitud3.setEnabled(true);
+            rbtn_Aptitud4.setEnabled(true);
             setCartaContenido(panelFormulario);
             btn_Confirmar.setBackground(new Color(40,235,40));
             btn_Confirmar.setVisible(true);
@@ -3366,6 +3703,10 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         try {
             if (lbl_SeleccionPreempleo.getText().length() > 0){
                 if (contenidoActual.equals("Actualizar")){
+                    rbtn_Aptitud1.setEnabled(false);
+                    rbtn_Aptitud2.setEnabled(false);
+                    rbtn_Aptitud3.setEnabled(false);
+                    rbtn_Aptitud4.setEnabled(false);
                     setCartaContenido(panelFormulario);
                     btn_Confirmar.setBackground(new Color(92,92,235));
 
@@ -3376,7 +3717,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
 
                     btn_Confirmar.setVisible(true);            
                 }
-                setBuscarPreempleoAntecedentesRevisionSistemas(jtPreempleo.getValueAt(jtPreempleo.getSelectedRow(), 0).toString());
+                setBuscarPreempleoAntecedentesRevisionSistemasEmpleado(jtPreempleo.getValueAt(jtPreempleo.getSelectedRow(), 0).toString());
             }else
                 JOptionPane.showMessageDialog(null, "Seleccione un registro de la tabla");
         } catch (SQLException ex) {
@@ -3491,7 +3832,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     }//GEN-LAST:event_lbl_btn_Pagina4_5MouseExited
 
     private void txtPAFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPAFocusLost
-        if (!(util.verificarNumero(txtPA.getText())) && (txtPA.getText().length() > 0))
+        if (!(util.verificarFlotante(txtPA.getText())) && (txtPA.getText().length() > 0))
         txtPA.requestFocus();
         if (txtPA.getText().isEmpty()){
             txtPA.setText("mmHg");
@@ -3507,7 +3848,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     }//GEN-LAST:event_txtPAFocusGained
 
     private void txtIMCFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtIMCFocusLost
-        if (!(util.verificarNumero(txtIMC.getText())) && (txtIMC.getText().length() > 0))
+        if (!(util.verificarFlotante(txtIMC.getText())) && (txtIMC.getText().length() > 0))
         txtIMC.requestFocus();
         if (txtIMC.getText().isEmpty()){
             txtIMC.setText("Kg/m^2");
@@ -3523,7 +3864,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     }//GEN-LAST:event_txtIMCFocusGained
 
     private void txtPesoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPesoFocusLost
-        if (!(util.verificarNumero(txtPeso.getText())) && (txtPeso.getText().length() > 0))
+        if (!(util.verificarFlotante(txtPeso.getText())) && (txtPeso.getText().length() > 0))
         txtPeso.requestFocus();
         if (txtPeso.getText().isEmpty()){
             txtPeso.setText("lb");
@@ -3539,7 +3880,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     }//GEN-LAST:event_txtPesoFocusGained
 
     private void txtGlicemiaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtGlicemiaFocusLost
-        if (!(util.verificarNumero(txtGlicemia.getText())) && (txtGlicemia.getText().length() > 0))
+        if (!(util.verificarFlotante(txtGlicemia.getText())) && (txtGlicemia.getText().length() > 0))
         txtGlicemia.requestFocus();
         if (txtGlicemia.getText().isEmpty()){
             txtGlicemia.setText("mg/dl");
@@ -3555,7 +3896,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     }//GEN-LAST:event_txtGlicemiaFocusGained
 
     private void txtFRFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFRFocusLost
-        if (!(util.verificarNumero(txtFR.getText())) && (txtFR.getText().length() > 0))
+        if (!(util.verificarFlotante(txtFR.getText())) && (txtFR.getText().length() > 0))
         txtFR.requestFocus();
         if (txtFR.getText().isEmpty()){
             txtFR.setText("RPM");
@@ -3571,7 +3912,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     }//GEN-LAST:event_txtFRFocusGained
 
     private void txtSPO2FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtSPO2FocusLost
-        if (!(util.verificarNumero(txtSPO2.getText())) && (txtSPO2.getText().length() > 0))
+        if (!(util.verificarFlotante(txtSPO2.getText())) && (txtSPO2.getText().length() > 0))
         txtSPO2.requestFocus();
         if (txtSPO2.getText().isEmpty()){
             txtSPO2.setText("%");
@@ -3587,7 +3928,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     }//GEN-LAST:event_txtSPO2FocusGained
 
     private void txtPulsoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPulsoFocusLost
-        if (!(util.verificarNumero(txtPulso.getText())) && (txtPulso.getText().length() > 0))
+        if (!(util.verificarFlotante(txtPulso.getText())) && (txtPulso.getText().length() > 0))
         txtPulso.requestFocus();
         if (txtPulso.getText().isEmpty()){
             txtPulso.setText("LPM");
@@ -3603,7 +3944,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     }//GEN-LAST:event_txtPulsoFocusGained
 
     private void txtTemperaturaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTemperaturaFocusLost
-        if (!(util.verificarNumero(txtTemperatura.getText())) && (txtTemperatura.getText().length() > 0))
+        if (!(util.verificarFlotante(txtTemperatura.getText())) && (txtTemperatura.getText().length() > 0))
         txtTemperatura.requestFocus();
         if (txtTemperatura.getText().isEmpty()){
             txtTemperatura.setText("°C");
@@ -3617,6 +3958,171 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
             txtTemperatura.setForeground(Color.black);
         }
     }//GEN-LAST:event_txtTemperaturaFocusGained
+
+    private void txtMenarquiaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtMenarquiaFocusGained
+        if (String.valueOf(txtMenarquia.getText()).equals("años")){
+            txtMenarquia.setText("");
+            txtMenarquia.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtMenarquiaFocusGained
+
+    private void txtMenarquiaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtMenarquiaFocusLost
+        if (!(util.verificarEntero(txtMenarquia.getText())) && (txtMenarquia.getText().length() > 0))
+        txtMenarquia.requestFocus();
+        if (txtMenarquia.getText().isEmpty()){
+            txtMenarquia.setText("años");
+            txtMenarquia.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtMenarquiaFocusLost
+
+    private void txtHVFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtHVFocusGained
+        if (String.valueOf(txtHV.getText()).equals("Hijos vivos")){
+            txtHV.setText("");
+            txtHV.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtHVFocusGained
+
+    private void txtHVFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtHVFocusLost
+        if (!(util.verificarEntero(txtHV.getText())) && (txtHV.getText().length() > 0))
+        txtHV.requestFocus();
+        if (txtHV.getText().isEmpty()){
+            txtHV.setText("Hijos vivos");
+            txtHV.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtHVFocusLost
+
+    private void txtGFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtGFocusGained
+        if (String.valueOf(txtG.getText()).equals("Gestaciones")){
+            txtG.setText("");
+            txtG.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtGFocusGained
+
+    private void txtGFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtGFocusLost
+        if (!(util.verificarEntero(txtG.getText())) && (txtG.getText().length() > 0))
+        txtG.requestFocus();
+        if (txtG.getText().isEmpty()){
+            txtG.setText("Gestaciones");
+            txtG.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtGFocusLost
+
+    private void txtPFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPFocusGained
+        if (String.valueOf(txtP.getText()).equals("Partos")){
+            txtP.setText("");
+            txtP.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtPFocusGained
+
+    private void txtPFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPFocusLost
+        if (!(util.verificarEntero(txtP.getText())) && (txtP.getText().length() > 0))
+        txtP.requestFocus();
+        if (txtP.getText().isEmpty()){
+            txtP.setText("Partos");
+            txtP.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtPFocusLost
+
+    private void txtHMFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtHMFocusGained
+        if (String.valueOf(txtHM.getText()).equals("Hijos muertos")){
+            txtHM.setText("");
+            txtHM.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtHMFocusGained
+
+    private void txtHMFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtHMFocusLost
+        if (!(util.verificarEntero(txtHM.getText())) && (txtHM.getText().length() > 0))
+        txtHM.requestFocus();
+        if (txtHM.getText().isEmpty()){
+            txtHM.setText("Hijos muertos");
+            txtHM.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtHMFocusLost
+
+    private void txtABFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtABFocusGained
+        if (String.valueOf(txtAB.getText()).equals("Abortos")){
+            txtAB.setText("");
+            txtAB.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtABFocusGained
+
+    private void txtABFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtABFocusLost
+        if (!(util.verificarEntero(txtAB.getText())) && (txtAB.getText().length() > 0))
+        txtAB.requestFocus();
+        if (txtAB.getText().isEmpty()){
+            txtAB.setText("Abortos");
+            txtAB.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtABFocusLost
+
+    private void txtCSTPFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCSTPFocusGained
+        if (String.valueOf(txtCSTP.getText()).equals("Cesáreas")){
+            txtCSTP.setText("");
+            txtCSTP.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtCSTPFocusGained
+
+    private void txtCSTPFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCSTPFocusLost
+        if (!(util.verificarEntero(txtCSTP.getText())) && (txtCSTP.getText().length() > 0))
+        txtCSTP.requestFocus();
+        if (txtCSTP.getText().isEmpty()){
+            txtCSTP.setText("Cesáreas");
+            txtCSTP.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtCSTPFocusLost
+
+    private void txtTallaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTallaFocusGained
+        if (String.valueOf(txtTalla.getText()).equals("m")){
+            txtTalla.setText("");
+            txtTalla.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtTallaFocusGained
+
+    private void txtTallaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTallaFocusLost
+        if (!(util.verificarFlotante(txtTalla.getText())) && (txtTalla.getText().length() > 0))
+        txtTalla.requestFocus();
+        if (txtTalla.getText().isEmpty()){
+            txtTalla.setText("m");
+            txtTalla.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtTallaFocusLost
+
+    private void txtIdentificacionFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtIdentificacionFocusLost
+        if(!(util.verificarNumero(txtIdentificacion.getText())))
+            txtIdentificacion.requestFocus();
+        if(txtIdentificacion.getText().isEmpty()){
+            txtIdentificacion.setText("Número sin espacios");
+            txtIdentificacion.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtIdentificacionFocusLost
+
+    private void txtTelefonoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTelefonoFocusLost
+        if(!(util.verificarNumero(txtTelefono.getText()))){
+            JOptionPane.showMessageDialog(this, "Formato de teléfono no válido. Ingresar solamente caracteres numéricos.", "Formato de Teléfono", JOptionPane.INFORMATION_MESSAGE);
+            txtTelefono.requestFocus();
+        }
+    }//GEN-LAST:event_txtTelefonoFocusLost
+
+    private void txtIdentificacionFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtIdentificacionFocusGained
+        if(txtIdentificacion.getText().equals("Número sin espacios")){
+            txtIdentificacion.setForeground(Color.black);
+            txtIdentificacion.setText("");
+        }
+    }//GEN-LAST:event_txtIdentificacionFocusGained
+
+    private void txtEdadFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtEdadFocusLost
+        if(!(util.verificarNumero(txtEdad.getText())))
+            txtEdad.requestFocus();
+    }//GEN-LAST:event_txtEdadFocusLost
+
+    private void rbtn_Aptitud2StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_rbtn_Aptitud2StateChanged
+        if(rbtn_Aptitud2.isSelected())
+            txtAreaRestricciones.setEnabled(true);
+        else{
+            txtAreaRestricciones.setEnabled(false);
+            txtAreaRestricciones.setText("");
+        }
+    }//GEN-LAST:event_rbtn_Aptitud2StateChanged
 
     
 
@@ -3635,26 +4141,26 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     private javax.swing.JPanel btn_Pagina4_5;
     private javax.swing.JPanel btn_Pagina5_4;
     private javax.swing.JCheckBox checkLentes;
+    private javax.swing.JComboBox<String> comboEstadoCivil;
+    private javax.swing.JComboBox<String> comboNivelAcademico;
     private javax.swing.JComboBox<String> combo_Autorizado;
     private javax.swing.JComboBox<String> combo_Realizado;
     private javax.swing.JComboBox<String> combo_Revisado;
-    private javax.swing.JComboBox<String> combo_Talla;
     public javax.swing.JPanel cont_Preempleo;
-    private com.raven.datechooser.DateChooser fechaCSTP;
     private com.raven.datechooser.DateChooser fechaFUR;
-    private com.raven.datechooser.DateChooser fechaMenarquia;
     private javax.swing.ButtonGroup grbtn_Aptitud;
     public static javax.swing.ButtonGroup grbtn_Sexo;
     public static javax.swing.ButtonGroup grbtn_empresa1;
     public static javax.swing.ButtonGroup grbtn_empresa2;
     public static javax.swing.ButtonGroup grbtn_empresa3;
     public javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     public javax.swing.JLabel jLabel3;
     public javax.swing.JLabel jLabel4;
     public javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     public javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane10;
+    private javax.swing.JScrollPane jScrollPane11;
     private javax.swing.JScrollPane jScrollPane13;
     private javax.swing.JScrollPane jScrollPane14;
     private javax.swing.JScrollPane jScrollPane15;
@@ -3699,6 +4205,8 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     private javax.swing.JLabel lblExtremidades;
     public javax.swing.JLabel lblFR;
     public javax.swing.JLabel lblFechaMod;
+    private javax.swing.JLabel lblFraccion1;
+    private javax.swing.JLabel lblFraccion2;
     public javax.swing.JLabel lblFur;
     public javax.swing.JLabel lblG;
     private javax.swing.JLabel lblGastrointestinal;
@@ -3728,6 +4236,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     public javax.swing.JLabel lblPulso;
     private javax.swing.JLabel lblRespiratorio;
     private javax.swing.JLabel lblResponsable;
+    private javax.swing.JLabel lblRuffier;
     public javax.swing.JLabel lblSPO2;
     public javax.swing.JLabel lblSeguridad;
     public javax.swing.JLabel lblSexo;
@@ -3820,14 +4329,14 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     public javax.swing.JRadioButton rbtn_SexoM;
     public javax.swing.JPanel tablaTitulos;
     public javax.swing.JTextField txtAB;
+    private javax.swing.JTextArea txtAreaAbdomen;
     private javax.swing.JTextArea txtAreaAlergicos;
     private javax.swing.JTextArea txtAreaAlteraciones;
     private javax.swing.JTextArea txtAreaCabeza;
-    private javax.swing.JTextArea txtAreaCardiovascular;
+    private javax.swing.JTextArea txtAreaCardiopulmonar;
     private javax.swing.JTextArea txtAreaCuello;
     private javax.swing.JTextArea txtAreaExtremidades;
     private javax.swing.JTextArea txtAreaFamiliares;
-    private javax.swing.JTextArea txtAreaGastrointestinal;
     private javax.swing.JTextArea txtAreaGenitourinario;
     private javax.swing.JTextArea txtAreaImpresionClinica;
     private javax.swing.JTextArea txtAreaLaboratorios;
@@ -3838,7 +4347,8 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     private javax.swing.JTextArea txtAreaOrofaringe;
     private javax.swing.JTextArea txtAreaPielFaneras;
     private javax.swing.JTextArea txtAreaQuirurgicos;
-    private javax.swing.JTextArea txtAreaRespiratorio;
+    private javax.swing.JTextArea txtAreaRestricciones;
+    private javax.swing.JTextArea txtAreaTorax;
     private javax.swing.JTextArea txtAreaTratamientos;
     private javax.swing.JTextArea txtAreaTraumaticos;
     private javax.swing.JTextArea txtAreaVicios;
@@ -3849,7 +4359,6 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     public javax.swing.JTextField txtEmpresa1;
     public javax.swing.JTextField txtEmpresa2;
     public javax.swing.JTextField txtEmpresa3;
-    public javax.swing.JTextField txtEstadoCivil;
     public javax.swing.JTextField txtFR;
     public javax.swing.JTextField txtFUR;
     public javax.swing.JTextField txtFecha;
@@ -3861,10 +4370,11 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     public javax.swing.JTextField txtIdentificacion;
     public javax.swing.JTextField txtMPF;
     public javax.swing.JTextField txtMenarquia;
-    public javax.swing.JTextField txtNivelAcademico;
     public javax.swing.JTextField txtNombre;
-    private javax.swing.JTextField txtOjoDerecho;
-    private javax.swing.JTextField txtOjoIzquierdo;
+    private javax.swing.JTextField txtOjoDerechoDenominador;
+    private javax.swing.JTextField txtOjoDerechoNumerador;
+    private javax.swing.JTextField txtOjoIzquierdoDenominador;
+    private javax.swing.JTextField txtOjoIzquierdoNumerador;
     public javax.swing.JTextField txtP;
     private javax.swing.JTextField txtPA;
     public javax.swing.JTextField txtPeso;
@@ -3876,6 +4386,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     public javax.swing.JTextField txtPulso;
     private javax.swing.JTextField txtRuffier;
     public javax.swing.JTextField txtSPO2;
+    private javax.swing.JTextField txtTalla;
     public javax.swing.JTextField txtTelefono;
     public javax.swing.JTextField txtTemperatura;
     // End of variables declaration//GEN-END:variables

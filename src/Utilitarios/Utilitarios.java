@@ -113,11 +113,11 @@ public class Utilitarios {
         return f;
     }
     /**
-     * Método que verifica si una cadena pertenece a un número.
-     * @param numero Fecha del sistema.
-     * @return  Verdadero si es un número, falso la cadena está vacía o no es un número..
+     * Método que verifica si una cadena pertenece a un número flotante.
+     * @param numero: Cadena de entrada
+     * @return  Verdadero si es un número flotante, falso la cadena está vacía o no es un número..
      */
-    public boolean verificarNumero(String numero){
+    public boolean verificarFlotante(String numero){
         if (numero == null)
             return false;
         try {
@@ -126,6 +126,37 @@ public class Utilitarios {
             return false;
         }
         return true;
+    }
+    
+    /**
+     * Método que verifica si una cadena tiene el valor de un número entero
+     * @param cadena: Cadena de entrada
+     * @return Verdadero si es un número entero, falso si la cadena tiene un valor que no esté entre -65535 y 65535
+     */
+    public boolean verificarEntero(String cadena) {
+        boolean resultado;
+        try {
+            Integer.parseInt(cadena);
+            resultado = true;
+        } catch (NumberFormatException excepcion) {
+            resultado = false;
+        }
+        return resultado;
+    }
+    
+    /**
+     * Método que verifica que todos los caracteres de una cadena son números enteros
+     * @param cadena: Cadena de entrada
+     * @return Verdadero si la cadena cuenta con sólo caracteres numéricos, falso si contiene algún otro caracter
+     */
+    public boolean verificarNumero(String cadena){
+        boolean resultado = true;
+        char[] caracteres = cadena.toCharArray();
+        for(int i = 0; i < caracteres.length; i++){
+            if((caracteres[i] < '0') || (caracteres[i] > '9'))
+                return false;
+        }
+        return resultado;
     }
     
     public DefaultTableModel consultaMixta(String sql, String[] columnas) throws SQLException, ConnectException{
