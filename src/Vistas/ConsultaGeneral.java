@@ -6,6 +6,7 @@ import Controladores.RevisionSistemasCtrl;
 import Controladores.EmpleadoCtrl;
 import Controladores.PaginadorTabla;
 import Controladores.UsuarioCtrl;
+import Controladores.GenerarReportePDF;
 import Modelos.FichaClinicaMod;
 import Modelos.EmpleadoMod;
 import Modelos.RevisionSistemasMod;
@@ -64,6 +65,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
     private EmpleadoCtrl empCtrl = new EmpleadoCtrl();
     private UsuarioCtrl usrCtrl = new UsuarioCtrl();
     private PaginadorTabla <ConsultaGeneral> paginadorFicha, paginadorEmpleado;
+    private GenerarReportePDF genPDF = new GenerarReportePDF();
     /**
      * Creates new form ConsultaGeneral
      */
@@ -74,6 +76,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         setCartas(panelPagina1);
         setCartaEmpleado(panelComboboxEmpleado);
         btn_Confirmar.setVisible(false);
+        btnReportes.setVisible(false);
         lbl_btn_Confirmar.setEnabled(false);
         txtHora.setEnabled(false);
         timeHora.set24hourMode(true);
@@ -197,8 +200,6 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         txtPeso.setForeground(Color.gray);
         txtIMC.setText("Kg/m^2");
         txtIMC.setForeground(Color.gray);
-        txtTalla.setText("m");
-        txtTalla.setForeground(Color.gray);
         txtOjoDerechoNumerador.setText("");
         txtOjoIzquierdoNumerador.setText("");
         checkLentes.setSelected(false);
@@ -472,7 +473,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
             revisionSistemas.setImc(txtIMC.getText());
         else
             revisionSistemas.setImc("");
-        revisionSistemas.setTalla(txtTalla.getText());
+        revisionSistemas.setTalla(comboTalla.getSelectedItem().toString());
         revisionSistemas.setRuffier(txtRuffier.getText());
         if((txtOjoDerechoNumerador.getText().length()>0) && (txtOjoDerechoDenominador.getText().length()>0))
             revisionSistemas.setOjoDerecho(txtOjoDerechoNumerador.getText() + "/" + txtOjoDerechoDenominador.getText());
@@ -564,12 +565,21 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
             txtIMC.setForeground(Color.gray);
             txtIMC.setText("Kg/m^2");
         }
-        if(revisionSistemas.getTalla().length() > 0){
-            txtTalla.setForeground(Color.black);
-            txtTalla.setText(revisionSistemas.getTalla());
-        }else{
-            txtTalla.setForeground(Color.gray);
-            txtTalla.setText("m");
+        switch(revisionSistemas.getTalla()){
+            case "S":
+                comboTalla.setSelectedIndex(0);
+                break;
+            case "M":
+                comboTalla.setSelectedIndex(1);
+                break;
+            case "L":
+                comboTalla.setSelectedIndex(2);
+                break;
+            case "XL":
+                comboTalla.setSelectedIndex(3);
+                break;
+            default:
+                comboTalla.setSelectedIndex(0);
         }
         txtRuffier.setText(revisionSistemas.getRuffier());
         if(revisionSistemas.getOjoDerecho().length()>1){
@@ -833,6 +843,8 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         setFichaClinica();
         empleado = empCtrl.buscarFila(fichaClinica.getEmpleadoId());
         setEmpleado();
+        revisionSistemas = revSisCtrl.buscarFila(fichaClinica.getRevisionSistemasId());
+        setRevisionSistemas();
     }
     
     private void crear() throws SQLException{
@@ -891,6 +903,30 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
             JOptionPane.showMessageDialog(this, "ERROR " + e.toString() + " AL ELIMINAR EL REGISTRO. COMUNIQUESE CON TI", "Inserción de Datos", JOptionPane.ERROR_MESSAGE);
         }
     }
+    
+    private void getDatosReporte(){
+        try{
+            genPDF.generarDatosEmpleado(empleado.getId());
+            genPDF.generarDatos(fichaClinica.getNombreTabla(), fichaClinica.getId(), fichaClinica.getLlavePrimaria(), fichaClinica.getPrefijo());
+            genPDF.generarDatos(revisionSistemas.getNombreTabla(), revisionSistemas.getId(), revisionSistemas.getLlavePrimaria(), revisionSistemas.getPrefijo());
+            genPDF.setDocumentoId(fichaClinica.getId());
+            genPDF.setTipoReporte("Consulta General");
+            genPDF.setUsuario(usuario.getNombre());
+            genPDF.setFecha(fichaClinica.getFecha());
+            //System.out.println(genPDF.getDatos());
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(this, "ERROR " + e.toString() + " AL CREAR EL REPORTE. COMUNIQUESE CON TI", "Reportes", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void crearReporte(){
+        try{
+            getDatosReporte();
+            genPDF.generarReporte("Consulta General - " + empleado.getNombre() + " - " + fichaClinica.getFecha());
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(this, "ERROR " + e.toString() + " AL CREAR EL REPORTE. COMUNIQUESE CON TI", "Reportes", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -904,6 +940,11 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         grbtn_Sexo = new javax.swing.ButtonGroup();
         timeHora = new com.raven.swing.TimePicker();
         cont_ConsultaGeneral = new javax.swing.JPanel();
+        panelBotonesConfirmarReportes = new javax.swing.JPanel();
+        btnReportes = new javax.swing.JPanel();
+        lblReportes = new javax.swing.JLabel();
+        btn_Confirmar = new javax.swing.JPanel();
+        lbl_btn_Confirmar = new javax.swing.JLabel();
         lblTituloPrincipal = new javax.swing.JLabel();
         tablaTitulos = new javax.swing.JPanel();
         panelAG = new javax.swing.JPanel();
@@ -923,8 +964,6 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         lbl_btnActualizar = new javax.swing.JLabel();
         btn_Eliminar = new javax.swing.JPanel();
         lbl_BtnEliminar = new javax.swing.JLabel();
-        btn_Confirmar = new javax.swing.JPanel();
-        lbl_btn_Confirmar = new javax.swing.JLabel();
         panelCartasContenido = new javax.swing.JPanel();
         panelInicio = new javax.swing.JPanel();
         lbl_InicioInicio = new javax.swing.JLabel();
@@ -976,12 +1015,12 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         txtGlicemia = new javax.swing.JTextField();
         lblPeso = new javax.swing.JLabel();
         txtPeso = new javax.swing.JTextField();
-        lblTalla = new javax.swing.JLabel();
         lblIMC = new javax.swing.JLabel();
         txtIMC = new javax.swing.JTextField();
         lblPA = new javax.swing.JLabel();
         txtPA = new javax.swing.JTextField();
-        txtTalla = new javax.swing.JTextField();
+        lblTalla = new javax.swing.JLabel();
+        comboTalla = new javax.swing.JComboBox<>();
         lblRuffier = new javax.swing.JLabel();
         txtRuffier = new javax.swing.JTextField();
         lblOjoDerecho = new javax.swing.JLabel();
@@ -1090,6 +1129,75 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         cont_ConsultaGeneral.setMinimumSize(new java.awt.Dimension(1080, 600));
         cont_ConsultaGeneral.setPreferredSize(new java.awt.Dimension(1080, 600));
         cont_ConsultaGeneral.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        panelBotonesConfirmarReportes.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        btnReportes.setBackground(new java.awt.Color(235, 235, 51));
+        btnReportes.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        btnReportes.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+        lblReportes.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblReportes.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblReportes.setText("Generar Reporte");
+        lblReportes.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblReportesMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lblReportesMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lblReportesMouseExited(evt);
+            }
+        });
+
+        javax.swing.GroupLayout btnReportesLayout = new javax.swing.GroupLayout(btnReportes);
+        btnReportes.setLayout(btnReportesLayout);
+        btnReportesLayout.setHorizontalGroup(
+            btnReportesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lblReportes, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)
+        );
+        btnReportesLayout.setVerticalGroup(
+            btnReportesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lblReportes, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)
+        );
+
+        panelBotonesConfirmarReportes.add(btnReportes, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 180, 35));
+
+        btn_Confirmar.setBackground(new java.awt.Color(255, 255, 255));
+        btn_Confirmar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+
+        lbl_btn_Confirmar.setBackground(new java.awt.Color(255, 255, 255));
+        lbl_btn_Confirmar.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lbl_btn_Confirmar.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbl_btn_Confirmar.setText("Ingresar");
+        lbl_btn_Confirmar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbl_btn_Confirmar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbl_btn_ConfirmarMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lbl_btn_ConfirmarMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lbl_btn_ConfirmarMouseExited(evt);
+            }
+        });
+
+        javax.swing.GroupLayout btn_ConfirmarLayout = new javax.swing.GroupLayout(btn_Confirmar);
+        btn_Confirmar.setLayout(btn_ConfirmarLayout);
+        btn_ConfirmarLayout.setHorizontalGroup(
+            btn_ConfirmarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lbl_btn_Confirmar, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
+        );
+        btn_ConfirmarLayout.setVerticalGroup(
+            btn_ConfirmarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lbl_btn_Confirmar, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)
+        );
+
+        panelBotonesConfirmarReportes.add(btn_Confirmar, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 0, 90, 35));
+
+        cont_ConsultaGeneral.add(panelBotonesConfirmarReportes, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 540, 280, 35));
 
         lblTituloPrincipal.setFont(new java.awt.Font("Roboto", 1, 24)); // NOI18N
         lblTituloPrincipal.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -1246,39 +1354,6 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         panelBotonesCRUD.add(btn_Eliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 80, -1, 35));
 
         cont_ConsultaGeneral.add(panelBotonesCRUD, new org.netbeans.lib.awtextra.AbsoluteConstraints(810, 0, 270, 120));
-
-        btn_Confirmar.setBackground(new java.awt.Color(255, 255, 255));
-        btn_Confirmar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-
-        lbl_btn_Confirmar.setBackground(new java.awt.Color(255, 255, 255));
-        lbl_btn_Confirmar.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lbl_btn_Confirmar.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbl_btn_Confirmar.setText("Ingresar");
-        lbl_btn_Confirmar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        lbl_btn_Confirmar.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lbl_btn_ConfirmarMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                lbl_btn_ConfirmarMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                lbl_btn_ConfirmarMouseExited(evt);
-            }
-        });
-
-        javax.swing.GroupLayout btn_ConfirmarLayout = new javax.swing.GroupLayout(btn_Confirmar);
-        btn_Confirmar.setLayout(btn_ConfirmarLayout);
-        btn_ConfirmarLayout.setHorizontalGroup(
-            btn_ConfirmarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lbl_btn_Confirmar, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
-        );
-        btn_ConfirmarLayout.setVerticalGroup(
-            btn_ConfirmarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lbl_btn_Confirmar, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)
-        );
-
-        cont_ConsultaGeneral.add(btn_Confirmar, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 540, 90, 35));
 
         panelCartasContenido.setPreferredSize(new java.awt.Dimension(1080, 472));
         panelCartasContenido.setLayout(new java.awt.CardLayout());
@@ -1613,10 +1688,6 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         });
         panelPagina1.add(txtPeso, new org.netbeans.lib.awtextra.AbsoluteConstraints(195, 190, 175, 35));
 
-        lblTalla.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblTalla.setText("Talla");
-        panelPagina1.add(lblTalla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 170, -1, 20));
-
         lblIMC.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblIMC.setText("IMC");
         panelPagina1.add(lblIMC, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, -1, 20));
@@ -1649,17 +1720,13 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         });
         panelPagina1.add(txtPA, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 50, 175, 35));
 
-        txtTalla.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtTalla.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtTalla.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                txtTallaFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtTallaFocusLost(evt);
-            }
-        });
-        panelPagina1.add(txtTalla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 190, 175, 35));
+        lblTalla.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblTalla.setText("Talla");
+        panelPagina1.add(lblTalla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 170, -1, 20));
+
+        comboTalla.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        comboTalla.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "S", "M", "L", "XL" }));
+        panelPagina1.add(comboTalla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 190, 175, 35));
 
         lblRuffier.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblRuffier.setText("Ruffier");
@@ -2212,6 +2279,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
             setCartaContenido(panelFormulario);
             btn_Confirmar.setBackground(new Color(40,235,40));
             btn_Confirmar.setVisible(true);
+            btnReportes.setVisible(false);
             lbl_btn_Confirmar.setText("Ingresar");
             contenidoActual = "Crear";
             lbl_btn_Confirmar.setEnabled(true);
@@ -2234,6 +2302,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
             
             setCartaContenido(panelCombobox);
             btn_Confirmar.setVisible(false);
+            btnReportes.setVisible(false);
             btn_Ingresar.setBackground(new Color(92,92,235));
             lblTituloCombobox.setText("Actualizar");
             lbl_btn_Confirmar.setText("Actualizar");
@@ -2255,6 +2324,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
     private void lbl_BtnEliminarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_BtnEliminarMouseClicked
         if (!contenidoActual.equals("Eliminar")){
             btn_Confirmar.setVisible(false);
+            btnReportes.setVisible(false);
             setCartaContenido(panelCombobox);
             btn_Ingresar.setBackground(new Color(235,91,91));
             lblTituloCombobox.setText("Eliminar");
@@ -2412,11 +2482,13 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
                     btn_Confirmar.setBackground(new Color(92,92,235));
 
                     btn_Confirmar.setVisible(true);
+                    btnReportes.setVisible(true);
                 }else if (contenidoActual.equals("Eliminar")){
                     setCartaContenido(panelFormulario);
                     btn_Confirmar.setBackground(new Color(235,91,91));
 
                     btn_Confirmar.setVisible(true);
+                    btnReportes.setVisible(false);
                 }
                 btn_OtroEmpleado.setVisible(false);
                 buscarEmpleadoFichaClinica(jtFichaClinica.getValueAt(jtFichaClinica.getSelectedRow(), 0).toString());
@@ -2606,25 +2678,22 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
         }
     }//GEN-LAST:event_txtPAFocusLost
 
-    private void txtTallaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTallaFocusGained
-        if (String.valueOf(txtTalla.getText()).equals("m")){
-            txtTalla.setText("");
-            txtTalla.setForeground(Color.black);
-        }
-    }//GEN-LAST:event_txtTallaFocusGained
+    private void lblReportesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblReportesMouseClicked
+        crearReporte();
+    }//GEN-LAST:event_lblReportesMouseClicked
 
-    private void txtTallaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTallaFocusLost
-        if (!(util.verificarFlotante(txtTalla.getText())) && (txtTalla.getText().length() > 0))
-        txtTalla.requestFocus();
-        if (txtTalla.getText().isEmpty()){
-            txtTalla.setText("m");
-            txtTalla.setForeground(Color.gray);
-        }
-    }//GEN-LAST:event_txtTallaFocusLost
+    private void lblReportesMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblReportesMouseEntered
+        btnReportes.setBackground(util.colorCursorEntra(btnReportes.getBackground()));
+    }//GEN-LAST:event_lblReportesMouseEntered
+
+    private void lblReportesMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblReportesMouseExited
+        btnReportes.setBackground(util.colorCursorSale(btnReportes.getBackground()));
+    }//GEN-LAST:event_lblReportesMouseExited
 
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel btnReportes;
     public javax.swing.JPanel btn_Actualizar;
     public javax.swing.JPanel btn_Confirmar;
     public javax.swing.JPanel btn_Crear;
@@ -2642,6 +2711,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
     private javax.swing.JCheckBox checkReferencia;
     private javax.swing.JCheckBox checkSuspension;
     private javax.swing.JCheckBox checkTraslado;
+    private javax.swing.JComboBox<String> comboTalla;
     private javax.swing.JComboBox<String> combo_Autorizado;
     private javax.swing.JComboBox<String> combo_Realizado;
     private javax.swing.JComboBox<String> combo_Revisado;
@@ -2706,6 +2776,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
     private javax.swing.JLabel lblPielFaneras;
     public javax.swing.JLabel lblPuesto1;
     public javax.swing.JLabel lblPulso;
+    private javax.swing.JLabel lblReportes;
     private javax.swing.JLabel lblRespiratorio;
     private javax.swing.JLabel lblResponsable;
     private javax.swing.JLabel lblRuffier;
@@ -2741,6 +2812,7 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
     public javax.swing.JPanel panelAG;
     private javax.swing.JPanel panelAuxiliar;
     public javax.swing.JPanel panelBotonesCRUD;
+    private javax.swing.JPanel panelBotonesConfirmarReportes;
     private javax.swing.JPanel panelCartas;
     private javax.swing.JPanel panelCartasContenido;
     private javax.swing.JPanel panelCartasEmpleado;
@@ -2801,7 +2873,6 @@ public class ConsultaGeneral extends javax.swing.JFrame implements ActionListene
     private javax.swing.JTextField txtRuffier;
     public javax.swing.JTextField txtSPO2;
     private javax.swing.JTextField txtSeleccionEmpleado;
-    private javax.swing.JTextField txtTalla;
     public javax.swing.JTextField txtTemperatura;
     // End of variables declaration//GEN-END:variables
 

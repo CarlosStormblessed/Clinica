@@ -33,6 +33,10 @@ public class PreempleoMod {
     private String autorizado;
     private String estado;
     
+    private final String nombreTabla = "PREEMPLEO";
+    private final String prefijo = "PREEMP_";
+    private final String llavePrimaria = prefijo+"ID";
+    
     public PreempleoMod(){
     }
 
@@ -283,4 +287,16 @@ public class PreempleoMod {
     public void setEstado(String estado) {
         this.estado = estado;
     }
+
+    public String getNombreTabla() {
+        return nombreTabla;
+    }
+
+    public String getPrefijo() {
+        return prefijo;
+    }
+
+    public String getLlavePrimaria() {
+        return llavePrimaria;
+    }   
 }

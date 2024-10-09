@@ -21,6 +21,10 @@ public class FichaClinicaMod {
     private String revisado;
     private String autorizado;
     private String estado;
+    
+    private final String nombreTabla = "CONSULTA_GENERAL";
+    private final String prefijo = "CONGEN_";
+    private final String llavePrimaria = prefijo+"ID";
 
     public String getId() {
         return id;
@@ -181,6 +185,16 @@ public class FichaClinicaMod {
     public void setEstado(String estado) {
         this.estado = estado;
     }
-    
-    
+
+    public String getNombreTabla() {
+        return nombreTabla;
+    }
+
+    public String getPrefijo() {
+        return prefijo;
+    }
+
+    public String getLlavePrimaria() {
+        return llavePrimaria;
+    }
 }

@@ -14,6 +14,7 @@ import Controladores.EmpleadoCtrl;
 import Controladores.EvaluacionPeriodicaCtrl;
 import Controladores.RevisionSistemasCtrl;
 import Controladores.UsuarioCtrl;
+import Controladores.GenerarReportePDF;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import javax.swing.ButtonModel;
@@ -61,6 +62,8 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
     private RevisionSistemasCtrl revSisCtrl = new RevisionSistemasCtrl();
     private EmpleadoCtrl empCtrl = new EmpleadoCtrl();
     private UsuarioCtrl usrCtrl = new UsuarioCtrl();
+    private GenerarReportePDF genPDF = new GenerarReportePDF();
+    
     private PaginadorTabla <ConsultaGeneral> paginadorEvaluacionPeriodica, paginadorEmpleado;
     public EvaluacionPeriodica() {
         initComponents();
@@ -69,6 +72,7 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         setCartas(panelPagina1);
         setCartaEmpleado(panelComboboxEmpleado);
         btn_Confirmar.setVisible(false);
+        btnReportes.setVisible(false);
         lbl_btn_Confirmar.setEnabled(false);
         txtHora.setEnabled(false);
         timeHora.set24hourMode(true);
@@ -100,6 +104,7 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         resetUsuarios();
         resetEvaluacionPeriodica();
         resetEmpleado();
+        resetAntecedentes();
         resetRevisionSistemas();
         construirEtiquetas();
         setTabla();
@@ -149,6 +154,47 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         evaluacionPeriodica.setEstado("");
     }
     
+    private void resetAntecedentes(){
+        txtMenarquia.setForeground(Color.gray);
+        txtMenarquia.setText("años");
+        txtFUR.setText("");
+        txtCSTP.setForeground(Color.gray);
+        txtCSTP.setText("Cesáreas");
+        txtHV.setForeground(Color.gray);
+        txtHV.setText("Hijos vivos");
+        txtHM.setForeground(Color.gray);
+        txtHM.setText("Hijos muertos");
+        txtG.setForeground(Color.gray);
+        txtG.setText("Gestaciones");
+        txtP.setForeground(Color.gray);
+        txtP.setText("Partos");
+        txtAB.setForeground(Color.gray);
+        txtAB.setText("Abortos");
+        txtMPF.setText("");
+        txtDiagnostico.setText("");
+        
+        antecedentes.setDiagnostico("");
+        antecedentes.setFamiliares("");
+        antecedentes.setMedicos("");
+        antecedentes.setTratamientos("");
+        antecedentes.setLaboratorios("");
+        antecedentes.setQuirurgicos("");
+        antecedentes.setTraumaticos("");
+        antecedentes.setAlergicos("");
+        antecedentes.setVicios("");
+        antecedentes.setEstado("");
+        antecedentes.setId("");
+        antecedentes.setMenarquia("");
+        antecedentes.setCstp("");
+        antecedentes.setFur("");
+        antecedentes.setMpf("");
+        antecedentes.setHv("");
+        antecedentes.setHm("");
+        antecedentes.setG("");
+        antecedentes.setP("");
+        antecedentes.setAb("");
+    }
+    
     private void resetRevisionSistemas(){
         txtAreaAlteraciones.setText("");
         txtAreaPielFaneras.setText("");
@@ -178,8 +224,6 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         txtPeso.setForeground(Color.gray);
         txtIMC.setText("Kg/m^2");
         txtIMC.setForeground(Color.gray);
-        txtTalla.setText("m");
-        txtTalla.setForeground(Color.gray);
         txtOjoDerechoNumerador.setText("");
         txtOjoIzquierdoNumerador.setText("");
         checkLentes.setSelected(false);
@@ -280,17 +324,25 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
     
     private boolean verificarAntecedentes(){
         boolean valido = false;
-        if (((util.verificarFlotante(txtG.getText())) || (txtG.getText().length() == 0)) && ((util.verificarFlotante(txtP.getText())) || (txtP.getText().length() == 0)) && ((util.verificarFlotante(txtHV.getText())) || (txtHV.getText().length() == 0)) && ((util.verificarFlotante(txtHM.getText())) || (txtHM.getText().length() == 0)) && (util.verificarFlotante(txtAB.getText()) || (txtAB.getText().length() == 0)) && (txtDiagnostico.getText().length()>0))
+        if (((util.verificarFlotante(txtG.getText())) || (txtG.getText().length() == 0) || (txtG.getText().equals("Gestaciones"))) && 
+            ((util.verificarFlotante(txtP.getText())) || (txtP.getText().length() == 0) || (txtP.getText().equals("Partos"))) && 
+            ((util.verificarFlotante(txtHV.getText())) || (txtHV.getText().length() == 0) || (txtHV.getText().equals("Hijos vivos"))) && 
+            ((util.verificarFlotante(txtHM.getText())) || (txtHM.getText().length() == 0) || (txtHM.getText().equals("Hijos muertos"))) && 
+            (util.verificarFlotante(txtAB.getText()) || (txtAB.getText().length() == 0) || (txtAB.getText().equals("Abortos"))) && 
+            (txtDiagnostico.getText().length()>0))
                 valido = true;
         return valido;
     }
     
     private boolean verificarRevisionSistemas(){
         boolean valido = false;
-        if ((util.verificarFlotante(txtTemperatura.getText()) || (txtTemperatura.getText().equals("°C"))) && 
-           ((util.verificarFlotante(txtPulso.getText())) || (txtPulso.getText().equals("LPM"))) && ((util.verificarFlotante(txtSPO2.getText())) || (txtSPO2.getText().equals("%"))) && 
-           ((util.verificarFlotante(txtFR.getText())) || (txtFR.getText().equals("RPM"))) && ((util.verificarFlotante(txtGlicemia.getText())) || (txtGlicemia.getText().equals("mg/dl"))) && 
-           ((util.verificarFlotante(txtPeso.getText())) || (txtPeso.getText().equals("lb"))) && (util.verificarFlotante(txtIMC.getText()) || (txtIMC.getText().equals("Kg/m^2"))) && 
+        if ((util.verificarFlotante(txtTemperatura.getText()) || (txtTemperatura.getText().equals("°C")) || (txtTemperatura.getText().length() == 0)) && 
+           ((util.verificarFlotante(txtPulso.getText())) || (txtPulso.getText().equals("LPM")) || (txtPulso.getText().length() == 0)) && 
+           ((util.verificarFlotante(txtSPO2.getText())) || (txtSPO2.getText().equals("%"))|| (txtSPO2.getText().length() == 0)) && 
+           ((util.verificarFlotante(txtFR.getText())) || (txtFR.getText().equals("RPM")) || (txtFR.getText().length() == 0)) && 
+           ((util.verificarFlotante(txtGlicemia.getText())) || (txtGlicemia.getText().equals("mg/dl")) || (txtGlicemia.getText().length() == 0)) && 
+           ((util.verificarFlotante(txtPeso.getText())) || (txtPeso.getText().equals("lb")) || (txtPeso.getText().length() == 0)) && 
+           (util.verificarFlotante(txtIMC.getText()) || (txtIMC.getText().equals("Kg/m^2"))|| (txtIMC.getText().length() == 0)) && 
            ((util.verificarFlotante(txtRuffier.getText())) || (txtRuffier.getText().equals(""))) &&
            (((txtOjoDerechoNumerador.getText().length()>0) && (txtOjoDerechoDenominador.getText().length()>0) && (txtOjoIzquierdoNumerador.getText().length()>0) && (txtOjoIzquierdoDenominador.getText().length()>0)) ||
            (((txtOjoDerechoNumerador.getText().length()>0) && (txtOjoDerechoDenominador.getText().length()>0)) && !((txtOjoIzquierdoNumerador.getText().length()>0) && (txtOjoIzquierdoDenominador.getText().length()>0))) ||
@@ -424,6 +476,37 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         antecedentes.setAb(txtAB.getText());
         antecedentes.setMpf(txtMPF.getText());
         
+        if(!(txtMenarquia.getText().equals("años")))
+            antecedentes.setMenarquia(util.convertirFechaSQL(txtMenarquia.getText()));
+        else
+            antecedentes.setMenarquia("");
+        antecedentes.setFur(util.convertirFechaSQL(txtFUR.getText()));
+        if(!(txtG.getText().equals("Gestaciones")))
+            antecedentes.setG(txtG.getText());
+        else
+            antecedentes.setG("");
+        if(!(txtP.getText().equals("Partos")))
+            antecedentes.setP(txtP.getText());
+        else
+            antecedentes.setP("");
+        if(!(txtCSTP.getText().equals("Cesáreas")))
+            antecedentes.setCstp(util.convertirFechaSQL(txtCSTP.getText()));
+        else
+            antecedentes.setCstp("");
+        if(!(txtHV.getText().equals("Hijos vivos")))
+            antecedentes.setHv(txtHV.getText());
+        else
+            antecedentes.setHv("");
+        if(!(txtHM.getText().equals("Hijos muertos")))
+            antecedentes.setHm(txtHM.getText());
+        else
+            antecedentes.setHm("");
+        if(!(txtAB.getText().equals("Abortos")))
+            antecedentes.setAb(txtAB.getText());
+        else
+            antecedentes.setAb("");
+        antecedentes.setMpf(txtMPF.getText());
+        
         antecedentes.setDiagnostico(txtDiagnostico.getText());
         antecedentes.setEstado("1");
     }
@@ -500,7 +583,9 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
             revisionSistemas.setImc(txtIMC.getText());
         else
             revisionSistemas.setImc("");
-        revisionSistemas.setTalla(txtTalla.getText());
+        
+        revisionSistemas.setTalla(comboTalla.getSelectedItem().toString());
+        
         revisionSistemas.setRuffier(txtRuffier.getText());
         if((txtOjoDerechoNumerador.getText().length()>0) && (txtOjoDerechoDenominador.getText().length()>0))
             revisionSistemas.setOjoDerecho(txtOjoDerechoNumerador.getText() + "/" + txtOjoDerechoDenominador.getText());
@@ -542,7 +627,22 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         txtPA.setText(revisionSistemas.getPa());
         txtGlicemia.setText(revisionSistemas.getGlicemia());
         txtPeso.setText(revisionSistemas.getPeso());
-        txtTalla.setText(revisionSistemas.getTalla());
+        switch(revisionSistemas.getTalla()){
+            case "S":
+                comboTalla.setSelectedIndex(0);
+                break;
+            case "M":
+                comboTalla.setSelectedIndex(1);
+                break;
+            case "L":
+                comboTalla.setSelectedIndex(2);
+                break;
+            case "XL":
+                comboTalla.setSelectedIndex(3);
+                break;
+            default:
+                comboTalla.setSelectedIndex(0);
+        }
         txtIMC.setText(revisionSistemas.getImc());
         txtRuffier.setText(revisionSistemas.getRuffier());
         if(revisionSistemas.getOjoDerecho().length()>1){
@@ -837,6 +937,30 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
             JOptionPane.showMessageDialog(this, "ERROR " + e.toString() + " AL ELIMINAR EL REGISTRO. COMUNIQUESE CON TI", "Eliminación de Datos", JOptionPane.ERROR_MESSAGE);
         }
     }
+    
+    private void getDatosReporte(){
+        try{
+            genPDF.generarDatosEmpleado(empleado.getId());
+            genPDF.generarDatos(evaluacionPeriodica.getNombreTabla(), evaluacionPeriodica.getId(), evaluacionPeriodica.getLlavePrimaria(), evaluacionPeriodica.getPrefijo());
+            genPDF.generarDatos(revisionSistemas.getNombreTabla(), revisionSistemas.getId(), revisionSistemas.getLlavePrimaria(), revisionSistemas.getPrefijo());
+            genPDF.setDocumentoId(evaluacionPeriodica.getId());
+            genPDF.setTipoReporte("Evaluación Periódica");
+            genPDF.setUsuario(usuario.getNombre());
+            genPDF.setFecha(evaluacionPeriodica.getFecha());
+            //System.out.println(genPDF.getDatos());
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(this, "ERROR " + e.toString() + " AL CREAR EL REPORTE. COMUNIQUESE CON TI", "Reportes", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void crearReporte(){
+        try{
+            getDatosReporte();
+            genPDF.generarReporte("Evaluacion Periodica - " + empleado.getNombre() + " - " + evaluacionPeriodica.getFecha());
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(this, "ERROR " + e.toString() + " AL CREAR EL REPORTE. COMUNIQUESE CON TI", "Reportes", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -850,6 +974,8 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         timeHora = new com.raven.swing.TimePicker();
         cont_EvaluacionPeriodica = new javax.swing.JPanel();
         lblTituloPrincipal = new javax.swing.JLabel();
+        btnReportes = new javax.swing.JPanel();
+        lblReportes = new javax.swing.JLabel();
         tablaTitulos = new javax.swing.JPanel();
         panelAG = new javax.swing.JPanel();
         lblAG = new javax.swing.JLabel();
@@ -976,7 +1102,7 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         lblPeso = new javax.swing.JLabel();
         txtPeso = new javax.swing.JTextField();
         lblTalla = new javax.swing.JLabel();
-        txtTalla = new javax.swing.JTextField();
+        comboTalla = new javax.swing.JComboBox<>();
         lblRuffier = new javax.swing.JLabel();
         txtRuffier = new javax.swing.JTextField();
         lblOjoDerecho = new javax.swing.JLabel();
@@ -1088,6 +1214,38 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         lblTituloPrincipal.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblTituloPrincipal.setText("Ficha de Evaluación de Riesgos Críticos / Evaluación Periódica");
         cont_EvaluacionPeriodica.add(lblTituloPrincipal, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1080, -1));
+
+        btnReportes.setBackground(new java.awt.Color(235, 235, 51));
+        btnReportes.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        btnReportes.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+        lblReportes.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblReportes.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblReportes.setText("Generar Reporte");
+        lblReportes.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblReportesMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lblReportesMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lblReportesMouseExited(evt);
+            }
+        });
+
+        javax.swing.GroupLayout btnReportesLayout = new javax.swing.GroupLayout(btnReportes);
+        btnReportes.setLayout(btnReportesLayout);
+        btnReportesLayout.setHorizontalGroup(
+            btnReportesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lblReportes, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
+        );
+        btnReportesLayout.setVerticalGroup(
+            btnReportesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lblReportes, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)
+        );
+
+        cont_EvaluacionPeriodica.add(btnReportes, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 445, 130, 35));
 
         tablaTitulos.setBackground(new java.awt.Color(255, 255, 255));
         tablaTitulos.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -1951,17 +2109,9 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         lblTalla.setText("Talla");
         panelPagina2.add(lblTalla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 170, -1, 20));
 
-        txtTalla.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtTalla.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtTalla.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                txtTallaFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtTallaFocusLost(evt);
-            }
-        });
-        panelPagina2.add(txtTalla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 190, 175, 35));
+        comboTalla.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        comboTalla.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "S", "M", "L", "XL" }));
+        panelPagina2.add(comboTalla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 190, 175, 35));
 
         lblRuffier.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblRuffier.setText("Ruffier");
@@ -2498,6 +2648,7 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
             setCartaContenido(panelFormulario);
             btn_Confirmar.setBackground(new Color(40,235,40));
             btn_Confirmar.setVisible(true);
+            btnReportes.setVisible(false);
             lbl_btn_Confirmar.setText("Ingresar");
             contenidoActual = "Crear";
             lbl_btn_Confirmar.setEnabled(true);
@@ -2516,6 +2667,7 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
     private void lbl_btnActualizarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btnActualizarMouseClicked
         if (!contenidoActual.equals("Actualizar")){
             btn_Confirmar.setVisible(false);
+            btnReportes.setVisible(false);
             setCartaContenido(panelCombobox);
             btn_Ingresar.setBackground(new Color(92,92,235));
             lblTituloCombobox.setText("Actualizar");
@@ -2538,6 +2690,7 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
     private void lbl_BtnEliminarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_BtnEliminarMouseClicked
         if (!contenidoActual.equals("Eliminar")){
             btn_Confirmar.setVisible(false);
+            btnReportes.setVisible(false);
             setCartaContenido(panelCombobox);
             btn_Ingresar.setBackground(new Color(235,91,91));
             lblTituloCombobox.setText("Eliminar");
@@ -2562,13 +2715,16 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
             if (contenidoActual.equals("Actualizar")){
                 setCartaContenido(panelFormulario);
                 btn_Confirmar.setBackground(new Color(92,92,235));
+                btnReportes.setBackground(new Color(235,235,51));
                 
                 btn_Confirmar.setVisible(true);
+                btnReportes.setVisible(true);
             }else if (contenidoActual.equals("Eliminar")){
                 setCartaContenido(panelFormulario);
                 btn_Confirmar.setBackground(new Color(235,91,91));
                 
                 btn_Confirmar.setVisible(true);
+                btnReportes.setVisible(false);
             }
             try {
                 buscarEmpleadoEvaluacionPeriodica(jtEvaluacionPeriodica.getValueAt(jtEvaluacionPeriodica.getSelectedRow(), 0).toString());
@@ -2844,22 +3000,6 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         }
     }//GEN-LAST:event_txtPesoFocusLost
 
-    private void txtTallaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTallaFocusGained
-        if (String.valueOf(txtTalla.getText()).equals("m")){
-            txtTalla.setText("");
-            txtTalla.setForeground(Color.black);
-        }
-    }//GEN-LAST:event_txtTallaFocusGained
-
-    private void txtTallaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTallaFocusLost
-        if (!(util.verificarFlotante(txtTalla.getText())) && (txtTalla.getText().length() > 0))
-        txtTalla.requestFocus();
-        if (txtTalla.getText().isEmpty()){
-            txtTalla.setText("m");
-            txtTalla.setForeground(Color.gray);
-        }
-    }//GEN-LAST:event_txtTallaFocusLost
-
     private void rbtn_Aptitud2StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_rbtn_Aptitud2StateChanged
         if(rbtn_Aptitud2.isSelected())
         txtAreaRestricciones.setEnabled(true);
@@ -2981,7 +3121,20 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
         }
     }//GEN-LAST:event_txtABFocusLost
 
+    private void lblReportesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblReportesMouseClicked
+        crearReporte();
+    }//GEN-LAST:event_lblReportesMouseClicked
+
+    private void lblReportesMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblReportesMouseEntered
+        btnReportes.setBackground(util.colorCursorEntra(btnReportes.getBackground()));
+    }//GEN-LAST:event_lblReportesMouseEntered
+
+    private void lblReportesMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblReportesMouseExited
+        btnReportes.setBackground(util.colorCursorSale(btnReportes.getBackground()));
+    }//GEN-LAST:event_lblReportesMouseExited
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel btnReportes;
     public javax.swing.JPanel btn_Actualizar;
     public javax.swing.JPanel btn_Confirmar;
     public javax.swing.JPanel btn_Crear;
@@ -2996,6 +3149,7 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
     private javax.swing.JPanel btn_Pagina4_3;
     private javax.swing.JPanel btn_SeleccionEmpleado;
     private javax.swing.JCheckBox checkLentes;
+    private javax.swing.JComboBox<String> comboTalla;
     private javax.swing.JPanel cont_EvaluacionPeriodica;
     private com.raven.datechooser.DateChooser fechaCSTP;
     private com.raven.datechooser.DateChooser fechaFUR;
@@ -3077,6 +3231,7 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
     private javax.swing.JLabel lblPielFaneras;
     public javax.swing.JLabel lblPuesto1;
     public javax.swing.JLabel lblPulso;
+    private javax.swing.JLabel lblReportes;
     private javax.swing.JLabel lblRespiratorio;
     private javax.swing.JLabel lblResponsable;
     private javax.swing.JLabel lblRestricciones;
@@ -3199,7 +3354,6 @@ public class EvaluacionPeriodica extends javax.swing.JFrame implements ActionLis
     private javax.swing.JTextField txtRuffier;
     public javax.swing.JTextField txtSPO2;
     private javax.swing.JTextField txtSeleccionEmpleado;
-    private javax.swing.JTextField txtTalla;
     public javax.swing.JTextField txtTemperatura;
     // End of variables declaration//GEN-END:variables
 

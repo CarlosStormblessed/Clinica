@@ -12,6 +12,7 @@ import Controladores.EmpleadoCtrl;
 import Controladores.AccidenteCtrl;
 import Controladores.RevisionSistemasCtrl;
 import Controladores.UsuarioCtrl;
+import Controladores.GenerarReportePDF;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import javax.swing.ButtonModel;
@@ -37,6 +38,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import java.awt.CardLayout;
 import java.util.ArrayList;
+import java.util.Arrays;
 public class Accidentes extends javax.swing.JFrame implements ActionListener, TableModelListener{
 
     String contenidoActual, clinicaId = "1";
@@ -57,6 +59,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
     private RevisionSistemasCtrl revSisCtrl = new RevisionSistemasCtrl();
     private EmpleadoCtrl empCtrl = new EmpleadoCtrl();
     private UsuarioCtrl usrCtrl = new UsuarioCtrl();
+    private GenerarReportePDF genPDF = new GenerarReportePDF();
     
     private PaginadorTabla <ConsultaGeneral> paginadorAccidente, paginadorEmpleado;
     public Accidentes() {
@@ -66,6 +69,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         setCartas(panelPagina1);
         setCartaEmpleado(panelComboboxEmpleado);
         btn_Confirmar.setVisible(false);
+        btnReportes.setVisible(false);
         lbl_btn_Confirmar.setEnabled(false);
         txtHora.setEnabled(false);
         timeHora.set24hourMode(true);
@@ -183,8 +187,6 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         txtPeso.setForeground(Color.gray);
         txtIMC.setText("Kg/m^2");
         txtIMC.setForeground(Color.gray);
-        txtTalla.setText("m");
-        txtTalla.setForeground(Color.gray);
         txtOjoDerechoNumerador.setText("");
         txtOjoIzquierdoNumerador.setText("");
         txtOjoDerechoDenominador.setText("");
@@ -359,7 +361,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         if(checkReincorporacion.isSelected())
             accidente.setReincorporacion("1");
         else
-            accidente.setTraslado("0");
+            accidente.setReincorporacion("0");
         accidente.setClinicaId(clinicaId);
         accidente.setEmpleadoId(empleado.getId());
         accidente.setRevisionSistemasId(revisionSistemas.getId());
@@ -441,7 +443,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
             revisionSistemas.setPeso(txtPeso.getText());
         else
             revisionSistemas.setFr("");
-        revisionSistemas.setTalla(txtTalla.getText());
+        revisionSistemas.setTalla(comboTalla.getSelectedItem().toString());
         if (!(txtIMC.getText().equals("Kg/m^2")))
             revisionSistemas.setImc(txtIMC.getText());
         revisionSistemas.setFr("");
@@ -536,12 +538,21 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
             txtIMC.setForeground(Color.gray);
             txtIMC.setText("Kg/m^2");
         }
-        if(revisionSistemas.getTalla().length() > 0){
-            txtTalla.setForeground(Color.black);
-            txtTalla.setText(revisionSistemas.getTalla());
-        }else{
-            txtTalla.setForeground(Color.gray);
-            txtTalla.setText("m");
+        switch(revisionSistemas.getTalla()){
+            case "S":
+                comboTalla.setSelectedIndex(0);
+                break;
+            case "M":
+                comboTalla.setSelectedIndex(1);
+                break;
+            case "L":
+                comboTalla.setSelectedIndex(2);
+                break;
+            case "XL":
+                comboTalla.setSelectedIndex(3);
+                break;
+            default:
+                comboTalla.setSelectedIndex(0);
         }
         
         txtRuffier.setText(revisionSistemas.getRuffier());
@@ -764,13 +775,13 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
     
     private void crear() throws SQLException{
         try {
-            int segCro = 0, revSis = 0;
+            int acc = 0, revSis = 0;
             revSis = revSisCtrl.Crear(revisionSistemas);
             if (revSis > 0){
                 revisionSistemas.setId(revSisCtrl.getMaxId());
                 accidente.setRevisionSistemasId(revisionSistemas.getId());
-                segCro = accIncCtrl.Crear(accidente);
-                if (segCro > 0) {
+                acc = accIncCtrl.Crear(accidente);
+                if (acc > 0) {
                     JOptionPane.showMessageDialog(this, "REGISTRO INGRESADO CON EXITO", "Inserción de Datos", JOptionPane.INFORMATION_MESSAGE);
                     reset();
                 } else {
@@ -822,6 +833,77 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
             JOptionPane.showMessageDialog(this, "ERROR " + e.toString() + " AL ELIMINAR EL REGISTRO. COMUNIQUESE CON TI", "Eliminación de Datos", JOptionPane.ERROR_MESSAGE);
         }
     }
+    
+    private void getDatosReporte(){
+        try{
+            /*String ref = "", tras = "", rein = "", ant = "";
+            if(accidente.getReferencia() == "1")
+                ref = "Sí";
+            else
+                ref = "No";
+            if(accidente.getTraslado() == "1")
+                tras = "Sí";
+            else
+                ref = "No";
+            if(accidente.getReincorporacion() == "1")
+                rein = "Sí";
+            else
+                ref = "No";
+            if(revisionSistemas.getAnteojos() == "1")
+                ant = "Sí";
+            else
+                ant = "No";
+            String[] datos = {accidente.getId(), accidente.getClinicaId(), 
+                accidente.getFecha(), accidente.getHora(), accidente.getEdad(), 
+                accidente.getArea(), accidente.getPuesto(), accidente.getRelato(), 
+                accidente.getDatosSubjetivos(), accidente.getClasificacion(), 
+                accidente.getTratamiento(), ref, tras, rein, empleado.getNombre(),
+                revisionSistemas.getAlteraciones(), revisionSistemas.getPielFaneras(),
+                revisionSistemas.getCabeza(), revisionSistemas.getOjoOidoNarizBoca(),
+                revisionSistemas.getOrofarinje(), revisionSistemas.getCuello(),
+                revisionSistemas.getCardiopulmonar(), revisionSistemas.getTorax(),
+                revisionSistemas.getAbdomen(), revisionSistemas.getGenitourinario(),
+                revisionSistemas.getExtremidades(), revisionSistemas.getNeurologico(),
+                revisionSistemas.getTemperatura(), revisionSistemas.getPulso(),
+                revisionSistemas.getSpo2(), revisionSistemas.getFr(),
+                revisionSistemas.getPa(), revisionSistemas.getGlicemia(),
+                revisionSistemas.getPeso(), revisionSistemas.getTalla(),
+                revisionSistemas.getImc(), revisionSistemas.getRuffier(),
+                revisionSistemas.getOjoDerecho(), revisionSistemas.getOjoIzquierdo(),
+                ant, revisionSistemas.getImpresionClinica(),
+                revisionSistemas.getObservaciones()
+                };
+            String[] datosNombres = {"Id", "Clínica", "Fecha", "Hora", "Edad", 
+                "Area", "Puesto", "Relato", "Datos Subjetivos", "Clasificación",
+                "Tratamiento", "Referencia", "Traslado", "Reincorporación Laboral", 
+                "Empleado", "Alteraciones", "Piel y Fanieras", "Cabeza", "Ojos, oidos, nariz y boca",
+                "Orofarinje", "Cuello", "Cardiopulmonar", "Torax", "Abdomen", 
+                "Genitourinario", "Extremidades", "Neurologico", "Temperatura", 
+                "Pulso", "SPO2", "FR", "PA", "Glicemia", "Peso", "Talla", "IMC", 
+                "Ruffier", "Ojo Derecho", "Ojo Izquierdo", "Usa anteojos", 
+                "Impresión Clínica", "Observaciones"};
+            */
+            genPDF.generarDatosEmpleado(empleado.getId());
+            genPDF.generarDatos(accidente.getNombreTabla(), accidente.getId(), accidente.getLlavePrimaria(), accidente.getPrefijo());
+            genPDF.generarDatos(revisionSistemas.getNombreTabla(), revisionSistemas.getId(), revisionSistemas.getLlavePrimaria(), revisionSistemas.getPrefijo());
+            genPDF.setDocumentoId(accidente.getId());
+            genPDF.setTipoReporte("Accidentes e Incidentes");
+            genPDF.setUsuario(usuario.getNombre());
+            genPDF.setFecha(accidente.getFecha());
+            //System.out.println(genPDF.getDatos());
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(this, "ERROR " + e.toString() + " AL CREAR EL REPORTE. COMUNIQUESE CON TI", "Reportes", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void crearReporte(){
+        try{
+            getDatosReporte();
+            genPDF.generarReporte("Ficha Accidente - " + empleado.getNombre() + " - " + accidente.getFecha());
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(this, "ERROR " + e.toString() + " AL CREAR EL REPORTE. COMUNIQUESE CON TI", "Reportes", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -854,6 +936,8 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         lbl_btnActualizar = new javax.swing.JLabel();
         btn_Eliminar = new javax.swing.JPanel();
         lbl_BtnEliminar = new javax.swing.JLabel();
+        btnReportes = new javax.swing.JPanel();
+        lblReportes = new javax.swing.JLabel();
         btn_Confirmar = new javax.swing.JPanel();
         lbl_btn_Confirmar = new javax.swing.JLabel();
         panelCartasContenido = new javax.swing.JPanel();
@@ -919,7 +1003,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         lblPeso = new javax.swing.JLabel();
         txtPeso = new javax.swing.JTextField();
         lblTalla = new javax.swing.JLabel();
-        txtTalla = new javax.swing.JTextField();
+        comboTalla = new javax.swing.JComboBox<>();
         lblRuffier = new javax.swing.JLabel();
         txtRuffier = new javax.swing.JTextField();
         lblOjoDerecho = new javax.swing.JLabel();
@@ -1166,6 +1250,38 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         panelBotonesCRUD.add(btn_Eliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 80, -1, 35));
 
         cont_Accidente.add(panelBotonesCRUD, new org.netbeans.lib.awtextra.AbsoluteConstraints(810, 0, 270, 120));
+
+        btnReportes.setBackground(new java.awt.Color(235, 235, 51));
+        btnReportes.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        btnReportes.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+        lblReportes.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblReportes.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblReportes.setText("Generar Reporte");
+        lblReportes.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblReportesMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lblReportesMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lblReportesMouseExited(evt);
+            }
+        });
+
+        javax.swing.GroupLayout btnReportesLayout = new javax.swing.GroupLayout(btnReportes);
+        btnReportes.setLayout(btnReportesLayout);
+        btnReportesLayout.setHorizontalGroup(
+            btnReportesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lblReportes, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)
+        );
+        btnReportesLayout.setVerticalGroup(
+            btnReportesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lblReportes, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)
+        );
+
+        cont_Accidente.add(btnReportes, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 540, 180, 35));
 
         btn_Confirmar.setBackground(new java.awt.Color(255, 255, 255));
         btn_Confirmar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
@@ -1599,17 +1715,9 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         lblTalla.setText("Talla");
         panelPagina1.add(lblTalla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 170, -1, 20));
 
-        txtTalla.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtTalla.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtTalla.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                txtTallaFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtTallaFocusLost(evt);
-            }
-        });
-        panelPagina1.add(txtTalla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 190, 175, 35));
+        comboTalla.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        comboTalla.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "S", "M", "L", "XL" }));
+        panelPagina1.add(comboTalla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 190, 175, 35));
 
         lblRuffier.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblRuffier.setText("Ruffier");
@@ -2071,6 +2179,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
             setCartaContenido(panelFormulario);
             btn_Confirmar.setBackground(new Color(40,235,40));
             btn_Confirmar.setVisible(true);
+            btnReportes.setVisible(false);
             lbl_btn_Confirmar.setText("Ingresar");
             contenidoActual = "Crear";
             lbl_btn_Confirmar.setEnabled(true);
@@ -2089,6 +2198,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
     private void lbl_btnActualizarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btnActualizarMouseClicked
         if (!contenidoActual.equals("Actualizar")){
             btn_Confirmar.setVisible(false);
+            btnReportes.setVisible(false);
             setCartaContenido(panelCombobox);
             btn_Ingresar.setBackground(new Color(92,92,235));
             lblTituloCombobox.setText("Actualizar");
@@ -2111,6 +2221,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
     private void lbl_BtnEliminarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_BtnEliminarMouseClicked
         if (!contenidoActual.equals("Eliminar")){
             btn_Confirmar.setVisible(false);
+            btnReportes.setVisible(false);
             setCartaContenido(panelCombobox);
             btn_Ingresar.setBackground(new Color(235,91,91));
             lblTituloCombobox.setText("Eliminar");
@@ -2130,60 +2241,22 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         btn_Eliminar.setBackground(util.colorCursorSale(btn_Eliminar.getBackground()));
     }//GEN-LAST:event_lbl_BtnEliminarMouseExited
 
-    private void lbl_btn_ConfirmarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btn_ConfirmarMouseClicked
-        if (lbl_btn_Confirmar.isEnabled()){
-            if (verificarRevisionSistemas()){
-                if (verificarEmpleado()){
-                    if (verificarAccidentes()){
-                        try {
-                            getRevisionSistemas();
-                            getAccidente();
-                            switch (contenidoActual){
-                                case "Eliminar":
-                                eliminar();
-                                break;
-                                case "Actualizar":
-                                actualizar();
-                                break;
-                                case "Crear":
-                                crear();
-                                break;
-                                default:
-                                break;
-                            }
-                        }catch (SQLException e) {
-                            JOptionPane.showMessageDialog(this, "ERROR " + e.toString() + " AL INSERTAR EL REGISTRO. COMUNIQUESE CON TI", "Inserción de Datos", JOptionPane.ERROR_MESSAGE);
-                        }
-                    }
-                }else
-                JOptionPane.showMessageDialog(this, "Información del empleado incompleta o no válida", "Inserción de Datos", JOptionPane.INFORMATION_MESSAGE);
-            }else
-            JOptionPane.showMessageDialog(this, "Información del formulario no válida", "Inserción de Datos", JOptionPane.INFORMATION_MESSAGE);
-        }
-    }//GEN-LAST:event_lbl_btn_ConfirmarMouseClicked
-
-    private void lbl_btn_ConfirmarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btn_ConfirmarMouseEntered
-        if (lbl_btn_Confirmar.isEnabled())
-        btn_Confirmar.setBackground(util.colorCursorEntra(btn_Confirmar.getBackground()));
-    }//GEN-LAST:event_lbl_btn_ConfirmarMouseEntered
-
-    private void lbl_btn_ConfirmarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btn_ConfirmarMouseExited
-        if (lbl_btn_Confirmar.isEnabled())
-        btn_Confirmar.setBackground(util.colorCursorSale(btn_Confirmar.getBackground()));
-    }//GEN-LAST:event_lbl_btn_ConfirmarMouseExited
-
     private void lbl_btnIngresarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btnIngresarMouseClicked
         if (lbl_SeleccionAccidente.getText().length() > 0){
             if (contenidoActual.equals("Actualizar")){
                 setCartaContenido(panelFormulario);
                 btn_Confirmar.setBackground(new Color(92,92,235));
+                btnReportes.setBackground(new Color(235,235,51));
 
                 btn_Confirmar.setVisible(true);
+                btnReportes.setVisible(true);
             }else if (contenidoActual.equals("Eliminar")){
+                
                 setCartaContenido(panelFormulario);
                 btn_Confirmar.setBackground(new Color(235,91,91));
 
                 btn_Confirmar.setVisible(true);
+                btnReportes.setVisible(false);
             }
             try {
                 buscarEmpleadoAccidente(jtAccidente.getValueAt(jtAccidente.getSelectedRow(), 0).toString());
@@ -2432,26 +2505,65 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         }
     }//GEN-LAST:event_txtPesoFocusLost
 
-    private void txtTallaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTallaFocusGained
-        if (String.valueOf(txtTalla.getText()).equals("m")){
-            txtTalla.setText("");
-            txtTalla.setForeground(Color.black);
-        }
-    }//GEN-LAST:event_txtTallaFocusGained
+    private void lblReportesMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblReportesMouseEntered
+        btnReportes.setBackground(util.colorCursorEntra(btnReportes.getBackground()));
+    }//GEN-LAST:event_lblReportesMouseEntered
 
-    private void txtTallaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTallaFocusLost
-        if (!(util.verificarFlotante(txtTalla.getText())) && (txtTalla.getText().length() > 0))
-        txtTalla.requestFocus();
-        if (txtTalla.getText().isEmpty()){
-            txtTalla.setText("m");
-            txtTalla.setForeground(Color.gray);
+    private void lblReportesMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblReportesMouseExited
+        btnReportes.setBackground(util.colorCursorSale(btnReportes.getBackground()));
+    }//GEN-LAST:event_lblReportesMouseExited
+
+    private void lblReportesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblReportesMouseClicked
+        crearReporte();
+    }//GEN-LAST:event_lblReportesMouseClicked
+
+    private void lbl_btn_ConfirmarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btn_ConfirmarMouseExited
+        if (lbl_btn_Confirmar.isEnabled())
+        btn_Confirmar.setBackground(util.colorCursorSale(btn_Confirmar.getBackground()));
+    }//GEN-LAST:event_lbl_btn_ConfirmarMouseExited
+
+    private void lbl_btn_ConfirmarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btn_ConfirmarMouseEntered
+        if (lbl_btn_Confirmar.isEnabled())
+        btn_Confirmar.setBackground(util.colorCursorEntra(btn_Confirmar.getBackground()));
+    }//GEN-LAST:event_lbl_btn_ConfirmarMouseEntered
+
+    private void lbl_btn_ConfirmarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btn_ConfirmarMouseClicked
+        if (lbl_btn_Confirmar.isEnabled()){
+            if (verificarRevisionSistemas()){
+                if (verificarEmpleado()){
+                    if (verificarAccidentes()){
+                        try {
+                            getRevisionSistemas();
+                            getAccidente();
+                            switch (contenidoActual){
+                                case "Eliminar":
+                                eliminar();
+                                break;
+                                case "Actualizar":
+                                actualizar();
+                                break;
+                                case "Crear":
+                                crear();
+                                break;
+                                default:
+                                break;
+                            }
+                        }catch (SQLException e) {
+                            JOptionPane.showMessageDialog(this, "ERROR " + e.toString() + " AL INSERTAR EL REGISTRO. COMUNIQUESE CON TI", "Inserción de Datos", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }else
+                JOptionPane.showMessageDialog(this, "Información del empleado incompleta o no válida", "Inserción de Datos", JOptionPane.INFORMATION_MESSAGE);
+            }else
+            JOptionPane.showMessageDialog(this, "Información del formulario no válida", "Inserción de Datos", JOptionPane.INFORMATION_MESSAGE);
         }
-    }//GEN-LAST:event_txtTallaFocusLost
+    }//GEN-LAST:event_lbl_btn_ConfirmarMouseClicked
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel btnReportes;
     public javax.swing.JPanel btn_Actualizar;
-    public javax.swing.JPanel btn_Confirmar;
+    private javax.swing.JPanel btn_Confirmar;
     public javax.swing.JPanel btn_Crear;
     public javax.swing.JPanel btn_Eliminar;
     public javax.swing.JPanel btn_Ingresar;
@@ -2465,6 +2577,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
     private javax.swing.JCheckBox checkReferencia;
     private javax.swing.JCheckBox checkReincorporacion;
     private javax.swing.JCheckBox checkTraslado;
+    private javax.swing.JComboBox<String> comboTalla;
     private javax.swing.JPanel cont_Accidente;
     public static javax.swing.ButtonGroup grbtn_Sexo;
     public javax.swing.JLabel jLabel1;
@@ -2527,6 +2640,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
     public javax.swing.JLabel lblPuesto1;
     public javax.swing.JLabel lblPulso;
     private javax.swing.JLabel lblRelato;
+    private javax.swing.JLabel lblReportes;
     private javax.swing.JLabel lblRespiratorio;
     private javax.swing.JLabel lblResponsable;
     private javax.swing.JLabel lblRuffier;
@@ -2549,7 +2663,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
     public javax.swing.JLabel lbl_btnIngresar;
     private javax.swing.JLabel lbl_btnOtroEmpleado;
     private javax.swing.JLabel lbl_btnSeleccionEmpleado;
-    public javax.swing.JLabel lbl_btn_Confirmar;
+    private javax.swing.JLabel lbl_btn_Confirmar;
     private javax.swing.JLabel lbl_btn_Pagina1_2;
     private javax.swing.JLabel lbl_btn_Pagina2_1;
     private javax.swing.JLabel lbl_btn_Pagina2_3;
@@ -2617,7 +2731,6 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
     private javax.swing.JTextField txtRuffier;
     public javax.swing.JTextField txtSPO2;
     private javax.swing.JTextField txtSeleccionEmpleado;
-    private javax.swing.JTextField txtTalla;
     public javax.swing.JTextField txtTemperatura;
     // End of variables declaration//GEN-END:variables
 

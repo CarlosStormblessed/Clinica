@@ -12,6 +12,7 @@ import Controladores.EmpleadoCtrl;
 import Controladores.SeguimientoCronicosCtrl;
 import Controladores.RevisionSistemasCtrl;
 import Controladores.UsuarioCtrl;
+import Controladores.GenerarReportePDF;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import javax.swing.ButtonModel;
@@ -57,6 +58,7 @@ public class SeguimientoCronicos extends javax.swing.JFrame implements ActionLis
     private RevisionSistemasCtrl revSisCtrl = new RevisionSistemasCtrl();
     private EmpleadoCtrl empCtrl = new EmpleadoCtrl();
     private UsuarioCtrl usrCtrl = new UsuarioCtrl();
+    private GenerarReportePDF genPDF = new GenerarReportePDF();
     
     private PaginadorTabla <ConsultaGeneral> paginadorSeguimientoCronicos, paginadorEmpleado;
     public SeguimientoCronicos() {
@@ -66,6 +68,7 @@ public class SeguimientoCronicos extends javax.swing.JFrame implements ActionLis
         setCartas(panelPagina1);
         setCartaEmpleado(panelComboboxEmpleado);
         btn_Confirmar.setVisible(false);
+        btnReportes.setVisible(false);
         lbl_btn_Confirmar.setEnabled(false);
         txtHora.setEnabled(false);
         timeHora.set24hourMode(true);
@@ -171,8 +174,6 @@ public class SeguimientoCronicos extends javax.swing.JFrame implements ActionLis
         txtPeso.setForeground(Color.gray);
         txtIMC.setText("Kg/m^2");
         txtIMC.setForeground(Color.gray);
-        txtTalla.setText("m");
-        txtTalla.setForeground(Color.gray);
         txtOjoDerechoNumerador.setText("");
         txtOjoIzquierdoNumerador.setText("");
         checkLentes.setSelected(false);
@@ -421,7 +422,7 @@ public class SeguimientoCronicos extends javax.swing.JFrame implements ActionLis
             revisionSistemas.setImc(txtIMC.getText());
         else
             revisionSistemas.setImc("");
-        revisionSistemas.setTalla(txtTalla.getText());
+        revisionSistemas.setTalla(comboTalla.getSelectedItem().toString());
         revisionSistemas.setRuffier(txtRuffier.getText());
         if((txtOjoDerechoNumerador.getText().length()>0) && (txtOjoDerechoDenominador.getText().length()>0))
             revisionSistemas.setOjoDerecho(txtOjoDerechoNumerador.getText() + "/" + txtOjoDerechoDenominador.getText());
@@ -513,12 +514,21 @@ public class SeguimientoCronicos extends javax.swing.JFrame implements ActionLis
             txtIMC.setForeground(Color.gray);
             txtIMC.setText("Kg/m^2");
         }
-        if(revisionSistemas.getTalla().length() > 0){
-            txtTalla.setForeground(Color.black);
-            txtTalla.setText(revisionSistemas.getTalla());
-        }else{
-            txtTalla.setForeground(Color.gray);
-            txtTalla.setText("m");
+        switch(revisionSistemas.getTalla()){
+            case "S":
+                comboTalla.setSelectedIndex(0);
+                break;
+            case "M":
+                comboTalla.setSelectedIndex(1);
+                break;
+            case "L":
+                comboTalla.setSelectedIndex(2);
+                break;
+            case "XL":
+                comboTalla.setSelectedIndex(3);
+                break;
+            default:
+                comboTalla.setSelectedIndex(0);
         }
         txtRuffier.setText(revisionSistemas.getRuffier());
         if(revisionSistemas.getOjoDerecho().length()>1){
@@ -799,6 +809,30 @@ public class SeguimientoCronicos extends javax.swing.JFrame implements ActionLis
             JOptionPane.showMessageDialog(this, "ERROR " + e.toString() + " AL ELIMINAR EL REGISTRO. COMUNIQUESE CON TI", "Eliminación de Datos", JOptionPane.ERROR_MESSAGE);
         }
     }
+    
+    private void getDatosReporte(){
+        try{
+            genPDF.generarDatosEmpleado(empleado.getId());
+            genPDF.generarDatos(seguimientoCronicos.getNombreTabla(), seguimientoCronicos.getId(), seguimientoCronicos.getLlavePrimaria(), seguimientoCronicos.getPrefijo());
+            genPDF.generarDatos(revisionSistemas.getNombreTabla(), revisionSistemas.getId(), revisionSistemas.getLlavePrimaria(), revisionSistemas.getPrefijo());
+            genPDF.setDocumentoId(seguimientoCronicos.getId());
+            genPDF.setTipoReporte("Seguimientos Cronicos");
+            genPDF.setUsuario(usuario.getNombre());
+            genPDF.setFecha(seguimientoCronicos.getFecha());
+            //System.out.println(genPDF.getDatos());
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(this, "ERROR " + e.toString() + " AL CREAR EL REPORTE. COMUNIQUESE CON TI", "Reportes", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void crearReporte(){
+        try{
+            getDatosReporte();
+            genPDF.generarReporte("Seguimientos Cronicos - " + empleado.getNombre() + " - " + seguimientoCronicos.getFecha());
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(this, "ERROR " + e.toString() + " AL CREAR EL REPORTE. COMUNIQUESE CON TI", "Reportes", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -837,6 +871,8 @@ public class SeguimientoCronicos extends javax.swing.JFrame implements ActionLis
         panelInicio = new javax.swing.JPanel();
         lbl_InicioInicio = new javax.swing.JLabel();
         panelFormulario = new javax.swing.JPanel();
+        btnReportes = new javax.swing.JPanel();
+        lblReportes = new javax.swing.JLabel();
         panelCartasEmpleado = new javax.swing.JPanel();
         panelEmpleado = new javax.swing.JPanel();
         btn_OtroEmpleado = new javax.swing.JPanel();
@@ -905,7 +941,7 @@ public class SeguimientoCronicos extends javax.swing.JFrame implements ActionLis
         lblPeso = new javax.swing.JLabel();
         txtPeso = new javax.swing.JTextField();
         lblTalla = new javax.swing.JLabel();
-        txtTalla = new javax.swing.JTextField();
+        comboTalla = new javax.swing.JComboBox<>();
         lblRuffier = new javax.swing.JLabel();
         txtRuffier = new javax.swing.JTextField();
         lblOjoDerecho = new javax.swing.JLabel();
@@ -1180,6 +1216,38 @@ public class SeguimientoCronicos extends javax.swing.JFrame implements ActionLis
 
         panelFormulario.setBackground(new java.awt.Color(255, 255, 255));
         panelFormulario.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        btnReportes.setBackground(new java.awt.Color(235, 235, 51));
+        btnReportes.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        btnReportes.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+        lblReportes.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblReportes.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblReportes.setText("Generar Reporte");
+        lblReportes.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblReportesMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lblReportesMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lblReportesMouseExited(evt);
+            }
+        });
+
+        javax.swing.GroupLayout btnReportesLayout = new javax.swing.GroupLayout(btnReportes);
+        btnReportes.setLayout(btnReportesLayout);
+        btnReportesLayout.setHorizontalGroup(
+            btnReportesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lblReportes, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
+        );
+        btnReportesLayout.setVerticalGroup(
+            btnReportesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lblReportes, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)
+        );
+
+        panelFormulario.add(btnReportes, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 380, 130, 35));
 
         panelCartasEmpleado.setLayout(new java.awt.CardLayout());
 
@@ -1602,17 +1670,9 @@ public class SeguimientoCronicos extends javax.swing.JFrame implements ActionLis
         lblTalla.setText("Talla");
         panelPagina1.add(lblTalla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 170, -1, 20));
 
-        txtTalla.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtTalla.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtTalla.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                txtTallaFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtTallaFocusLost(evt);
-            }
-        });
-        panelPagina1.add(txtTalla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 190, 175, 35));
+        comboTalla.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        comboTalla.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "S", "M", "L", "XL" }));
+        panelPagina1.add(comboTalla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 190, 175, 35));
 
         lblRuffier.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblRuffier.setText("Ruffier");
@@ -1956,6 +2016,7 @@ public class SeguimientoCronicos extends javax.swing.JFrame implements ActionLis
             setCartaContenido(panelFormulario);
             btn_Confirmar.setBackground(new Color(40,235,40));
             btn_Confirmar.setVisible(true);
+            btnReportes.setVisible(false);
             lbl_btn_Confirmar.setText("Ingresar");
             contenidoActual = "Crear";
             lbl_btn_Confirmar.setEnabled(true);
@@ -1974,6 +2035,7 @@ public class SeguimientoCronicos extends javax.swing.JFrame implements ActionLis
     private void lbl_btnActualizarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btnActualizarMouseClicked
         if (!contenidoActual.equals("Actualizar")){
             btn_Confirmar.setVisible(false);
+            btnReportes.setVisible(false);
             setCartaContenido(panelCombobox);
             btn_Ingresar.setBackground(new Color(92,92,235));
             lblTituloCombobox.setText("Actualizar");
@@ -1996,6 +2058,7 @@ public class SeguimientoCronicos extends javax.swing.JFrame implements ActionLis
     private void lbl_BtnEliminarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_BtnEliminarMouseClicked
         if (!contenidoActual.equals("Eliminar")){
             btn_Confirmar.setVisible(false);
+            btnReportes.setVisible(false);
             setCartaContenido(panelCombobox);
             btn_Ingresar.setBackground(new Color(235,91,91));
             lblTituloCombobox.setText("Eliminar");
@@ -2064,11 +2127,13 @@ public class SeguimientoCronicos extends javax.swing.JFrame implements ActionLis
                 btn_Confirmar.setBackground(new Color(92,92,235));
 
                 btn_Confirmar.setVisible(true);
+                btnReportes.setVisible(true);
             }else if (contenidoActual.equals("Eliminar")){
                 setCartaContenido(panelFormulario);
                 btn_Confirmar.setBackground(new Color(235,91,91));
 
                 btn_Confirmar.setVisible(true);
+                btnReportes.setVisible(false);
             }
             try {
                 buscarEmpleadoSeguimientoCronicos(jtSeguimientoCronicos.getValueAt(jtSeguimientoCronicos.getSelectedRow(), 0).toString());
@@ -2292,24 +2357,21 @@ public class SeguimientoCronicos extends javax.swing.JFrame implements ActionLis
         }
     }//GEN-LAST:event_txtPesoFocusLost
 
-    private void txtTallaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTallaFocusGained
-        if (String.valueOf(txtTalla.getText()).equals("m")){
-            txtTalla.setText("");
-            txtTalla.setForeground(Color.black);
-        }
-    }//GEN-LAST:event_txtTallaFocusGained
+    private void lblReportesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblReportesMouseClicked
+        crearReporte();
+    }//GEN-LAST:event_lblReportesMouseClicked
 
-    private void txtTallaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTallaFocusLost
-        if (!(util.verificarFlotante(txtTalla.getText())) && (txtTalla.getText().length() > 0))
-        txtTalla.requestFocus();
-        if (txtTalla.getText().isEmpty()){
-            txtTalla.setText("m");
-            txtTalla.setForeground(Color.gray);
-        }
-    }//GEN-LAST:event_txtTallaFocusLost
+    private void lblReportesMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblReportesMouseEntered
+        btnReportes.setBackground(util.colorCursorEntra(btnReportes.getBackground()));
+    }//GEN-LAST:event_lblReportesMouseEntered
+
+    private void lblReportesMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblReportesMouseExited
+        btnReportes.setBackground(util.colorCursorSale(btnReportes.getBackground()));
+    }//GEN-LAST:event_lblReportesMouseExited
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel btnReportes;
     public javax.swing.JPanel btn_Actualizar;
     public javax.swing.JPanel btn_Confirmar;
     public javax.swing.JPanel btn_Crear;
@@ -2322,6 +2384,7 @@ public class SeguimientoCronicos extends javax.swing.JFrame implements ActionLis
     private javax.swing.JCheckBox checkLentes;
     private javax.swing.JCheckBox checkReferencia;
     private javax.swing.JCheckBox checkTraslado;
+    private javax.swing.JComboBox<String> comboTalla;
     private javax.swing.JPanel cont_SeguimientoCronicos;
     public static javax.swing.ButtonGroup grbtn_Sexo;
     public javax.swing.JLabel jLabel1;
@@ -2380,6 +2443,7 @@ public class SeguimientoCronicos extends javax.swing.JFrame implements ActionLis
     private javax.swing.JLabel lblPielFaneras;
     public javax.swing.JLabel lblPuesto1;
     public javax.swing.JLabel lblPulso;
+    private javax.swing.JLabel lblReportes;
     private javax.swing.JLabel lblRespiratorio;
     private javax.swing.JLabel lblResponsable;
     private javax.swing.JLabel lblRuffier;
@@ -2465,7 +2529,6 @@ public class SeguimientoCronicos extends javax.swing.JFrame implements ActionLis
     private javax.swing.JTextField txtRuffier;
     public javax.swing.JTextField txtSPO2;
     private javax.swing.JTextField txtSeleccionEmpleado;
-    private javax.swing.JTextField txtTalla;
     public javax.swing.JTextField txtTemperatura;
     // End of variables declaration//GEN-END:variables
 

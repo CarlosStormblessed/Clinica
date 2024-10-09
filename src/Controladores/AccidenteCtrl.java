@@ -106,7 +106,7 @@ public class AccidenteCtrl {
         conn = conex.connect();
         int result = 0;
         try {
-            String sql = "UPDATE ACCIDENTE_INCIDENTE SET ACCINC_EDAD = ?, ACCINC_AREA = ?, ACCINC_PUESTO = ?, ACCINC_RELATO = ?, ACCINC_DATOSSUB = ?, ACCINC_CLASIFICACION = ?, ACCINC_TRATAMIENTO = ?, ACCINC_REFERENCIA = ?, ACCINC_TRASLADO = ?, ACCINC_REINCORPORACION WHERE ACCINC_ID = ?";
+            String sql = "UPDATE ACCIDENTE_INCIDENTE SET ACCINC_EDAD = ?, ACCINC_AREA = ?, ACCINC_PUESTO = ?, ACCINC_RELATO = ?, ACCINC_DATOSSUB = ?, ACCINC_CLASIFICACION = ?, ACCINC_TRATAMIENTO = ?, ACCINC_REFERENCIA = ?, ACCINC_TRASLADO = ?, ACCINC_REINCORPORACION = ? WHERE ACCINC_ID = ?";
             conn.setAutoCommit(false);
 
             smt = conn.prepareStatement(sql);

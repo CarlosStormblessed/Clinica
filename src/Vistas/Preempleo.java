@@ -12,6 +12,7 @@ import Controladores.RevisionSistemasCtrl;
 import Controladores.EmpleadoCtrl;
 import Controladores.UsuarioCtrl;
 import Controladores.PaginadorTabla;
+import Controladores.GenerarReportePDF;
 import Modelos.AntecedentesMod;
 import Modelos.PreempleoMod;
 import Modelos.RevisionSistemasMod;
@@ -63,11 +64,13 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     private RevisionSistemasCtrl revSisCtrl = new RevisionSistemasCtrl();
     private UsuarioCtrl usuarioCtrl = new UsuarioCtrl();
     private PaginadorTabla <Preempleo> paginador;
+    private GenerarReportePDF genPDF = new GenerarReportePDF(); 
     public Preempleo() throws SQLException, ConnectException {
         initComponents();
         contenidoActual = "Inicio";
         setCartaContenido(panelInicio);
         btn_Confirmar.setVisible(false);
+        btnReportes.setVisible(false);
         lbl_btn_Confirmar.setEnabled(false);
         jtPreempleo.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent Mouse_evt){
@@ -234,8 +237,6 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         txtPeso.setForeground(Color.gray);
         txtIMC.setText("Kg/m^2");
         txtIMC.setForeground(Color.gray);
-        txtTalla.setText("m");
-        txtTalla.setForeground(Color.gray);
         txtRuffier.setText("");
         txtOjoDerechoNumerador.setText("");
         txtOjoIzquierdoNumerador.setText("");
@@ -356,10 +357,13 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     
     private boolean verificarAntecedentes(){
         boolean valido = false;
-        if ((util.verificarFlotante(txtTemperatura.getText()) || (txtTemperatura.getText().equals("°C"))) && 
-           ((util.verificarFlotante(txtPulso.getText())) || (txtPulso.getText().equals("LPM"))) && ((util.verificarFlotante(txtSPO2.getText())) || (txtSPO2.getText().equals("%"))) && 
-           ((util.verificarFlotante(txtFR.getText())) || (txtFR.getText().equals("RPM"))) && ((util.verificarFlotante(txtGlicemia.getText())) || (txtGlicemia.getText().equals("mg/dl"))) && 
-           ((util.verificarFlotante(txtPeso.getText())) || (txtPeso.getText().equals("lb"))) && (util.verificarFlotante(txtIMC.getText()) || (txtIMC.getText().equals("Kg/m^2"))) && 
+        if ((util.verificarFlotante(txtTemperatura.getText()) || (txtTemperatura.getText().equals("°C")) || (txtTemperatura.getText().length() == 0)) && 
+           ((util.verificarFlotante(txtPulso.getText())) || (txtPulso.getText().equals("LPM")) || (txtPulso.getText().length() == 0)) && 
+           ((util.verificarFlotante(txtSPO2.getText())) || (txtSPO2.getText().equals("%"))|| (txtSPO2.getText().length() == 0)) && 
+           ((util.verificarFlotante(txtFR.getText())) || (txtFR.getText().equals("RPM")) || (txtFR.getText().length() == 0)) && 
+           ((util.verificarFlotante(txtGlicemia.getText())) || (txtGlicemia.getText().equals("mg/dl")) || (txtGlicemia.getText().length() == 0)) && 
+           ((util.verificarFlotante(txtPeso.getText())) || (txtPeso.getText().equals("lb")) || (txtPeso.getText().length() == 0)) && 
+           (util.verificarFlotante(txtIMC.getText()) || (txtIMC.getText().equals("Kg/m^2"))|| (txtIMC.getText().length() == 0)) && 
            ((util.verificarFlotante(txtRuffier.getText())) || (txtRuffier.getText().equals(""))) &&
            (((txtOjoDerechoNumerador.getText().length()>0) && (txtOjoDerechoDenominador.getText().length()>0) && (txtOjoIzquierdoNumerador.getText().length()>0) && (txtOjoIzquierdoDenominador.getText().length()>0)) ||
            (((txtOjoDerechoNumerador.getText().length()>0) && (txtOjoDerechoDenominador.getText().length()>0)) && !((txtOjoIzquierdoNumerador.getText().length()>0) && (txtOjoIzquierdoDenominador.getText().length()>0))) ||
@@ -680,7 +684,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
             revisionSistemas.setImc(txtIMC.getText());
         else
             revisionSistemas.setImc("");
-        revisionSistemas.setTalla(txtTalla.getText());
+        revisionSistemas.setTalla(comboTalla.getSelectedItem().toString());
         revisionSistemas.setRuffier(txtRuffier.getText());
         if((txtOjoDerechoNumerador.getText().length()>0) && (txtOjoDerechoDenominador.getText().length()>0))
             revisionSistemas.setOjoDerecho(txtOjoDerechoNumerador.getText() + "/" + txtOjoDerechoDenominador.getText());
@@ -772,12 +776,21 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
             txtIMC.setForeground(Color.gray);
             txtIMC.setText("Kg/m^2");
         }
-        if(revisionSistemas.getTalla().length() > 0){
-            txtTalla.setForeground(Color.black);
-            txtTalla.setText(revisionSistemas.getTalla());
-        }else{
-            txtTalla.setForeground(Color.gray);
-            txtTalla.setText("m");
+        switch(revisionSistemas.getTalla()){
+            case "S":
+                comboTalla.setSelectedIndex(0);
+                break;
+            case "M":
+                comboTalla.setSelectedIndex(1);
+                break;
+            case "L":
+                comboTalla.setSelectedIndex(2);
+                break;
+            case "XL":
+                comboTalla.setSelectedIndex(3);
+                break;
+            default:
+                comboTalla.setSelectedIndex(0);
         }
         txtRuffier.setText(revisionSistemas.getRuffier());
         if(revisionSistemas.getOjoDerecho().length()>1){
@@ -1084,6 +1097,10 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
                         preempleo.setRevisionSistemasId(revSisCtrl.getMaxId());
                         preempleo.setEmpleadoId(empCtrl.getMaxId());
                         resPreempleo = preempCtrl.Crear(preempleo);
+                        if (resPreempleo > 0){
+                            empleado.setId(empCtrl.getMaxId());
+                            resEmpleado = empCtrl.Crear(empleado);
+                        }
                 }
             }
             if ((resAntecedentes > 0) && (resRevisionSistemas > 0) && (resPreempleo > 0)) {
@@ -1143,6 +1160,30 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
             JOptionPane.showMessageDialog(this, "ERROR " + e.toString() + " AL ELIMINAR EL REGISTRO. COMUNIQUESE CON TI", "Inserción de Datos", JOptionPane.ERROR_MESSAGE);
         }
     }
+    
+        private void getDatosReporte(){
+        try{
+            genPDF.generarDatosEmpleado(empleado.getId());
+            genPDF.generarDatos(preempleo.getNombreTabla(), preempleo.getId(), preempleo.getLlavePrimaria(), preempleo.getPrefijo());
+            genPDF.generarDatos(revisionSistemas.getNombreTabla(), revisionSistemas.getId(), revisionSistemas.getLlavePrimaria(), revisionSistemas.getPrefijo());
+            genPDF.setDocumentoId(preempleo.getId());
+            genPDF.setTipoReporte("Preempleo");
+            genPDF.setUsuario(usuario.getNombre());
+            genPDF.setFecha(preempleo.getFecha());
+            //System.out.println(genPDF.getDatos());
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(this, "ERROR " + e.toString() + " AL CREAR EL REPORTE. COMUNIQUESE CON TI", "Reportes", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void crearReporte(){
+        try{
+            getDatosReporte();
+            genPDF.generarReporte("Ficha de Preempleo - " + empleado.getNombre() + " - " + preempleo.getFecha());
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(this, "ERROR " + e.toString() + " AL CREAR EL REPORTE. COMUNIQUESE CON TI", "Reportes", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -1179,6 +1220,8 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         lblSeguridad = new javax.swing.JLabel();
         panelFecha = new javax.swing.JPanel();
         lblFechaMod = new javax.swing.JLabel();
+        btnReportes = new javax.swing.JPanel();
+        lblReportes = new javax.swing.JLabel();
         btn_Confirmar = new javax.swing.JPanel();
         lbl_btn_Confirmar = new javax.swing.JLabel();
         panelCartasContenido = new javax.swing.JPanel();
@@ -1320,7 +1363,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         lblPeso = new javax.swing.JLabel();
         txtPeso = new javax.swing.JTextField();
         lblTalla = new javax.swing.JLabel();
-        txtTalla = new javax.swing.JTextField();
+        comboTalla = new javax.swing.JComboBox<>();
         lblRuffier = new javax.swing.JLabel();
         txtRuffier = new javax.swing.JTextField();
         lblOjoDerecho = new javax.swing.JLabel();
@@ -1644,6 +1687,38 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
 
         cont_Preempleo.add(tablaTitulos, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 1080, 90));
 
+        btnReportes.setBackground(new java.awt.Color(235, 235, 51));
+        btnReportes.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        btnReportes.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+        lblReportes.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblReportes.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblReportes.setText("Generar Reporte");
+        lblReportes.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblReportesMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lblReportesMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lblReportesMouseExited(evt);
+            }
+        });
+
+        javax.swing.GroupLayout btnReportesLayout = new javax.swing.GroupLayout(btnReportes);
+        btnReportes.setLayout(btnReportesLayout);
+        btnReportesLayout.setHorizontalGroup(
+            btnReportesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lblReportes, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
+        );
+        btnReportesLayout.setVerticalGroup(
+            btnReportesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lblReportes, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)
+        );
+
+        cont_Preempleo.add(btnReportes, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 500, 130, 35));
+
         btn_Confirmar.setBackground(new java.awt.Color(255, 255, 255));
         btn_Confirmar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
@@ -1675,7 +1750,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
             .addComponent(lbl_btn_Confirmar, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)
         );
 
-        cont_Preempleo.add(btn_Confirmar, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 540, 90, 35));
+        cont_Preempleo.add(btn_Confirmar, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 555, 90, 35));
 
         panelCartasContenido.setLayout(new java.awt.CardLayout());
 
@@ -2792,17 +2867,9 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         lblTalla.setText("Talla");
         panelPagina3.add(lblTalla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 170, -1, 20));
 
-        txtTalla.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtTalla.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtTalla.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                txtTallaFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtTallaFocusLost(evt);
-            }
-        });
-        panelPagina3.add(txtTalla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 190, 175, 35));
+        comboTalla.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        comboTalla.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "S", "M", "L", "XL" }));
+        panelPagina3.add(comboTalla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 190, 175, 35));
 
         lblRuffier.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblRuffier.setText("Ruffier");
@@ -3656,6 +3723,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
             setCartaContenido(panelFormulario);
             btn_Confirmar.setBackground(new Color(40,235,40));
             btn_Confirmar.setVisible(true);
+            btnReportes.setVisible(false);
             lbl_btn_Confirmar.setText("Ingresar");
             contenidoActual = "Crear";
             lbl_btn_Confirmar.setEnabled(true);
@@ -3666,6 +3734,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     private void lbl_btnActualizarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btnActualizarMouseClicked
         if (!contenidoActual.equals("Actualizar")){
             btn_Confirmar.setVisible(false);
+            btnReportes.setVisible(false);
             setCartaContenido(panelCombobox);
             btn_Ingresar.setBackground(new Color(92,92,235));
             lblTituloCombobox.setText("Actualizar");
@@ -3680,6 +3749,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     private void lbl_BtnEliminarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_BtnEliminarMouseClicked
         if (!contenidoActual.equals("Eliminar")){
             btn_Confirmar.setVisible(false);
+            btnReportes.setVisible(false);
             setCartaContenido(panelCombobox);
             btn_Ingresar.setBackground(new Color(235,91,91));
             lblTituloCombobox.setText("Eliminar");
@@ -3711,11 +3781,13 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
                     btn_Confirmar.setBackground(new Color(92,92,235));
 
                     btn_Confirmar.setVisible(true);
+                    btnReportes.setVisible(true);
                 }else if (contenidoActual.equals("Eliminar")){
                     setCartaContenido(panelFormulario);
                     btn_Confirmar.setBackground(new Color(235,91,91));
 
-                    btn_Confirmar.setVisible(true);            
+                    btn_Confirmar.setVisible(true);
+                    btnReportes.setVisible(false);
                 }
                 setBuscarPreempleoAntecedentesRevisionSistemasEmpleado(jtPreempleo.getValueAt(jtPreempleo.getSelectedRow(), 0).toString());
             }else
@@ -4071,22 +4143,6 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         }
     }//GEN-LAST:event_txtCSTPFocusLost
 
-    private void txtTallaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTallaFocusGained
-        if (String.valueOf(txtTalla.getText()).equals("m")){
-            txtTalla.setText("");
-            txtTalla.setForeground(Color.black);
-        }
-    }//GEN-LAST:event_txtTallaFocusGained
-
-    private void txtTallaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTallaFocusLost
-        if (!(util.verificarFlotante(txtTalla.getText())) && (txtTalla.getText().length() > 0))
-        txtTalla.requestFocus();
-        if (txtTalla.getText().isEmpty()){
-            txtTalla.setText("m");
-            txtTalla.setForeground(Color.gray);
-        }
-    }//GEN-LAST:event_txtTallaFocusLost
-
     private void txtIdentificacionFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtIdentificacionFocusLost
         if(!(util.verificarNumero(txtIdentificacion.getText())))
             txtIdentificacion.requestFocus();
@@ -4124,9 +4180,22 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
         }
     }//GEN-LAST:event_rbtn_Aptitud2StateChanged
 
+    private void lblReportesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblReportesMouseClicked
+        crearReporte();
+    }//GEN-LAST:event_lblReportesMouseClicked
+
+    private void lblReportesMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblReportesMouseEntered
+        btnReportes.setBackground(util.colorCursorEntra(btnReportes.getBackground()));
+    }//GEN-LAST:event_lblReportesMouseEntered
+
+    private void lblReportesMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblReportesMouseExited
+        btnReportes.setBackground(util.colorCursorSale(btnReportes.getBackground()));
+    }//GEN-LAST:event_lblReportesMouseExited
+
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel btnReportes;
     public javax.swing.JPanel btn_Actualizar;
     public javax.swing.JPanel btn_Confirmar;
     public javax.swing.JPanel btn_Crear;
@@ -4143,6 +4212,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     private javax.swing.JCheckBox checkLentes;
     private javax.swing.JComboBox<String> comboEstadoCivil;
     private javax.swing.JComboBox<String> comboNivelAcademico;
+    private javax.swing.JComboBox<String> comboTalla;
     private javax.swing.JComboBox<String> combo_Autorizado;
     private javax.swing.JComboBox<String> combo_Realizado;
     private javax.swing.JComboBox<String> combo_Revisado;
@@ -4234,6 +4304,7 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     public javax.swing.JLabel lblPuesto;
     public javax.swing.JLabel lblPuestoAplica;
     public javax.swing.JLabel lblPulso;
+    private javax.swing.JLabel lblReportes;
     private javax.swing.JLabel lblRespiratorio;
     private javax.swing.JLabel lblResponsable;
     private javax.swing.JLabel lblRuffier;
@@ -4386,7 +4457,6 @@ public class Preempleo extends javax.swing.JFrame implements ActionListener, Tab
     public javax.swing.JTextField txtPulso;
     private javax.swing.JTextField txtRuffier;
     public javax.swing.JTextField txtSPO2;
-    private javax.swing.JTextField txtTalla;
     public javax.swing.JTextField txtTelefono;
     public javax.swing.JTextField txtTemperatura;
     // End of variables declaration//GEN-END:variables
