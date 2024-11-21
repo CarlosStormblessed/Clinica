@@ -14,10 +14,15 @@ public class AccidenteMod {
     private String tratamiento;
     private String referencia;
     private String traslado;
+    private String reincorporacion;
     private String empleadoId;
     private String revisionSistemasId;
     private String responsable;
     private String estado;
+    
+    private final String nombreTabla = "ACCIDENTE_INCIDENTE";
+    private final String prefijo = "ACCINC_";
+    private final String llavePrimaria = prefijo+"ID";
 
     public String getId() {
         return id;
@@ -122,6 +127,14 @@ public class AccidenteMod {
     public void setTraslado(String traslado) {
         this.traslado = traslado;
     }
+
+    public String getReincorporacion() {
+        return reincorporacion;
+    }
+
+    public void setReincorporacion(String reincorporacion) {
+        this.reincorporacion = reincorporacion;
+    }
     
     public String getEmpleadoId() {
         return empleadoId;
@@ -154,4 +167,16 @@ public class AccidenteMod {
     public void setEstado(String estado) {
         this.estado = estado;
     }
+
+    public String getNombreTabla() {
+        return nombreTabla;
+    }
+
+    public String getPrefijo() {
+        return prefijo;
+    }
+
+    public String getLlavePrimaria() {
+        return llavePrimaria;
+    }    
 }

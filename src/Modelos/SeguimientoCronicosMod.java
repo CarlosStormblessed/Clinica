@@ -16,6 +16,10 @@ public class SeguimientoCronicosMod {
     private String revisionSistemasId;
     private String responsable;
     private String estado;
+    
+    private final String nombreTabla = "SEGUIMIENTO_CRONICOS";
+    private final String prefijo = "SEGCRO_";
+    private final String llavePrimaria = prefijo+"ID";
 
     public String getClinicaId() {
         return clinicaId;
@@ -135,5 +139,17 @@ public class SeguimientoCronicosMod {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public String getNombreTabla() {
+        return nombreTabla;
+    }
+
+    public String getPrefijo() {
+        return prefijo;
+    }
+
+    public String getLlavePrimaria() {
+        return llavePrimaria;
     }
 }

@@ -19,7 +19,7 @@ public class EvaluacionPeriodicaCtrl {
         conn = conex.connect();
         try {
             //String sql = "INSERT INTO EVALUACION_PERIODICA VALUES ((SELECT IFNULL(MAX(EVAPER_ID), 0)+1 FROM EVALUACION_PERIODICA a), '?','?','?','?','?','?','?','?',?,'?','?','?','?','?','?',?,?,?,'?',?)";
-            String sql = "INSERT INTO EVALUACION_PERIODICA VALUES ((SELECT IFNULL(MAX(EVAPER_ID), 0)+1 FROM EVALUACION_PERIODICA a), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO EVALUACION_PERIODICA VALUES ((SELECT IFNULL(MAX(EVAPER_ID), 0)+1 FROM EVALUACION_PERIODICA a), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             conn.setAutoCommit(false);
             smt = conn.prepareStatement(sql);
             smt.setString(1, modelo.getFecha());
@@ -28,12 +28,13 @@ public class EvaluacionPeriodicaCtrl {
             smt.setString(4, modelo.getArea());
             smt.setString(5, modelo.getPuesto());
             smt.setString(6, modelo.getAptitud());
-            smt.setString(7, modelo.getEmpleadoId());
-            smt.setString(8, modelo.getClinicaId());
-            smt.setString(9, modelo.getAntecedentesId());
-            smt.setString(10, modelo.getRevisionSistemasId());
-            smt.setString(11, modelo.getResponsable());
-            smt.setString(12, modelo.getEstado());
+            smt.setString(7, modelo.getRestricciones());
+            smt.setString(8, modelo.getEmpleadoId());
+            smt.setString(9, modelo.getClinicaId());
+            smt.setString(10, modelo.getAntecedentesId());
+            smt.setString(11, modelo.getRevisionSistemasId());
+            smt.setString(12, modelo.getResponsable());
+            smt.setString(13, modelo.getEstado());
             
 
             smt.executeUpdate();
@@ -104,7 +105,7 @@ public class EvaluacionPeriodicaCtrl {
         conn = conex.connect();
          int result = 0;
         try {
-            String sql = "UPDATE EVALUACION_PERIODICA SET EVAPER_FECHA = ?, EVAPER_HORA = ?, EVAPER_EDAD = ?, EVAPER_AREA = ?, EVAPER_PUESTO = ?, EVAPER_APTITUD = ?, EVAPER_EMP_ID = ?, EVAPER_CLI_ID = ?, EVAPER_ANT_ID = ?, EVAPER_REVSIS_ID = ?, EVAPER_RESPONSABLE = ?, EVAPER_ESTADO = ? WHERE EVAPER_ID = ?";
+            String sql = "UPDATE EVALUACION_PERIODICA SET EVAPER_FECHA = ?, EVAPER_HORA = ?, EVAPER_EDAD = ?, EVAPER_AREA = ?, EVAPER_PUESTO = ?, EVAPER_APTITUD = ?, EVAPER_RESTRICCIONES = ?, EVAPER_EMP_ID = ?, EVAPER_CLI_ID = ?, EVAPER_ANT_ID = ?, EVAPER_REVSIS_ID = ?, EVAPER_RESPONSABLE = ?, EVAPER_ESTADO = ? WHERE EVAPER_ID = ?";
             conn.setAutoCommit(false);
 
             smt = conn.prepareStatement(sql);
@@ -116,13 +117,14 @@ public class EvaluacionPeriodicaCtrl {
             smt.setString(4, modelo.getArea());
             smt.setString(5, modelo.getPuesto());
             smt.setString(6, modelo.getAptitud());
-            smt.setString(7, modelo.getEmpleadoId());
-            smt.setString(8, modelo.getClinicaId());
-            smt.setString(9, modelo.getAntecedentesId());
-            smt.setString(10, modelo.getRevisionSistemasId());
-            smt.setString(11, modelo.getResponsable());
-            smt.setString(12, modelo.getEstado());
-            smt.setString(13, modelo.getId());
+            smt.setString(7, modelo.getRestricciones());
+            smt.setString(8, modelo.getEmpleadoId());
+            smt.setString(9, modelo.getClinicaId());
+            smt.setString(10, modelo.getAntecedentesId());
+            smt.setString(11, modelo.getRevisionSistemasId());
+            smt.setString(12, modelo.getResponsable());
+            smt.setString(13, modelo.getEstado());
+            smt.setString(14, modelo.getId());
                         
             smt.executeUpdate();
             conn.commit();
@@ -210,12 +212,13 @@ public class EvaluacionPeriodicaCtrl {
                 modeloBuscar.setArea(result.getString(5));
                 modeloBuscar.setPuesto(result.getString(6));
                 modeloBuscar.setAptitud(result.getString(7));
-                modeloBuscar.setEmpleadoId(result.getString(8));
-                modeloBuscar.setClinicaId(result.getString(9));
-                modeloBuscar.setAntecedentesId(result.getString(10));
-                modeloBuscar.setRevisionSistemasId(result.getString(11));
-                modeloBuscar.setResponsable(result.getString(12));
-                modeloBuscar.setEstado(result.getString(13));
+                modeloBuscar.setRestricciones(result.getString(8));
+                modeloBuscar.setEmpleadoId(result.getString(9));
+                modeloBuscar.setClinicaId(result.getString(10));
+                modeloBuscar.setAntecedentesId(result.getString(11));
+                modeloBuscar.setRevisionSistemasId(result.getString(12));
+                modeloBuscar.setResponsable(result.getString(13));
+                modeloBuscar.setEstado(result.getString(14));
                 
                 lista.add(modeloBuscar);
             }
@@ -266,12 +269,13 @@ public class EvaluacionPeriodicaCtrl {
                 modeloBuscar.setArea(result.getString(5));
                 modeloBuscar.setPuesto(result.getString(6));
                 modeloBuscar.setAptitud(result.getString(7));
-                modeloBuscar.setEmpleadoId(result.getString(8));
-                modeloBuscar.setClinicaId(result.getString(9));
-                modeloBuscar.setAntecedentesId(result.getString(10));
-                modeloBuscar.setRevisionSistemasId(result.getString(11));
-                modeloBuscar.setResponsable(result.getString(12));
-                modeloBuscar.setEstado(result.getString(13));
+                modeloBuscar.setRestricciones(result.getString(8));
+                modeloBuscar.setEmpleadoId(result.getString(9));
+                modeloBuscar.setClinicaId(result.getString(10));
+                modeloBuscar.setAntecedentesId(result.getString(11));
+                modeloBuscar.setRevisionSistemasId(result.getString(12));
+                modeloBuscar.setResponsable(result.getString(13));
+                modeloBuscar.setEstado(result.getString(14));
             }
         } catch (Exception e) {
         } finally {

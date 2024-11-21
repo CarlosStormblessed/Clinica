@@ -28,9 +28,9 @@ public class RevisionSistemasCtrl {
             smt.setString(4, modelo.getOjoOidoNarizBoca());
             smt.setString(5, modelo.getOrofarinje());
             smt.setString(6, modelo.getCuello());
-            smt.setString(7, modelo.getRespiratorio());
-            smt.setString(8, modelo.getCardiovascular());
-            smt.setString(9, modelo.getGastrointestinal());
+            smt.setString(7, modelo.getCardiopulmonar());
+            smt.setString(8, modelo.getTorax());
+            smt.setString(9, modelo.getAbdomen());
             smt.setString(10, modelo.getGenitourinario());
             smt.setString(11, modelo.getExtremidades());
             smt.setString(12, modelo.getNeurologico());
@@ -118,7 +118,7 @@ public class RevisionSistemasCtrl {
         conn = conex.connect();
          int result = 0;
         try {
-            String sql = "UPDATE REVISION_SISTEMAS SET REVSIS_ALTERACIONES = ?, REVSIS_PIELFANERAS = ?, REVSIS_CABEZA = ?, REVSIS_OJOIDONARIZBOCA = ?, REVSIS_OROFARINGE = ?, REVSIS_CUELLO = ?, REVSIS_RESPIRATORIO = ?, REVSIS_CARDIOVASCULAR = ?, REVSIS_GASTROINTESTINAL =?, REVSIS_GENITOURINARIO = ?, REVSIS_EXTREMIDADES = ?, REVSIS_NEUROLOGICO = ?, REVSIS_TEMPERATURA = ?, REVSIS_PULSO = ?, REVSIS_SPO2 = ?, REVSIS_FR = ?, REVSIS_PA = ?, REVSIS_GLICEMIA = ?, REVSIS_PESO = ?, REVSIS_TALLA = ?, REVSIS_IMC = ?, REVSIS_RUFFIER = ?, REVSIS_OJODERECHO = ?, REVSIS_OJOIZQUIERDO = ?, REVSIS_ANTEOJOS = ?, REVSIS_IMPRESIONCLINICA = ?, REVSIS_OBSERVACIONES = ? WHERE REVSIS_ID = ?";
+            String sql = "UPDATE REVISION_SISTEMAS SET REVSIS_ALTERACIONES = ?, REVSIS_PIELFANERAS = ?, REVSIS_CABEZA = ?, REVSIS_OJOIDONARIZBOCA = ?, REVSIS_OROFARINGE = ?, REVSIS_CUELLO = ?, REVSIS_CARDIOPULMONAR = ?, REVSIS_TORAX = ?, REVSIS_ABDOMEN =?, REVSIS_GENITOURINARIO = ?, REVSIS_EXTREMIDADES = ?, REVSIS_NEUROLOGICO = ?, REVSIS_TEMPERATURA = ?, REVSIS_PULSO = ?, REVSIS_SPO2 = ?, REVSIS_FR = ?, REVSIS_PA = ?, REVSIS_GLICEMIA = ?, REVSIS_PESO = ?, REVSIS_TALLA = ?, REVSIS_IMC = ?, REVSIS_RUFFIER = ?, REVSIS_OJODERECHO = ?, REVSIS_OJOIZQUIERDO = ?, REVSIS_ANTEOJOS = ?, REVSIS_IMPRESIONCLINICA = ?, REVSIS_OBSERVACIONES = ? WHERE REVSIS_ID = ?";
             conn.setAutoCommit(false);
 
             smt = conn.prepareStatement(sql);
@@ -129,9 +129,9 @@ public class RevisionSistemasCtrl {
             smt.setString(4, modelo.getOjoOidoNarizBoca());
             smt.setString(5, modelo.getOrofarinje());
             smt.setString(6, modelo.getCuello());
-            smt.setString(7, modelo.getRespiratorio());
-            smt.setString(8, modelo.getCardiovascular());
-            smt.setString(9, modelo.getGastrointestinal());
+            smt.setString(7, modelo.getCardiopulmonar());
+            smt.setString(8, modelo.getTorax());
+            smt.setString(9, modelo.getAbdomen());
             smt.setString(10, modelo.getGenitourinario());
             smt.setString(11, modelo.getExtremidades());
             smt.setString(12, modelo.getNeurologico());
@@ -236,9 +236,9 @@ public class RevisionSistemasCtrl {
                 modeloBuscar.setOjoOidoNarizBoca(result.getString(5));
                 modeloBuscar.setOrofarinje(result.getString(6));
                 modeloBuscar.setCuello(result.getString(7));
-                modeloBuscar.setRespiratorio(result.getString(8));
-                modeloBuscar.setCardiovascular(result.getString(9));
-                modeloBuscar.setGastrointestinal(result.getString(10));
+                modeloBuscar.setCardiopulmonar(result.getString(8));
+                modeloBuscar.setTorax(result.getString(9));
+                modeloBuscar.setAbdomen(result.getString(10));
                 modeloBuscar.setGenitourinario(result.getString(11));
                 modeloBuscar.setExtremidades(result.getString(12));
                 modeloBuscar.setNeurologico(result.getString(13));
@@ -307,9 +307,9 @@ public class RevisionSistemasCtrl {
                 modeloBuscar.setOjoOidoNarizBoca(result.getString(5));
                 modeloBuscar.setOrofarinje(result.getString(6));
                 modeloBuscar.setCuello(result.getString(7));
-                modeloBuscar.setRespiratorio(result.getString(8));
-                modeloBuscar.setCardiovascular(result.getString(9));
-                modeloBuscar.setGastrointestinal(result.getString(10));
+                modeloBuscar.setCardiopulmonar(result.getString(8));
+                modeloBuscar.setTorax(result.getString(9));
+                modeloBuscar.setAbdomen(result.getString(10));
                 modeloBuscar.setGenitourinario(result.getString(11));
                 modeloBuscar.setExtremidades(result.getString(12));
                 modeloBuscar.setNeurologico(result.getString(13));

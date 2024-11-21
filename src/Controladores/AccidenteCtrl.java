@@ -17,7 +17,7 @@ public class AccidenteCtrl {
         Conexion conex = new Conexion();
         conn = conex.connect();
         try {
-            String sql = "INSERT INTO ACCIDENTE_INCIDENTE VALUES ((SELECT IFNULL(MAX(ACCINC_ID), 0)+1 FROM ACCIDENTE_INCIDENTE a), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO ACCIDENTE_INCIDENTE VALUES ((SELECT IFNULL(MAX(ACCINC_ID), 0)+1 FROM ACCIDENTE_INCIDENTE a), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             conn.setAutoCommit(false);
             smt = conn.prepareStatement(sql);
             smt.setString(1, modelo.getClinicaId());
@@ -32,10 +32,11 @@ public class AccidenteCtrl {
             smt.setString(10, modelo.getTratamiento());
             smt.setString(11, modelo.getReferencia());
             smt.setString(12, modelo.getTraslado());
-            smt.setString(13, modelo.getEmpleadoId());
-            smt.setString(14, modelo.getRevisionSistemasId());
-            smt.setString(15, modelo.getResponsable());
-            smt.setString(16, modelo.getEstado());
+            smt.setString(13, modelo.getReincorporacion());
+            smt.setString(14, modelo.getEmpleadoId());
+            smt.setString(15, modelo.getRevisionSistemasId());
+            smt.setString(16, modelo.getResponsable());
+            smt.setString(17, modelo.getEstado());
 
             smt.executeUpdate();
 
@@ -105,7 +106,7 @@ public class AccidenteCtrl {
         conn = conex.connect();
         int result = 0;
         try {
-            String sql = "UPDATE ACCIDENTE_INCIDENTE SET ACCINC_EDAD = ?, ACCINC_AREA = ?, ACCINC_PUESTO = ?, ACCINC_RELATO = ?, ACCINC_DATOSSUB = ?, ACCINC_CLASIFICACION = ?, ACCINC_TRATAMIENTO = ?, ACCINC_REFERENCIA = ?, ACCINC_TRASLADO = ? WHERE ACCINC_ID = ?";
+            String sql = "UPDATE ACCIDENTE_INCIDENTE SET ACCINC_EDAD = ?, ACCINC_AREA = ?, ACCINC_PUESTO = ?, ACCINC_RELATO = ?, ACCINC_DATOSSUB = ?, ACCINC_CLASIFICACION = ?, ACCINC_TRATAMIENTO = ?, ACCINC_REFERENCIA = ?, ACCINC_TRASLADO = ?, ACCINC_REINCORPORACION = ? WHERE ACCINC_ID = ?";
             conn.setAutoCommit(false);
 
             smt = conn.prepareStatement(sql);
@@ -120,7 +121,8 @@ public class AccidenteCtrl {
             smt.setString(7, modelo.getTratamiento());
             smt.setString(8, modelo.getReferencia());
             smt.setString(9, modelo.getTraslado());
-            smt.setString(10, modelo.getId());
+            smt.setString(10, modelo.getReincorporacion());
+            smt.setString(11, modelo.getId());
 
             smt.executeUpdate();
             conn.commit();
@@ -214,10 +216,11 @@ public class AccidenteCtrl {
                 modeloBuscar.setTratamiento(result.getString(11));
                 modeloBuscar.setReferencia(result.getString(12));
                 modeloBuscar.setTraslado(result.getString(13));
-                modeloBuscar.setEmpleadoId(result.getString(14));
-                modeloBuscar.setRevisionSistemasId(result.getString(15));
-                modeloBuscar.setResponsable(result.getString(16));
-                modeloBuscar.setEstado(result.getString(17));
+                modeloBuscar.setReincorporacion(result.getString(14));
+                modeloBuscar.setEmpleadoId(result.getString(15));
+                modeloBuscar.setRevisionSistemasId(result.getString(16));
+                modeloBuscar.setResponsable(result.getString(17));
+                modeloBuscar.setEstado(result.getString(18));
 
                 lista.add(modeloBuscar);
             }
@@ -274,10 +277,11 @@ public class AccidenteCtrl {
                 modeloBuscar.setTratamiento(result.getString(11));
                 modeloBuscar.setReferencia(result.getString(12));
                 modeloBuscar.setTraslado(result.getString(13));
-                modeloBuscar.setEmpleadoId(result.getString(14));
-                modeloBuscar.setRevisionSistemasId(result.getString(15));
-                modeloBuscar.setResponsable(result.getString(16));
-                modeloBuscar.setEstado(result.getString(17));
+                modeloBuscar.setReincorporacion(result.getString(14));
+                modeloBuscar.setEmpleadoId(result.getString(15));
+                modeloBuscar.setRevisionSistemasId(result.getString(16));
+                modeloBuscar.setResponsable(result.getString(17));
+                modeloBuscar.setEstado(result.getString(18));
             }
         } catch (Exception e) {
         } finally {

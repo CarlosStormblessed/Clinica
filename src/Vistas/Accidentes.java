@@ -12,6 +12,7 @@ import Controladores.EmpleadoCtrl;
 import Controladores.AccidenteCtrl;
 import Controladores.RevisionSistemasCtrl;
 import Controladores.UsuarioCtrl;
+import Controladores.GenerarReportePDF;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import javax.swing.ButtonModel;
@@ -37,6 +38,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import java.awt.CardLayout;
 import java.util.ArrayList;
+import java.util.Arrays;
 public class Accidentes extends javax.swing.JFrame implements ActionListener, TableModelListener{
 
     String contenidoActual, clinicaId = "1";
@@ -57,6 +59,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
     private RevisionSistemasCtrl revSisCtrl = new RevisionSistemasCtrl();
     private EmpleadoCtrl empCtrl = new EmpleadoCtrl();
     private UsuarioCtrl usrCtrl = new UsuarioCtrl();
+    private GenerarReportePDF genPDF = new GenerarReportePDF();
     
     private PaginadorTabla <ConsultaGeneral> paginadorAccidente, paginadorEmpleado;
     public Accidentes() {
@@ -66,6 +69,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         setCartas(panelPagina1);
         setCartaEmpleado(panelComboboxEmpleado);
         btn_Confirmar.setVisible(false);
+        btnReportes.setVisible(false);
         lbl_btn_Confirmar.setEnabled(false);
         txtHora.setEnabled(false);
         timeHora.set24hourMode(true);
@@ -133,6 +137,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         txtAreaClasificacionAccidente.setText("");
         checkReferencia.setSelected(false);
         checkTraslado.setSelected(false);
+        checkReincorporacion.setSelected(false);
         
         accidente.setId("");
         accidente.setFecha("");
@@ -160,9 +165,9 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         txtAreaOjoidos.setText("");
         txtAreaOrofaringe.setText("");
         txtAreaCuello.setText("");
-        txtAreaRespiratorio.setText("");
-        txtAreaCardiovascular.setText("");
-        txtAreaGastrointestinal.setText("");
+        txtAreaCardiopulmonar.setText("");
+        txtAreaTorax.setText("");
+        txtAreaAbdomen.setText("");
         txtAreaGenitourinario.setText("");
         txtAreaExtremidades.setText("");
         txtAreaNeurologico.setText("");
@@ -182,9 +187,10 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         txtPeso.setForeground(Color.gray);
         txtIMC.setText("Kg/m^2");
         txtIMC.setForeground(Color.gray);
-        combo_Talla.setSelectedIndex(0);
-        txtOjoDerecho.setText("");
-        txtOjoIzquierdo.setText("");
+        txtOjoDerechoNumerador.setText("");
+        txtOjoIzquierdoNumerador.setText("");
+        txtOjoDerechoDenominador.setText("");
+        txtOjoIzquierdoDenominador.setText("");
         checkLentes.setSelected(false);
         txtAreaImpresionClinica.setText("");
         
@@ -194,9 +200,9 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         revisionSistemas.setOjoOidoNarizBoca("");
         revisionSistemas.setOrofarinje("");
         revisionSistemas.setCuello("");
-        revisionSistemas.setRespiratorio("");
-        revisionSistemas.setCardiovascular("");
-        revisionSistemas.setGastrointestinal("");
+        revisionSistemas.setCardiopulmonar("");
+        revisionSistemas.setTorax("");
+        revisionSistemas.setAbdomen("");
         revisionSistemas.setGenitourinario("");
         revisionSistemas.setExtremidades("");
         revisionSistemas.setNeurologico("");
@@ -240,8 +246,8 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         String codigo;
         try {
             codigo = accIncCtrl.getMaxId();
-            lblTitulos.setText("<html><center>Formato<br><b>FICHA MÉDICA SEGUIMIENTO PACIENTES CRÓNICOS</b><br>CÓDIGO " + codigo + "</center></html>");
-            lblSeguridad.setText("<html><center>Seguridad Industrial y Salud Ocupacional</center></html>");
+            lblTitulos.setText("<html><center>Formato<br><b>FICHA MÉDICA SEGUIMIENTO PACIENTES CRÓNICOS</b><br>CORRELATIVO: " + codigo + "</center></html>");
+            lblSeguridad.setText("<html><center>Salud Ocupacional</center></html>");
             lblFechaMod.setText("<html><center>Fecha de<br>modificacion:<br>"+ util.convertirFechaGUI(now.format(dtf)) + "</center></html>");
             
             txtFecha.setText(util.convertirFechaGUI(now.format(dtf)));
@@ -269,14 +275,22 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
     
     private boolean verificarAccidentes(){
         boolean valido = false;
-        if ((util.verificarNumero(txtEdad.getText())) && (txtArea.getText().length()>0) && (txtPuesto.getText().length()>0) && (txtHora.getText().length() > 0))
+        if ((util.verificarFlotante(txtEdad.getText())) && (txtArea.getText().length()>0) && (txtPuesto.getText().length()>0) && (txtHora.getText().length() > 0))
             valido = true;
         return valido;
     }
     
     private boolean verificarRevisionSistemas(){
         boolean valido = false;
-        if ((util.verificarNumero(txtTemperatura.getText()) || (txtTemperatura.getText().equals("°C"))) && ((util.verificarNumero(txtPulso.getText())) || (txtPulso.getText().equals("LPM"))) && ((util.verificarNumero(txtSPO2.getText())) || (txtSPO2.getText().equals("%"))) && ((util.verificarNumero(txtFR.getText())) || (txtFR.getText().equals("RPM"))) && ((util.verificarNumero(txtGlicemia.getText())) || (txtGlicemia.getText().equals("mg/dl"))) && ((util.verificarNumero(txtPeso.getText())) || (txtPeso.getText().equals("lb"))) && (util.verificarNumero(txtIMC.getText()) || (txtIMC.getText().equals("Kg/m^2"))) && ((util.verificarNumero(txtRuffier.getText())) || (txtRuffier.getText().equals(""))) && ((util.verificarNumero(txtOjoDerecho.getText())) || (txtOjoDerecho.getText().equals(""))) && ((util.verificarNumero(txtOjoIzquierdo.getText())) || (txtOjoIzquierdo.getText().equals(""))))
+         if ((util.verificarFlotante(txtTemperatura.getText()) || (txtTemperatura.getText().equals("°C"))) && 
+           ((util.verificarFlotante(txtPulso.getText())) || (txtPulso.getText().equals("LPM"))) && ((util.verificarFlotante(txtSPO2.getText())) || (txtSPO2.getText().equals("%"))) && 
+           ((util.verificarFlotante(txtFR.getText())) || (txtFR.getText().equals("RPM"))) && ((util.verificarFlotante(txtGlicemia.getText())) || (txtGlicemia.getText().equals("mg/dl"))) && 
+           ((util.verificarFlotante(txtPeso.getText())) || (txtPeso.getText().equals("lb"))) && (util.verificarFlotante(txtIMC.getText()) || (txtIMC.getText().equals("Kg/m^2"))) && 
+           ((util.verificarFlotante(txtRuffier.getText())) || (txtRuffier.getText().equals(""))) &&
+           (((txtOjoDerechoNumerador.getText().length()>0) && (txtOjoDerechoDenominador.getText().length()>0) && (txtOjoIzquierdoNumerador.getText().length()>0) && (txtOjoIzquierdoDenominador.getText().length()>0)) ||
+           (((txtOjoDerechoNumerador.getText().length()>0) && (txtOjoDerechoDenominador.getText().length()>0)) && !((txtOjoIzquierdoNumerador.getText().length()>0) && (txtOjoIzquierdoDenominador.getText().length()>0))) ||
+           (((txtOjoIzquierdoNumerador.getText().length()>0) && (txtOjoIzquierdoDenominador.getText().length()>0)) && !((txtOjoDerechoNumerador.getText().length()>0) && (txtOjoDerechoDenominador.getText().length()>0))) ||
+           !((txtOjoDerechoDenominador.getText().length()>0) || (txtOjoDerechoNumerador.getText().length()>0) || (txtOjoIzquierdoNumerador.getText().length()>0) || (txtOjoIzquierdoDenominador.getText().length()>0))))
                 valido = true;
         return valido;
     }
@@ -335,7 +349,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         accidente.setDatosSubjetivos(txtAreaDatosSubjetivos.getText());
         accidente.setClasificacion(txtAreaClasificacionAccidente.getText());
         accidente.setTratamiento(txtAreaTratamiento.getText());
-        //Referencia, Traslado
+        //Referencia, Traslado, Reincorporación
         if(checkReferencia.isSelected())
             accidente.setReferencia("1");
         else
@@ -344,7 +358,10 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
             accidente.setTraslado("1");
         else
             accidente.setTraslado("0");
-        
+        if(checkReincorporacion.isSelected())
+            accidente.setReincorporacion("1");
+        else
+            accidente.setReincorporacion("0");
         accidente.setClinicaId(clinicaId);
         accidente.setEmpleadoId(empleado.getId());
         accidente.setRevisionSistemasId(revisionSistemas.getId());
@@ -365,7 +382,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         txtAreaDatosSubjetivos.setText(accidente.getDatosSubjetivos());
         txtAreaClasificacionAccidente.setText(accidente.getClasificacion());
         txtAreaTratamiento.setText(accidente.getTratamiento());
-        //Set referencia, traslado
+        //Set referencia, traslado, reincorporación
         if(accidente.getReferencia().equals("1"))
             checkReferencia.setSelected(true);
         else
@@ -374,6 +391,10 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
             checkTraslado.setSelected(true);
         else
             checkTraslado.setSelected(false);
+        if(accidente.getReincorporacion().equals("1"))
+            checkReincorporacion.setSelected(true);
+        else
+            checkReincorporacion.setSelected(false);
         
         responsable = accidente.getResponsable();
     }
@@ -388,9 +409,9 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         revisionSistemas.setOjoOidoNarizBoca(txtAreaOjoidos.getText());
         revisionSistemas.setOrofarinje(txtAreaOrofaringe.getText());
         revisionSistemas.setCuello(txtAreaCuello.getText());
-        revisionSistemas.setRespiratorio(txtAreaRespiratorio.getText());
-        revisionSistemas.setCardiovascular(txtAreaCardiovascular.getText());
-        revisionSistemas.setGastrointestinal(txtAreaGastrointestinal.getText());
+        revisionSistemas.setCardiopulmonar(txtAreaCardiopulmonar.getText());
+        revisionSistemas.setTorax(txtAreaTorax.getText());
+        revisionSistemas.setAbdomen(txtAreaAbdomen.getText());
         revisionSistemas.setGenitourinario(txtAreaGenitourinario.getText());
         revisionSistemas.setExtremidades(txtAreaExtremidades.getText());
         revisionSistemas.setNeurologico(txtAreaNeurologico.getText());
@@ -422,13 +443,19 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
             revisionSistemas.setPeso(txtPeso.getText());
         else
             revisionSistemas.setFr("");
-        revisionSistemas.setTalla(combo_Talla.getSelectedItem().toString());
+        revisionSistemas.setTalla(comboTalla.getSelectedItem().toString());
         if (!(txtIMC.getText().equals("Kg/m^2")))
             revisionSistemas.setImc(txtIMC.getText());
         revisionSistemas.setFr("");
         revisionSistemas.setRuffier(txtRuffier.getText());
-        revisionSistemas.setOjoDerecho(txtOjoDerecho.getText());
-        revisionSistemas.setOjoIzquierdo(txtOjoIzquierdo.getText());
+        if((txtOjoDerechoNumerador.getText().length()>0) && (txtOjoDerechoDenominador.getText().length()>0))
+            revisionSistemas.setOjoDerecho(txtOjoDerechoNumerador.getText() + "/" + txtOjoDerechoDenominador.getText());
+        else
+            revisionSistemas.setOjoDerecho("");
+        if((txtOjoIzquierdoNumerador.getText().length()>0) && (txtOjoIzquierdoDenominador.getText().length()>0))
+            revisionSistemas.setOjoIzquierdo(txtOjoIzquierdoNumerador.getText() + "/" + txtOjoIzquierdoDenominador.getText());
+        else
+            revisionSistemas.setOjoIzquierdo("");
         if(checkLentes.isSelected())
             revisionSistemas.setAnteojos("1");
         else
@@ -448,9 +475,9 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         txtAreaOjoidos.setText(revisionSistemas.getOjoOidoNarizBoca());
         txtAreaOrofaringe.setText(revisionSistemas.getOrofarinje());
         txtAreaCuello.setText(revisionSistemas.getCuello());
-        txtAreaRespiratorio.setText(revisionSistemas.getRespiratorio());
-        txtAreaCardiovascular.setText(revisionSistemas.getCardiovascular());
-        txtAreaGastrointestinal.setText(revisionSistemas.getGastrointestinal());
+        txtAreaCardiopulmonar.setText(revisionSistemas.getCardiopulmonar());
+        txtAreaTorax.setText(revisionSistemas.getTorax());
+        txtAreaAbdomen.setText(revisionSistemas.getAbdomen());
         txtAreaGenitourinario.setText(revisionSistemas.getGenitourinario());
         txtAreaExtremidades.setText(revisionSistemas.getExtremidades());
         txtAreaNeurologico.setText(revisionSistemas.getNeurologico());
@@ -511,30 +538,40 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
             txtIMC.setForeground(Color.gray);
             txtIMC.setText("Kg/m^2");
         }
-        //Set Talla
         switch(revisionSistemas.getTalla()){
             case "S":
-                combo_Talla.setSelectedIndex(0);
+                comboTalla.setSelectedIndex(0);
                 break;
             case "M":
-                combo_Talla.setSelectedIndex(1);
+                comboTalla.setSelectedIndex(1);
                 break;
             case "L":
-                combo_Talla.setSelectedIndex(2);
+                comboTalla.setSelectedIndex(2);
                 break;
             case "XL":
-                combo_Talla.setSelectedIndex(3);
-                break;
-            case "XXL":
-                combo_Talla.setSelectedIndex(4);
+                comboTalla.setSelectedIndex(3);
                 break;
             default:
-                break;
+                comboTalla.setSelectedIndex(0);
         }
         
         txtRuffier.setText(revisionSistemas.getRuffier());
-        txtOjoDerecho.setText(revisionSistemas.getOjoDerecho());
-        txtOjoIzquierdo.setText(revisionSistemas.getOjoIzquierdo());
+        if(revisionSistemas.getOjoDerecho().length()>1){
+            String [] partesOjoDerecho = revisionSistemas.getOjoDerecho().split("/");
+            txtOjoDerechoNumerador.setText(partesOjoDerecho[0]);
+            txtOjoDerechoDenominador.setText(partesOjoDerecho[1]);
+        } else{
+            txtOjoDerechoNumerador.setText("");
+            txtOjoDerechoDenominador.setText("");
+        }
+        if(revisionSistemas.getOjoIzquierdo().length()>1){
+            String [] partesOjoIzquierdo = revisionSistemas.getOjoIzquierdo().split("/");
+            txtOjoIzquierdoNumerador.setText(partesOjoIzquierdo[0]);
+            txtOjoIzquierdoDenominador.setText(partesOjoIzquierdo[1]);
+        }else{
+            txtOjoIzquierdoNumerador.setText("");
+            txtOjoIzquierdoDenominador.setText("");
+        }
         // Set Lentes
         switch(revisionSistemas.getAnteojos()){
             case "0":
@@ -710,7 +747,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
     }
     
     private DatosPaginacion <EmpleadoMod> crearDatosPaginacionEmpleado() throws SQLException, ConnectException{
-        List <EmpleadoMod> lista = empCtrl.seleccionarTodos();
+        List <EmpleadoMod> lista = empCtrl.seleccionarTodosActivos();
         //Reemplazar el id del empleado por el nombre del empleado
         
         return new DatosPaginacion<EmpleadoMod>(){
@@ -728,7 +765,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
     
     private void buscarEmpleadoAccidente(String valorBuscar) throws SQLException, ConnectException{
         accidente = accIncCtrl.buscarFila(valorBuscar);
-        lblTitulos.setText("<html><center>Formato<br><b>EVALUACIÓN PERIÓDICA / RIESGOS CRÍTICOS</b><br>CÓDIGO " + accidente.getId() + "</center></html>");
+        lblTitulos.setText("<html><center>Formato<br><b>FICHA MÉDICA SEGUIMIENTO PACIENTES CRÓNICOS</b><br>CORRELATIVO: " + accidente.getId() + "</center></html>");
         empleado = empCtrl.buscarFila(accidente.getEmpleadoId());
         revisionSistemas = revSisCtrl.buscarFila(accidente.getRevisionSistemasId());
         setAccidente();
@@ -738,13 +775,13 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
     
     private void crear() throws SQLException{
         try {
-            int segCro = 0, revSis = 0;
+            int acc = 0, revSis = 0;
             revSis = revSisCtrl.Crear(revisionSistemas);
             if (revSis > 0){
                 revisionSistemas.setId(revSisCtrl.getMaxId());
                 accidente.setRevisionSistemasId(revisionSistemas.getId());
-                segCro = accIncCtrl.Crear(accidente);
-                if (segCro > 0) {
+                acc = accIncCtrl.Crear(accidente);
+                if (acc > 0) {
                     JOptionPane.showMessageDialog(this, "REGISTRO INGRESADO CON EXITO", "Inserción de Datos", JOptionPane.INFORMATION_MESSAGE);
                     reset();
                 } else {
@@ -796,6 +833,77 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
             JOptionPane.showMessageDialog(this, "ERROR " + e.toString() + " AL ELIMINAR EL REGISTRO. COMUNIQUESE CON TI", "Eliminación de Datos", JOptionPane.ERROR_MESSAGE);
         }
     }
+    
+    private void getDatosReporte(){
+        try{
+            /*String ref = "", tras = "", rein = "", ant = "";
+            if(accidente.getReferencia() == "1")
+                ref = "Sí";
+            else
+                ref = "No";
+            if(accidente.getTraslado() == "1")
+                tras = "Sí";
+            else
+                ref = "No";
+            if(accidente.getReincorporacion() == "1")
+                rein = "Sí";
+            else
+                ref = "No";
+            if(revisionSistemas.getAnteojos() == "1")
+                ant = "Sí";
+            else
+                ant = "No";
+            String[] datos = {accidente.getId(), accidente.getClinicaId(), 
+                accidente.getFecha(), accidente.getHora(), accidente.getEdad(), 
+                accidente.getArea(), accidente.getPuesto(), accidente.getRelato(), 
+                accidente.getDatosSubjetivos(), accidente.getClasificacion(), 
+                accidente.getTratamiento(), ref, tras, rein, empleado.getNombre(),
+                revisionSistemas.getAlteraciones(), revisionSistemas.getPielFaneras(),
+                revisionSistemas.getCabeza(), revisionSistemas.getOjoOidoNarizBoca(),
+                revisionSistemas.getOrofarinje(), revisionSistemas.getCuello(),
+                revisionSistemas.getCardiopulmonar(), revisionSistemas.getTorax(),
+                revisionSistemas.getAbdomen(), revisionSistemas.getGenitourinario(),
+                revisionSistemas.getExtremidades(), revisionSistemas.getNeurologico(),
+                revisionSistemas.getTemperatura(), revisionSistemas.getPulso(),
+                revisionSistemas.getSpo2(), revisionSistemas.getFr(),
+                revisionSistemas.getPa(), revisionSistemas.getGlicemia(),
+                revisionSistemas.getPeso(), revisionSistemas.getTalla(),
+                revisionSistemas.getImc(), revisionSistemas.getRuffier(),
+                revisionSistemas.getOjoDerecho(), revisionSistemas.getOjoIzquierdo(),
+                ant, revisionSistemas.getImpresionClinica(),
+                revisionSistemas.getObservaciones()
+                };
+            String[] datosNombres = {"Id", "Clínica", "Fecha", "Hora", "Edad", 
+                "Area", "Puesto", "Relato", "Datos Subjetivos", "Clasificación",
+                "Tratamiento", "Referencia", "Traslado", "Reincorporación Laboral", 
+                "Empleado", "Alteraciones", "Piel y Fanieras", "Cabeza", "Ojos, oidos, nariz y boca",
+                "Orofarinje", "Cuello", "Cardiopulmonar", "Torax", "Abdomen", 
+                "Genitourinario", "Extremidades", "Neurologico", "Temperatura", 
+                "Pulso", "SPO2", "FR", "PA", "Glicemia", "Peso", "Talla", "IMC", 
+                "Ruffier", "Ojo Derecho", "Ojo Izquierdo", "Usa anteojos", 
+                "Impresión Clínica", "Observaciones"};
+            */
+            genPDF.generarDatosEmpleado(empleado.getId());
+            genPDF.generarDatos(accidente.getNombreTabla(), accidente.getId(), accidente.getLlavePrimaria(), accidente.getPrefijo());
+            genPDF.generarDatos(revisionSistemas.getNombreTabla(), revisionSistemas.getId(), revisionSistemas.getLlavePrimaria(), revisionSistemas.getPrefijo());
+            genPDF.setDocumentoId(accidente.getId());
+            genPDF.setTipoReporte("Accidentes e Incidentes");
+            genPDF.setUsuario(usuario.getNombre());
+            genPDF.setFecha(accidente.getFecha());
+            //System.out.println(genPDF.getDatos());
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(this, "ERROR " + e.toString() + " AL CREAR EL REPORTE. COMUNIQUESE CON TI", "Reportes", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void crearReporte(){
+        try{
+            getDatosReporte();
+            genPDF.generarReporte("Ficha Accidente - " + empleado.getNombre() + " - " + accidente.getFecha());
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(this, "ERROR " + e.toString() + " AL CREAR EL REPORTE. COMUNIQUESE CON TI", "Reportes", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -828,6 +936,8 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         lbl_btnActualizar = new javax.swing.JLabel();
         btn_Eliminar = new javax.swing.JPanel();
         lbl_BtnEliminar = new javax.swing.JLabel();
+        btnReportes = new javax.swing.JPanel();
+        lblReportes = new javax.swing.JLabel();
         btn_Confirmar = new javax.swing.JPanel();
         lbl_btn_Confirmar = new javax.swing.JLabel();
         panelCartasContenido = new javax.swing.JPanel();
@@ -874,34 +984,42 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         panelCartas = new javax.swing.JPanel();
         panelPagina1 = new javax.swing.JPanel();
         lbl_RevisionPorSistemas = new javax.swing.JLabel();
+        btn_Pagina1_2 = new javax.swing.JPanel();
+        lbl_btn_Pagina1_2 = new javax.swing.JLabel();
         lblTemperatura = new javax.swing.JLabel();
         txtTemperatura = new javax.swing.JTextField();
+        lblGlicemia = new javax.swing.JLabel();
+        txtGlicemia = new javax.swing.JTextField();
+        lblPA = new javax.swing.JLabel();
+        txtPA = new javax.swing.JTextField();
         lblPulso = new javax.swing.JLabel();
         txtPulso = new javax.swing.JTextField();
         lblSPO2 = new javax.swing.JLabel();
         txtSPO2 = new javax.swing.JTextField();
         lblFR = new javax.swing.JLabel();
         txtFR = new javax.swing.JTextField();
-        lblGlicemia = new javax.swing.JLabel();
-        txtGlicemia = new javax.swing.JTextField();
+        lblIMC = new javax.swing.JLabel();
+        txtIMC = new javax.swing.JTextField();
         lblPeso = new javax.swing.JLabel();
         txtPeso = new javax.swing.JTextField();
         lblTalla = new javax.swing.JLabel();
-        combo_Talla = new javax.swing.JComboBox<>();
-        lblIMC = new javax.swing.JLabel();
-        txtIMC = new javax.swing.JTextField();
-        lblPA = new javax.swing.JLabel();
-        txtPA = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
+        comboTalla = new javax.swing.JComboBox<>();
+        lblRuffier = new javax.swing.JLabel();
         txtRuffier = new javax.swing.JTextField();
         lblOjoDerecho = new javax.swing.JLabel();
-        txtOjoDerecho = new javax.swing.JTextField();
+        txtOjoDerechoNumerador = new javax.swing.JTextField();
+        lblFraccion1 = new javax.swing.JLabel();
+        txtOjoDerechoDenominador = new javax.swing.JTextField();
         lblOjoIzquierdo = new javax.swing.JLabel();
-        txtOjoIzquierdo = new javax.swing.JTextField();
+        txtOjoIzquierdoNumerador = new javax.swing.JTextField();
+        lblFraccion2 = new javax.swing.JLabel();
+        txtOjoIzquierdoDenominador = new javax.swing.JTextField();
         checkLentes = new javax.swing.JCheckBox();
-        btn_Pagina1_2 = new javax.swing.JPanel();
-        lbl_btn_Pagina1_2 = new javax.swing.JLabel();
         panelPagina2 = new javax.swing.JPanel();
+        btn_Pagina2_1 = new javax.swing.JPanel();
+        lbl_btn_Pagina2_1 = new javax.swing.JLabel();
+        btn_Pagina2_3 = new javax.swing.JPanel();
+        lbl_btn_Pagina2_3 = new javax.swing.JLabel();
         lblAlteraciones = new javax.swing.JLabel();
         jScrollPane13 = new javax.swing.JScrollPane();
         txtAreaAlteraciones = new javax.swing.JTextArea();
@@ -922,26 +1040,22 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         txtAreaCuello = new javax.swing.JTextArea();
         lblRespiratorio = new javax.swing.JLabel();
         jScrollPane19 = new javax.swing.JScrollPane();
-        txtAreaRespiratorio = new javax.swing.JTextArea();
+        txtAreaCardiopulmonar = new javax.swing.JTextArea();
         lblCardiovascular = new javax.swing.JLabel();
         jScrollPane20 = new javax.swing.JScrollPane();
-        txtAreaCardiovascular = new javax.swing.JTextArea();
+        txtAreaTorax = new javax.swing.JTextArea();
         lblGastrointestinal = new javax.swing.JLabel();
         jScrollPane21 = new javax.swing.JScrollPane();
-        txtAreaGastrointestinal = new javax.swing.JTextArea();
+        txtAreaAbdomen = new javax.swing.JTextArea();
         lblExtremidades = new javax.swing.JLabel();
+        jScrollPane23 = new javax.swing.JScrollPane();
+        txtAreaExtremidades = new javax.swing.JTextArea();
         lblGenitourinario = new javax.swing.JLabel();
         jScrollPane22 = new javax.swing.JScrollPane();
         txtAreaGenitourinario = new javax.swing.JTextArea();
         lblNeurologico = new javax.swing.JLabel();
         jScrollPane24 = new javax.swing.JScrollPane();
         txtAreaNeurologico = new javax.swing.JTextArea();
-        jScrollPane23 = new javax.swing.JScrollPane();
-        txtAreaExtremidades = new javax.swing.JTextArea();
-        btn_Pagina2_1 = new javax.swing.JPanel();
-        lbl_btn_Pagina2_1 = new javax.swing.JLabel();
-        btn_Pagina2_3 = new javax.swing.JPanel();
-        lbl_btn_Pagina2_3 = new javax.swing.JLabel();
         panelPagina3 = new javax.swing.JPanel();
         btn_Pagina3_2 = new javax.swing.JPanel();
         lbl_btn_Pagina3_2 = new javax.swing.JLabel();
@@ -956,6 +1070,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         txtAreaObservaciones = new javax.swing.JTextArea();
         checkReferencia = new javax.swing.JCheckBox();
         checkTraslado = new javax.swing.JCheckBox();
+        checkReincorporacion = new javax.swing.JCheckBox();
         lblResponsable = new javax.swing.JLabel();
         lblClasificacionAccidente = new javax.swing.JLabel();
         jScrollPane5 = new javax.swing.JScrollPane();
@@ -1136,6 +1251,38 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
 
         cont_Accidente.add(panelBotonesCRUD, new org.netbeans.lib.awtextra.AbsoluteConstraints(810, 0, 270, 120));
 
+        btnReportes.setBackground(new java.awt.Color(235, 235, 51));
+        btnReportes.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        btnReportes.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+        lblReportes.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblReportes.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblReportes.setText("Generar Reporte");
+        lblReportes.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblReportesMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lblReportesMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lblReportesMouseExited(evt);
+            }
+        });
+
+        javax.swing.GroupLayout btnReportesLayout = new javax.swing.GroupLayout(btnReportes);
+        btnReportes.setLayout(btnReportesLayout);
+        btnReportesLayout.setHorizontalGroup(
+            btnReportesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lblReportes, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)
+        );
+        btnReportesLayout.setVerticalGroup(
+            btnReportesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lblReportes, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)
+        );
+
+        cont_Accidente.add(btnReportes, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 540, 180, 35));
+
         btn_Confirmar.setBackground(new java.awt.Color(255, 255, 255));
         btn_Confirmar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
@@ -1213,7 +1360,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
 
         panelEmpleado.add(btn_OtroEmpleado, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 0, 120, 40));
 
-        lblArea.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblArea.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblArea.setText("Área de Trabajo");
         panelEmpleado.add(lblArea, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, -1, -1));
 
@@ -1231,7 +1378,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         txtCodigo.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         panelEmpleado.add(txtCodigo, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 110, 100, 35));
 
-        lblCodigo.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblCodigo.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblCodigo.setText("Código");
         panelEmpleado.add(lblCodigo, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 90, -1, 20));
 
@@ -1250,7 +1397,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         });
         panelEmpleado.add(rbtn_SexoM, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 110, -1, -1));
 
-        lblSexo.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblSexo.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblSexo.setText("Sexo");
         panelEmpleado.add(lblSexo, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 90, -1, 20));
 
@@ -1268,7 +1415,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         txtPuesto.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         panelEmpleado.add(txtPuesto, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 170, 240, 35));
 
-        lblPuesto1.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblPuesto1.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblPuesto1.setText("Puesto");
         panelEmpleado.add(lblPuesto1, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 150, -1, 20));
 
@@ -1276,7 +1423,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         lblClinica.setText("Clínica de Atención: Sidegua");
         panelEmpleado.add(lblClinica, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 190, 30));
 
-        lblNombre.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblNombre.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblNombre.setText("Nombre");
         panelEmpleado.add(lblNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, -1, 20));
 
@@ -1295,11 +1442,11 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         txtArea.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         panelEmpleado.add(txtArea, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, 207, 35));
 
-        lblHora.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblHora.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblHora.setText("Hora");
         panelEmpleado.add(lblHora, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 90, -1, 20));
 
-        lblEdad.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblEdad.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lblEdad.setText("Edad");
         panelEmpleado.add(lblEdad, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 90, -1, 20));
 
@@ -1413,6 +1560,29 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         lbl_RevisionPorSistemas.setText("EXAMEN FÍSICO");
         panelPagina1.add(lbl_RevisionPorSistemas, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, -1, -1));
 
+        btn_Pagina1_2.setBackground(new java.awt.Color(204, 204, 235));
+        btn_Pagina1_2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        btn_Pagina1_2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lbl_btn_Pagina1_2.setFont(new java.awt.Font("Roboto", 0, 11)); // NOI18N
+        lbl_btn_Pagina1_2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbl_btn_Pagina1_2.setText("Página 2 ->");
+        lbl_btn_Pagina1_2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbl_btn_Pagina1_2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbl_btn_Pagina1_2MouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lbl_btn_Pagina1_2MouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lbl_btn_Pagina1_2MouseExited(evt);
+            }
+        });
+        btn_Pagina1_2.add(lbl_btn_Pagina1_2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 106, 35));
+
+        panelPagina1.add(btn_Pagina1_2, new org.netbeans.lib.awtextra.AbsoluteConstraints(293, 370, 106, 35));
+
         lblTemperatura.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblTemperatura.setText("Temperatura");
         panelPagina1.add(lblTemperatura, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, -1, 20));
@@ -1428,6 +1598,38 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
             }
         });
         panelPagina1.add(txtTemperatura, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 175, 35));
+
+        lblGlicemia.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblGlicemia.setText("Glicemia");
+        panelPagina1.add(lblGlicemia, new org.netbeans.lib.awtextra.AbsoluteConstraints(195, 30, -1, 20));
+
+        txtGlicemia.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtGlicemia.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtGlicemia.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtGlicemiaFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtGlicemiaFocusLost(evt);
+            }
+        });
+        panelPagina1.add(txtGlicemia, new org.netbeans.lib.awtextra.AbsoluteConstraints(195, 50, 175, 35));
+
+        lblPA.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblPA.setText("P/A");
+        panelPagina1.add(lblPA, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 30, -1, -1));
+
+        txtPA.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtPA.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtPA.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtPAFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtPAFocusLost(evt);
+            }
+        });
+        panelPagina1.add(txtPA, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 50, 175, 35));
 
         lblPulso.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblPulso.setText("Pulso");
@@ -1477,21 +1679,21 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         });
         panelPagina1.add(txtFR, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 120, 175, 35));
 
-        lblGlicemia.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblGlicemia.setText("Glicemia");
-        panelPagina1.add(lblGlicemia, new org.netbeans.lib.awtextra.AbsoluteConstraints(195, 30, -1, 20));
+        lblIMC.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblIMC.setText("IMC");
+        panelPagina1.add(lblIMC, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, -1, 20));
 
-        txtGlicemia.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtGlicemia.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtGlicemia.addFocusListener(new java.awt.event.FocusAdapter() {
+        txtIMC.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtIMC.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtIMC.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                txtGlicemiaFocusGained(evt);
+                txtIMCFocusGained(evt);
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
-                txtGlicemiaFocusLost(evt);
+                txtIMCFocusLost(evt);
             }
         });
-        panelPagina1.add(txtGlicemia, new org.netbeans.lib.awtextra.AbsoluteConstraints(195, 50, 175, 35));
+        panelPagina1.add(txtIMC, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, 175, 35));
 
         lblPeso.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblPeso.setText("Peso");
@@ -1513,46 +1715,13 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         lblTalla.setText("Talla");
         panelPagina1.add(lblTalla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 170, -1, 20));
 
-        combo_Talla.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        combo_Talla.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "S", "M", "L", "XL", "XXL" }));
-        combo_Talla.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelPagina1.add(combo_Talla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 190, 175, 35));
+        comboTalla.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        comboTalla.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "S", "M", "L", "XL" }));
+        panelPagina1.add(comboTalla, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 190, 175, 35));
 
-        lblIMC.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblIMC.setText("IMC");
-        panelPagina1.add(lblIMC, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, -1, 20));
-
-        txtIMC.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtIMC.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtIMC.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                txtIMCFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtIMCFocusLost(evt);
-            }
-        });
-        panelPagina1.add(txtIMC, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, 175, 35));
-
-        lblPA.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblPA.setText("P/A");
-        panelPagina1.add(lblPA, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 30, -1, -1));
-
-        txtPA.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtPA.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtPA.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                txtPAFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtPAFocusLost(evt);
-            }
-        });
-        panelPagina1.add(txtPA, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 50, 175, 35));
-
-        jLabel2.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        jLabel2.setText("Ruffier");
-        panelPagina1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 240, -1, 20));
+        lblRuffier.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lblRuffier.setText("Ruffier");
+        panelPagina1.add(lblRuffier, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 240, -1, 20));
 
         txtRuffier.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtRuffier.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -1562,51 +1731,90 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         lblOjoDerecho.setText("Agudeza ojo derecho");
         panelPagina1.add(lblOjoDerecho, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 240, -1, 20));
 
-        txtOjoDerecho.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtOjoDerecho.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelPagina1.add(txtOjoDerecho, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 260, 143, 35));
+        txtOjoDerechoNumerador.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtOjoDerechoNumerador.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        panelPagina1.add(txtOjoDerechoNumerador, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 260, 40, 35));
+
+        lblFraccion1.setFont(new java.awt.Font("Roboto", 0, 36)); // NOI18N
+        lblFraccion1.setText("/");
+        panelPagina1.add(lblFraccion1, new org.netbeans.lib.awtextra.AbsoluteConstraints(203, 260, -1, 35));
+
+        txtOjoDerechoDenominador.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtOjoDerechoDenominador.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        panelPagina1.add(txtOjoDerechoDenominador, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 260, 40, 35));
 
         lblOjoIzquierdo.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblOjoIzquierdo.setText("Agudeza ojo izquierdo");
         panelPagina1.add(lblOjoIzquierdo, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 240, -1, 20));
 
-        txtOjoIzquierdo.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        txtOjoIzquierdo.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panelPagina1.add(txtOjoIzquierdo, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 260, 143, 35));
+        txtOjoIzquierdoNumerador.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtOjoIzquierdoNumerador.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        panelPagina1.add(txtOjoIzquierdoNumerador, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 260, 40, 35));
+
+        lblFraccion2.setFont(new java.awt.Font("Roboto", 0, 36)); // NOI18N
+        lblFraccion2.setText("/");
+        panelPagina1.add(lblFraccion2, new org.netbeans.lib.awtextra.AbsoluteConstraints(353, 260, -1, 35));
+
+        txtOjoIzquierdoDenominador.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtOjoIzquierdoDenominador.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        panelPagina1.add(txtOjoIzquierdoDenominador, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 260, 40, 35));
 
         checkLentes.setBackground(new java.awt.Color(255, 255, 255));
         checkLentes.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         checkLentes.setText("Usa Lentes");
         panelPagina1.add(checkLentes, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 260, -1, 35));
 
-        btn_Pagina1_2.setBackground(new java.awt.Color(204, 204, 235));
-        btn_Pagina1_2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        btn_Pagina1_2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        lbl_btn_Pagina1_2.setFont(new java.awt.Font("Roboto", 0, 11)); // NOI18N
-        lbl_btn_Pagina1_2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbl_btn_Pagina1_2.setText("Página 2 ->");
-        lbl_btn_Pagina1_2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        lbl_btn_Pagina1_2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lbl_btn_Pagina1_2MouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                lbl_btn_Pagina1_2MouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                lbl_btn_Pagina1_2MouseExited(evt);
-            }
-        });
-        btn_Pagina1_2.add(lbl_btn_Pagina1_2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 106, 35));
-
-        panelPagina1.add(btn_Pagina1_2, new org.netbeans.lib.awtextra.AbsoluteConstraints(293, 370, 106, 35));
-
         panelCartas.add(panelPagina1, "card1");
 
         panelPagina2.setBackground(new java.awt.Color(255, 255, 255));
         panelPagina2.setMinimumSize(new java.awt.Dimension(566, 365));
         panelPagina2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        btn_Pagina2_1.setBackground(new java.awt.Color(204, 204, 235));
+        btn_Pagina2_1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        btn_Pagina2_1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lbl_btn_Pagina2_1.setFont(new java.awt.Font("Roboto", 0, 11)); // NOI18N
+        lbl_btn_Pagina2_1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbl_btn_Pagina2_1.setText("<- Página 1");
+        lbl_btn_Pagina2_1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbl_btn_Pagina2_1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbl_btn_Pagina2_1MouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lbl_btn_Pagina2_1MouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lbl_btn_Pagina2_1MouseExited(evt);
+            }
+        });
+        btn_Pagina2_1.add(lbl_btn_Pagina2_1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 106, 35));
+
+        panelPagina2.add(btn_Pagina2_1, new org.netbeans.lib.awtextra.AbsoluteConstraints(167, 370, 106, 35));
+
+        btn_Pagina2_3.setBackground(new java.awt.Color(204, 204, 235));
+        btn_Pagina2_3.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        btn_Pagina2_3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lbl_btn_Pagina2_3.setFont(new java.awt.Font("Roboto", 0, 11)); // NOI18N
+        lbl_btn_Pagina2_3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbl_btn_Pagina2_3.setText("Página 3 ->");
+        lbl_btn_Pagina2_3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbl_btn_Pagina2_3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbl_btn_Pagina2_3MouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lbl_btn_Pagina2_3MouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lbl_btn_Pagina2_3MouseExited(evt);
+            }
+        });
+        btn_Pagina2_3.add(lbl_btn_Pagina2_3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 106, 35));
+
+        panelPagina2.add(btn_Pagina2_3, new org.netbeans.lib.awtextra.AbsoluteConstraints(293, 370, 106, 35));
 
         lblAlteraciones.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblAlteraciones.setText("Alteraciones");
@@ -1623,7 +1831,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
 
         lblPielFaneras.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblPielFaneras.setText("Piel y Faneras");
-        panelPagina2.add(lblPielFaneras, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, -1, 20));
+        panelPagina2.add(lblPielFaneras, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, -1, -1));
 
         jScrollPane14.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -1687,46 +1895,56 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         panelPagina2.add(jScrollPane18, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 90, 260, 35));
 
         lblRespiratorio.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblRespiratorio.setText("Sistema Respiratorio");
+        lblRespiratorio.setText("Cardiopulmonar");
         panelPagina2.add(lblRespiratorio, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 130, -1, 20));
 
         jScrollPane19.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        txtAreaRespiratorio.setColumns(20);
-        txtAreaRespiratorio.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
-        txtAreaRespiratorio.setRows(5);
-        jScrollPane19.setViewportView(txtAreaRespiratorio);
+        txtAreaCardiopulmonar.setColumns(20);
+        txtAreaCardiopulmonar.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        txtAreaCardiopulmonar.setRows(5);
+        jScrollPane19.setViewportView(txtAreaCardiopulmonar);
 
         panelPagina2.add(jScrollPane19, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 150, 260, 35));
 
         lblCardiovascular.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblCardiovascular.setText("Sistema Cardiovascular");
+        lblCardiovascular.setText("Torax");
         panelPagina2.add(lblCardiovascular, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 190, -1, 20));
 
         jScrollPane20.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        txtAreaCardiovascular.setColumns(20);
-        txtAreaCardiovascular.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
-        txtAreaCardiovascular.setRows(5);
-        jScrollPane20.setViewportView(txtAreaCardiovascular);
+        txtAreaTorax.setColumns(20);
+        txtAreaTorax.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        txtAreaTorax.setRows(5);
+        jScrollPane20.setViewportView(txtAreaTorax);
 
         panelPagina2.add(jScrollPane20, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 210, 260, 35));
 
         lblGastrointestinal.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        lblGastrointestinal.setText("Sistema Gastrointestinal");
+        lblGastrointestinal.setText("Abdomen");
         panelPagina2.add(lblGastrointestinal, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 250, -1, 20));
 
         jScrollPane21.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        txtAreaGastrointestinal.setColumns(20);
-        txtAreaGastrointestinal.setRows(5);
-        jScrollPane21.setViewportView(txtAreaGastrointestinal);
+        txtAreaAbdomen.setColumns(20);
+        txtAreaAbdomen.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        txtAreaAbdomen.setRows(5);
+        jScrollPane21.setViewportView(txtAreaAbdomen);
 
         panelPagina2.add(jScrollPane21, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 270, 260, 35));
 
         lblExtremidades.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblExtremidades.setText("Extremidades");
         panelPagina2.add(lblExtremidades, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 250, -1, 20));
+
+        jScrollPane23.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        txtAreaExtremidades.setColumns(20);
+        txtAreaExtremidades.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        txtAreaExtremidades.setRows(5);
+        jScrollPane23.setViewportView(txtAreaExtremidades);
+
+        panelPagina2.add(jScrollPane23, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 270, 260, 35));
 
         lblGenitourinario.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblGenitourinario.setText("Sistema Genitourinario");
@@ -1735,6 +1953,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         jScrollPane22.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         txtAreaGenitourinario.setColumns(20);
+        txtAreaGenitourinario.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         txtAreaGenitourinario.setRows(5);
         jScrollPane22.setViewportView(txtAreaGenitourinario);
 
@@ -1747,64 +1966,11 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         jScrollPane24.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         txtAreaNeurologico.setColumns(20);
+        txtAreaNeurologico.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         txtAreaNeurologico.setRows(5);
         jScrollPane24.setViewportView(txtAreaNeurologico);
 
         panelPagina2.add(jScrollPane24, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 330, 260, 35));
-
-        jScrollPane23.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        txtAreaExtremidades.setColumns(20);
-        txtAreaExtremidades.setRows(5);
-        jScrollPane23.setViewportView(txtAreaExtremidades);
-
-        panelPagina2.add(jScrollPane23, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 270, 260, 35));
-
-        btn_Pagina2_1.setBackground(new java.awt.Color(204, 204, 235));
-        btn_Pagina2_1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        btn_Pagina2_1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        lbl_btn_Pagina2_1.setFont(new java.awt.Font("Roboto", 0, 11)); // NOI18N
-        lbl_btn_Pagina2_1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbl_btn_Pagina2_1.setText("<- Página 1");
-        lbl_btn_Pagina2_1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        lbl_btn_Pagina2_1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lbl_btn_Pagina2_1MouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                lbl_btn_Pagina2_1MouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                lbl_btn_Pagina2_1MouseExited(evt);
-            }
-        });
-        btn_Pagina2_1.add(lbl_btn_Pagina2_1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 106, 35));
-
-        panelPagina2.add(btn_Pagina2_1, new org.netbeans.lib.awtextra.AbsoluteConstraints(167, 370, 106, 35));
-
-        btn_Pagina2_3.setBackground(new java.awt.Color(204, 204, 235));
-        btn_Pagina2_3.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        btn_Pagina2_3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        lbl_btn_Pagina2_3.setFont(new java.awt.Font("Roboto", 0, 11)); // NOI18N
-        lbl_btn_Pagina2_3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbl_btn_Pagina2_3.setText("Página 3 ->");
-        lbl_btn_Pagina2_3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        lbl_btn_Pagina2_3.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lbl_btn_Pagina2_3MouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                lbl_btn_Pagina2_3MouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                lbl_btn_Pagina2_3MouseExited(evt);
-            }
-        });
-        btn_Pagina2_3.add(lbl_btn_Pagina2_3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 106, 35));
-
-        panelPagina2.add(btn_Pagina2_3, new org.netbeans.lib.awtextra.AbsoluteConstraints(293, 370, 106, 35));
 
         panelCartas.add(panelPagina2, "card2");
 
@@ -1879,6 +2045,11 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         checkTraslado.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         checkTraslado.setText("Traslado");
         panelPagina3.add(checkTraslado, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 320, -1, -1));
+
+        checkReincorporacion.setBackground(new java.awt.Color(255, 255, 255));
+        checkReincorporacion.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        checkReincorporacion.setText("Reincorporación");
+        panelPagina3.add(checkReincorporacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 320, -1, -1));
 
         lblResponsable.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblResponsable.setText("Responsable:");
@@ -2008,6 +2179,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
             setCartaContenido(panelFormulario);
             btn_Confirmar.setBackground(new Color(40,235,40));
             btn_Confirmar.setVisible(true);
+            btnReportes.setVisible(false);
             lbl_btn_Confirmar.setText("Ingresar");
             contenidoActual = "Crear";
             lbl_btn_Confirmar.setEnabled(true);
@@ -2026,6 +2198,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
     private void lbl_btnActualizarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btnActualizarMouseClicked
         if (!contenidoActual.equals("Actualizar")){
             btn_Confirmar.setVisible(false);
+            btnReportes.setVisible(false);
             setCartaContenido(panelCombobox);
             btn_Ingresar.setBackground(new Color(92,92,235));
             lblTituloCombobox.setText("Actualizar");
@@ -2048,6 +2221,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
     private void lbl_BtnEliminarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_BtnEliminarMouseClicked
         if (!contenidoActual.equals("Eliminar")){
             btn_Confirmar.setVisible(false);
+            btnReportes.setVisible(false);
             setCartaContenido(panelCombobox);
             btn_Ingresar.setBackground(new Color(235,91,91));
             lblTituloCombobox.setText("Eliminar");
@@ -2067,60 +2241,22 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         btn_Eliminar.setBackground(util.colorCursorSale(btn_Eliminar.getBackground()));
     }//GEN-LAST:event_lbl_BtnEliminarMouseExited
 
-    private void lbl_btn_ConfirmarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btn_ConfirmarMouseClicked
-        if (lbl_btn_Confirmar.isEnabled()){
-            if (verificarRevisionSistemas()){
-                if (verificarEmpleado()){
-                    if (verificarAccidentes()){
-                        try {
-                            getRevisionSistemas();
-                            getAccidente();
-                            switch (contenidoActual){
-                                case "Eliminar":
-                                eliminar();
-                                break;
-                                case "Actualizar":
-                                actualizar();
-                                break;
-                                case "Crear":
-                                crear();
-                                break;
-                                default:
-                                break;
-                            }
-                        }catch (SQLException e) {
-                            JOptionPane.showMessageDialog(this, "ERROR " + e.toString() + " AL INSERTAR EL REGISTRO. COMUNIQUESE CON TI", "Inserción de Datos", JOptionPane.ERROR_MESSAGE);
-                        }
-                    }
-                }else
-                JOptionPane.showMessageDialog(this, "Información del empleado incompleta o no válida", "Inserción de Datos", JOptionPane.INFORMATION_MESSAGE);
-            }else
-            JOptionPane.showMessageDialog(this, "Información del formulario no válida", "Inserción de Datos", JOptionPane.INFORMATION_MESSAGE);
-        }
-    }//GEN-LAST:event_lbl_btn_ConfirmarMouseClicked
-
-    private void lbl_btn_ConfirmarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btn_ConfirmarMouseEntered
-        if (lbl_btn_Confirmar.isEnabled())
-        btn_Confirmar.setBackground(util.colorCursorEntra(btn_Confirmar.getBackground()));
-    }//GEN-LAST:event_lbl_btn_ConfirmarMouseEntered
-
-    private void lbl_btn_ConfirmarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btn_ConfirmarMouseExited
-        if (lbl_btn_Confirmar.isEnabled())
-        btn_Confirmar.setBackground(util.colorCursorSale(btn_Confirmar.getBackground()));
-    }//GEN-LAST:event_lbl_btn_ConfirmarMouseExited
-
     private void lbl_btnIngresarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btnIngresarMouseClicked
         if (lbl_SeleccionAccidente.getText().length() > 0){
             if (contenidoActual.equals("Actualizar")){
                 setCartaContenido(panelFormulario);
                 btn_Confirmar.setBackground(new Color(92,92,235));
+                btnReportes.setBackground(new Color(235,235,51));
 
                 btn_Confirmar.setVisible(true);
+                btnReportes.setVisible(true);
             }else if (contenidoActual.equals("Eliminar")){
+                
                 setCartaContenido(panelFormulario);
                 btn_Confirmar.setBackground(new Color(235,91,91));
 
                 btn_Confirmar.setVisible(true);
+                btnReportes.setVisible(false);
             }
             try {
                 buscarEmpleadoAccidente(jtAccidente.getValueAt(jtAccidente.getSelectedRow(), 0).toString());
@@ -2190,134 +2326,6 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         btn_SeleccionEmpleado.setBackground(util.colorCursorSale(btn_SeleccionEmpleado.getBackground()));
     }//GEN-LAST:event_lbl_btnSeleccionEmpleadoMouseExited
 
-    private void txtTemperaturaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTemperaturaFocusGained
-        if (String.valueOf(txtTemperatura.getText()).equals("°C")){
-            txtTemperatura.setText("");
-            txtTemperatura.setForeground(Color.black);
-        }
-    }//GEN-LAST:event_txtTemperaturaFocusGained
-
-    private void txtTemperaturaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTemperaturaFocusLost
-        if (!(util.verificarNumero(txtTemperatura.getText())) && (txtTemperatura.getText().length() > 0))
-        txtTemperatura.requestFocus();
-        if (txtTemperatura.getText().isEmpty()){
-            txtTemperatura.setText("°C");
-            txtTemperatura.setForeground(Color.gray);
-        }
-    }//GEN-LAST:event_txtTemperaturaFocusLost
-
-    private void txtPulsoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPulsoFocusGained
-        if (String.valueOf(txtPulso.getText()).equals("LPM")){
-            txtPulso.setText("");
-            txtPulso.setForeground(Color.black);
-        }
-    }//GEN-LAST:event_txtPulsoFocusGained
-
-    private void txtPulsoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPulsoFocusLost
-        if (!(util.verificarNumero(txtPulso.getText())) && (txtPulso.getText().length() > 0))
-        txtPulso.requestFocus();
-        if (txtPulso.getText().isEmpty()){
-            txtPulso.setText("LPM");
-            txtPulso.setForeground(Color.gray);
-        }
-    }//GEN-LAST:event_txtPulsoFocusLost
-
-    private void txtSPO2FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtSPO2FocusGained
-        if (String.valueOf(txtSPO2.getText()).equals("%")){
-            txtSPO2.setText("");
-            txtSPO2.setForeground(Color.black);
-        }
-    }//GEN-LAST:event_txtSPO2FocusGained
-
-    private void txtSPO2FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtSPO2FocusLost
-        if (!(util.verificarNumero(txtSPO2.getText())) && (txtSPO2.getText().length() > 0))
-        txtSPO2.requestFocus();
-        if (txtSPO2.getText().isEmpty()){
-            txtSPO2.setText("%");
-            txtSPO2.setForeground(Color.gray);
-        }
-    }//GEN-LAST:event_txtSPO2FocusLost
-
-    private void txtFRFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFRFocusGained
-        if (String.valueOf(txtFR.getText()).equals("RPM")){
-            txtFR.setText("");
-            txtFR.setForeground(Color.black);
-        }
-    }//GEN-LAST:event_txtFRFocusGained
-
-    private void txtFRFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFRFocusLost
-        if (!(util.verificarNumero(txtFR.getText())) && (txtFR.getText().length() > 0))
-        txtFR.requestFocus();
-        if (txtFR.getText().isEmpty()){
-            txtFR.setText("RPM");
-            txtFR.setForeground(Color.gray);
-        }
-    }//GEN-LAST:event_txtFRFocusLost
-
-    private void txtGlicemiaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtGlicemiaFocusGained
-        if (String.valueOf(txtGlicemia.getText()).equals("mg/dl")){
-            txtGlicemia.setText("");
-            txtGlicemia.setForeground(Color.black);
-        }
-    }//GEN-LAST:event_txtGlicemiaFocusGained
-
-    private void txtGlicemiaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtGlicemiaFocusLost
-        if (!(util.verificarNumero(txtGlicemia.getText())) && (txtGlicemia.getText().length() > 0))
-        txtGlicemia.requestFocus();
-        if (txtGlicemia.getText().isEmpty()){
-            txtGlicemia.setText("mg/dl");
-            txtGlicemia.setForeground(Color.gray);
-        }
-    }//GEN-LAST:event_txtGlicemiaFocusLost
-
-    private void txtPesoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPesoFocusGained
-        if (String.valueOf(txtPeso.getText()).equals("lb")){
-            txtPeso.setText("");
-            txtPeso.setForeground(Color.black);
-        }
-    }//GEN-LAST:event_txtPesoFocusGained
-
-    private void txtPesoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPesoFocusLost
-        if (!(util.verificarNumero(txtPeso.getText())) && (txtPeso.getText().length() > 0))
-        txtPeso.requestFocus();
-        if (txtPeso.getText().isEmpty()){
-            txtPeso.setText("lb");
-            txtPeso.setForeground(Color.gray);
-        }
-    }//GEN-LAST:event_txtPesoFocusLost
-
-    private void txtIMCFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtIMCFocusGained
-        if (String.valueOf(txtIMC.getText()).equals("Kg/m^2")){
-            txtIMC.setText("");
-            txtIMC.setForeground(Color.black);
-        }
-    }//GEN-LAST:event_txtIMCFocusGained
-
-    private void txtIMCFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtIMCFocusLost
-        if (!(util.verificarNumero(txtIMC.getText())) && (txtIMC.getText().length() > 0))
-        txtIMC.requestFocus();
-        if (txtIMC.getText().isEmpty()){
-            txtIMC.setText("Kg/m^2");
-            txtIMC.setForeground(Color.gray);
-        }
-    }//GEN-LAST:event_txtIMCFocusLost
-
-    private void txtPAFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPAFocusGained
-        if (String.valueOf(txtPA.getText()).equals("mmHg")){
-            txtPA.setText("");
-            txtPA.setForeground(Color.black);
-        }
-    }//GEN-LAST:event_txtPAFocusGained
-
-    private void txtPAFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPAFocusLost
-        if (!(util.verificarNumero(txtPA.getText())) && (txtPA.getText().length() > 0))
-        txtPA.requestFocus();
-        if (txtPA.getText().isEmpty()){
-            txtPA.setText("mmHg");
-            txtPA.setForeground(Color.gray);
-        }
-    }//GEN-LAST:event_txtPAFocusLost
-
     private void lbl_btn_Pagina2_1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btn_Pagina2_1MouseClicked
         setCartas(panelPagina1);
         btn_Pagina2_1.setBackground(util.colorCursorSale(btn_Pagina2_1.getBackground()));
@@ -2369,10 +2377,193 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
         btn_Pagina3_2.setBackground(util.colorCursorSale(btn_Pagina3_2.getBackground()));
     }//GEN-LAST:event_lbl_btn_Pagina3_2MouseExited
 
+    private void txtTemperaturaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTemperaturaFocusGained
+        if (String.valueOf(txtTemperatura.getText()).equals("°C")){
+            txtTemperatura.setText("");
+            txtTemperatura.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtTemperaturaFocusGained
+
+    private void txtTemperaturaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTemperaturaFocusLost
+        if (!(util.verificarFlotante(txtTemperatura.getText())) && (txtTemperatura.getText().length() > 0))
+        txtTemperatura.requestFocus();
+        if (txtTemperatura.getText().isEmpty()){
+            txtTemperatura.setText("°C");
+            txtTemperatura.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtTemperaturaFocusLost
+
+    private void txtGlicemiaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtGlicemiaFocusGained
+        if (String.valueOf(txtGlicemia.getText()).equals("mg/dl")){
+            txtGlicemia.setText("");
+            txtGlicemia.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtGlicemiaFocusGained
+
+    private void txtGlicemiaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtGlicemiaFocusLost
+        if (!(util.verificarFlotante(txtGlicemia.getText())) && (txtGlicemia.getText().length() > 0))
+        txtGlicemia.requestFocus();
+        if (txtGlicemia.getText().isEmpty()){
+            txtGlicemia.setText("mg/dl");
+            txtGlicemia.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtGlicemiaFocusLost
+
+    private void txtPAFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPAFocusGained
+        if (String.valueOf(txtPA.getText()).equals("mmHg")){
+            txtPA.setText("");
+            txtPA.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtPAFocusGained
+
+    private void txtPAFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPAFocusLost
+        if (!(util.verificarFlotante(txtPA.getText())) && (txtPA.getText().length() > 0))
+        txtPA.requestFocus();
+        if (txtPA.getText().isEmpty()){
+            txtPA.setText("mmHg");
+            txtPA.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtPAFocusLost
+
+    private void txtPulsoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPulsoFocusGained
+        if (String.valueOf(txtPulso.getText()).equals("LPM")){
+            txtPulso.setText("");
+            txtPulso.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtPulsoFocusGained
+
+    private void txtPulsoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPulsoFocusLost
+        if (!(util.verificarFlotante(txtPulso.getText())) && (txtPulso.getText().length() > 0))
+        txtPulso.requestFocus();
+        if (txtPulso.getText().isEmpty()){
+            txtPulso.setText("LPM");
+            txtPulso.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtPulsoFocusLost
+
+    private void txtSPO2FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtSPO2FocusGained
+        if (String.valueOf(txtSPO2.getText()).equals("%")){
+            txtSPO2.setText("");
+            txtSPO2.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtSPO2FocusGained
+
+    private void txtSPO2FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtSPO2FocusLost
+        if (!(util.verificarFlotante(txtSPO2.getText())) && (txtSPO2.getText().length() > 0))
+        txtSPO2.requestFocus();
+        if (txtSPO2.getText().isEmpty()){
+            txtSPO2.setText("%");
+            txtSPO2.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtSPO2FocusLost
+
+    private void txtFRFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFRFocusGained
+        if (String.valueOf(txtFR.getText()).equals("RPM")){
+            txtFR.setText("");
+            txtFR.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtFRFocusGained
+
+    private void txtFRFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFRFocusLost
+        if (!(util.verificarFlotante(txtFR.getText())) && (txtFR.getText().length() > 0))
+        txtFR.requestFocus();
+        if (txtFR.getText().isEmpty()){
+            txtFR.setText("RPM");
+            txtFR.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtFRFocusLost
+
+    private void txtIMCFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtIMCFocusGained
+        if (String.valueOf(txtIMC.getText()).equals("Kg/m^2")){
+            txtIMC.setText("");
+            txtIMC.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtIMCFocusGained
+
+    private void txtIMCFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtIMCFocusLost
+        if (!(util.verificarFlotante(txtIMC.getText())) && (txtIMC.getText().length() > 0))
+        txtIMC.requestFocus();
+        if (txtIMC.getText().isEmpty()){
+            txtIMC.setText("Kg/m^2");
+            txtIMC.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtIMCFocusLost
+
+    private void txtPesoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPesoFocusGained
+        if (String.valueOf(txtPeso.getText()).equals("lb")){
+            txtPeso.setText("");
+            txtPeso.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtPesoFocusGained
+
+    private void txtPesoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPesoFocusLost
+        if (!(util.verificarFlotante(txtPeso.getText())) && (txtPeso.getText().length() > 0))
+        txtPeso.requestFocus();
+        if (txtPeso.getText().isEmpty()){
+            txtPeso.setText("lb");
+            txtPeso.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtPesoFocusLost
+
+    private void lblReportesMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblReportesMouseEntered
+        btnReportes.setBackground(util.colorCursorEntra(btnReportes.getBackground()));
+    }//GEN-LAST:event_lblReportesMouseEntered
+
+    private void lblReportesMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblReportesMouseExited
+        btnReportes.setBackground(util.colorCursorSale(btnReportes.getBackground()));
+    }//GEN-LAST:event_lblReportesMouseExited
+
+    private void lblReportesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblReportesMouseClicked
+        crearReporte();
+    }//GEN-LAST:event_lblReportesMouseClicked
+
+    private void lbl_btn_ConfirmarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btn_ConfirmarMouseExited
+        if (lbl_btn_Confirmar.isEnabled())
+        btn_Confirmar.setBackground(util.colorCursorSale(btn_Confirmar.getBackground()));
+    }//GEN-LAST:event_lbl_btn_ConfirmarMouseExited
+
+    private void lbl_btn_ConfirmarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btn_ConfirmarMouseEntered
+        if (lbl_btn_Confirmar.isEnabled())
+        btn_Confirmar.setBackground(util.colorCursorEntra(btn_Confirmar.getBackground()));
+    }//GEN-LAST:event_lbl_btn_ConfirmarMouseEntered
+
+    private void lbl_btn_ConfirmarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btn_ConfirmarMouseClicked
+        if (lbl_btn_Confirmar.isEnabled()){
+            if (verificarRevisionSistemas()){
+                if (verificarEmpleado()){
+                    if (verificarAccidentes()){
+                        try {
+                            getRevisionSistemas();
+                            getAccidente();
+                            switch (contenidoActual){
+                                case "Eliminar":
+                                eliminar();
+                                break;
+                                case "Actualizar":
+                                actualizar();
+                                break;
+                                case "Crear":
+                                crear();
+                                break;
+                                default:
+                                break;
+                            }
+                        }catch (SQLException e) {
+                            JOptionPane.showMessageDialog(this, "ERROR " + e.toString() + " AL INSERTAR EL REGISTRO. COMUNIQUESE CON TI", "Inserción de Datos", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }else
+                JOptionPane.showMessageDialog(this, "Información del empleado incompleta o no válida", "Inserción de Datos", JOptionPane.INFORMATION_MESSAGE);
+            }else
+            JOptionPane.showMessageDialog(this, "Información del formulario no válida", "Inserción de Datos", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_lbl_btn_ConfirmarMouseClicked
+
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel btnReportes;
     public javax.swing.JPanel btn_Actualizar;
-    public javax.swing.JPanel btn_Confirmar;
+    private javax.swing.JPanel btn_Confirmar;
     public javax.swing.JPanel btn_Crear;
     public javax.swing.JPanel btn_Eliminar;
     public javax.swing.JPanel btn_Ingresar;
@@ -2384,12 +2575,12 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
     private javax.swing.JPanel btn_SeleccionEmpleado;
     private javax.swing.JCheckBox checkLentes;
     private javax.swing.JCheckBox checkReferencia;
+    private javax.swing.JCheckBox checkReincorporacion;
     private javax.swing.JCheckBox checkTraslado;
-    private javax.swing.JComboBox<String> combo_Talla;
+    private javax.swing.JComboBox<String> comboTalla;
     private javax.swing.JPanel cont_Accidente;
     public static javax.swing.ButtonGroup grbtn_Sexo;
     public javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     public javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane13;
@@ -2427,6 +2618,8 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
     private javax.swing.JLabel lblExtremidades;
     public javax.swing.JLabel lblFR;
     public javax.swing.JLabel lblFechaMod;
+    private javax.swing.JLabel lblFraccion1;
+    private javax.swing.JLabel lblFraccion2;
     private javax.swing.JLabel lblGastrointestinal;
     private javax.swing.JLabel lblGenitourinario;
     public javax.swing.JLabel lblGlicemia;
@@ -2447,8 +2640,10 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
     public javax.swing.JLabel lblPuesto1;
     public javax.swing.JLabel lblPulso;
     private javax.swing.JLabel lblRelato;
+    private javax.swing.JLabel lblReportes;
     private javax.swing.JLabel lblRespiratorio;
     private javax.swing.JLabel lblResponsable;
+    private javax.swing.JLabel lblRuffier;
     public javax.swing.JLabel lblSPO2;
     public javax.swing.JLabel lblSeguridad;
     public javax.swing.JLabel lblSexo;
@@ -2468,7 +2663,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
     public javax.swing.JLabel lbl_btnIngresar;
     private javax.swing.JLabel lbl_btnOtroEmpleado;
     private javax.swing.JLabel lbl_btnSeleccionEmpleado;
-    public javax.swing.JLabel lbl_btn_Confirmar;
+    private javax.swing.JLabel lbl_btn_Confirmar;
     private javax.swing.JLabel lbl_btn_Pagina1_2;
     private javax.swing.JLabel lbl_btn_Pagina2_1;
     private javax.swing.JLabel lbl_btn_Pagina2_3;
@@ -2498,14 +2693,14 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
     public javax.swing.JPanel tablaTitulos;
     private com.raven.swing.TimePicker timeHora;
     public javax.swing.JTextField txtArea;
+    private javax.swing.JTextArea txtAreaAbdomen;
     private javax.swing.JTextArea txtAreaAlteraciones;
     private javax.swing.JTextArea txtAreaCabeza;
-    private javax.swing.JTextArea txtAreaCardiovascular;
+    private javax.swing.JTextArea txtAreaCardiopulmonar;
     private javax.swing.JTextArea txtAreaClasificacionAccidente;
     private javax.swing.JTextArea txtAreaCuello;
     private javax.swing.JTextArea txtAreaDatosSubjetivos;
     private javax.swing.JTextArea txtAreaExtremidades;
-    private javax.swing.JTextArea txtAreaGastrointestinal;
     private javax.swing.JTextArea txtAreaGenitourinario;
     private javax.swing.JTextArea txtAreaImpresionClinica;
     private javax.swing.JTextArea txtAreaNeurologico;
@@ -2514,7 +2709,7 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
     private javax.swing.JTextArea txtAreaOrofaringe;
     private javax.swing.JTextArea txtAreaPielFaneras;
     private javax.swing.JTextArea txtAreaRelato;
-    private javax.swing.JTextArea txtAreaRespiratorio;
+    private javax.swing.JTextArea txtAreaTorax;
     private javax.swing.JTextArea txtAreaTratamiento;
     public javax.swing.JTextField txtCodigo;
     public javax.swing.JTextField txtEdad;
@@ -2524,8 +2719,10 @@ public class Accidentes extends javax.swing.JFrame implements ActionListener, Ta
     private javax.swing.JTextField txtHora;
     public javax.swing.JTextField txtIMC;
     public javax.swing.JTextField txtNombre;
-    private javax.swing.JTextField txtOjoDerecho;
-    private javax.swing.JTextField txtOjoIzquierdo;
+    private javax.swing.JTextField txtOjoDerechoDenominador;
+    private javax.swing.JTextField txtOjoDerechoNumerador;
+    private javax.swing.JTextField txtOjoIzquierdoDenominador;
+    private javax.swing.JTextField txtOjoIzquierdoNumerador;
     private javax.swing.JTextField txtPA;
     public javax.swing.JTextField txtPeso;
     public javax.swing.JLabel txtPreempleoId;

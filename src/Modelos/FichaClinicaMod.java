@@ -12,7 +12,7 @@ public class FichaClinicaMod {
     private String tratamiento;
     private String referencia;
     private String traslado;
-    private String patologia;
+    private String suspension;
     private String clinicaId;
     private String empleadoId;
     private String revisionSistemasId;
@@ -21,6 +21,10 @@ public class FichaClinicaMod {
     private String revisado;
     private String autorizado;
     private String estado;
+    
+    private final String nombreTabla = "CONSULTA_GENERAL";
+    private final String prefijo = "CONGEN_";
+    private final String llavePrimaria = prefijo+"ID";
 
     public String getId() {
         return id;
@@ -110,12 +114,12 @@ public class FichaClinicaMod {
         this.traslado = traslado;
     }
 
-    public String getPatologia() {
-        return patologia;
+    public String getSuspension() {
+        return suspension;
     }
 
-    public void setPatologia(String patologia) {
-        this.patologia = patologia;
+    public void setSuspension(String patologia) {
+        this.suspension = patologia;
     }
 
     public String getClinicaId() {
@@ -181,6 +185,16 @@ public class FichaClinicaMod {
     public void setEstado(String estado) {
         this.estado = estado;
     }
-    
-    
+
+    public String getNombreTabla() {
+        return nombreTabla;
+    }
+
+    public String getPrefijo() {
+        return prefijo;
+    }
+
+    public String getLlavePrimaria() {
+        return llavePrimaria;
+    }
 }

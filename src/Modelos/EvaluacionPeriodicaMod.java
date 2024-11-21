@@ -8,12 +8,17 @@ public class EvaluacionPeriodicaMod {
     private String area;
     private String puesto;
     private String aptitud;
+    private String restricciones;
     private String empleadoId;
     private String clinicaId;
     private String antecedentesId;
     private String revisionSistemasId;
     private String responsable;
     private String estado;
+    
+    private final String nombreTabla = "EVALUACION_PERIODICA";
+    private final String prefijo = "EVAPER_";
+    private final String llavePrimaria = prefijo+"ID";
 
     public String getId() {
         return id;
@@ -71,6 +76,14 @@ public class EvaluacionPeriodicaMod {
         this.aptitud = aptitud;
     }
 
+    public String getRestricciones() {
+        return restricciones;
+    }
+
+    public void setRestricciones(String restricciones) {
+        this.restricciones = restricciones;
+    }
+    
     public String getEmpleadoId() {
         return empleadoId;
     }
@@ -118,6 +131,16 @@ public class EvaluacionPeriodicaMod {
     public void setEstado(String estado) {
         this.estado = estado;
     }
-    
-    
+
+    public String getNombreTabla() {
+        return nombreTabla;
+    }
+
+    public String getPrefijo() {
+        return prefijo;
+    }
+
+    public String getLlavePrimaria() {
+        return llavePrimaria;
+    }
 }

@@ -7,6 +7,7 @@ public class EmpleadoMod {
     private String sexo;
     private String direccion;
     private String telefono;
+    private String aptitud;
     private String estado;
 
     public String getId() {
@@ -57,6 +58,14 @@ public class EmpleadoMod {
         this.telefono = telefono;
     }
 
+    public String getAptitud() {
+        return aptitud;
+    }
+
+    public void setAptitud(String resultado) {
+        this.aptitud = resultado;
+    }
+    
     public String getEstado() {
         return estado;
     }

@@ -11,7 +11,7 @@ import javax.swing.ImageIcon;
 import Utilitarios.Utilitarios;
 import java.awt.Color;
 import java.sql.Connection;
-import Conexion.Conexion;
+import Conexion.*;
 import com.sun.glass.events.KeyEvent;
 import java.awt.HeadlessException;
 import java.net.ConnectException;
@@ -45,14 +45,18 @@ public class Login extends javax.swing.JFrame {
         else
         {
             try{
+                Encriptacion encript = new Encriptacion();
                 PreparedStatement smt = null;
                 Connection conn;
                 Conexion conex = new Conexion();
                 conn = conex.connect();
                 ResultSet resultado = null;
-                String sql = "select * from clinica.usuario where USR_USUARIO = '" + txt_Usuario.getText() + "' AND USR_PASSWORD ='" + String.valueOf(txt_Contrasena.getPassword()) + "' AND USR_ESTADO = 1";
+                String sql = "select * from clinica.usuario where USR_USUARIO = ? AND USR_PASSWORD = ? AND USR_ESTADO = 1";
                 smt = conn.prepareStatement(sql);
-                resultado = smt.executeQuery(sql);
+                
+                smt.setString(1, (txt_Usuario.getText()));
+                smt.setString(2, encript.encriptar(String.valueOf(txt_Contrasena.getPassword())));
+                resultado = smt.executeQuery();
                 if (resultado.next()) {
                     if (resultado.getString(5).equals("admin")){
                         Usuario usuario = new Usuario();

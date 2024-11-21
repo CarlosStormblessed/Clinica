@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import Conexion.Conexion;
+import Conexion.*;
 import java.net.ConnectException;
 
 public class UsuarioCtrl {
@@ -17,6 +17,7 @@ public class UsuarioCtrl {
         Connection conn;
         Conexion conex = new Conexion();
         conn = conex.connect();
+        Encriptacion encript = new Encriptacion();
         try {
 
             String sql = "INSERT INTO USUARIO VALUES ((SELECT IFNULL(MAX(USR_ID), 0)+1 FROM USUARIO u), ?,?,?,?,?)";
@@ -24,7 +25,7 @@ public class UsuarioCtrl {
             smt = conn.prepareStatement(sql);
             smt.setString(1, modelo.getUsuario());
             smt.setString(2, modelo.getNombre());
-            smt.setString(3, modelo.getPassword());
+            smt.setString(3, encript.encriptar(modelo.getPassword()));
             smt.setString(4, modelo.getRol());
             smt.setString(5, modelo.getEstado());
             smt.executeUpdate();
@@ -92,6 +93,7 @@ public class UsuarioCtrl {
         Connection conn;
         Conexion conex = new Conexion();
         conn = conex.connect();
+        Encriptacion encript = new Encriptacion();
          int result = 0;
         try {
             String sql = "UPDATE USUARIO SET USR_USUARIO = ?, USR_NOMBRE = ?, USR_PASSWORD = ?, USR_ROL = ? WHERE USR_ID = ?";
@@ -101,7 +103,7 @@ public class UsuarioCtrl {
 
             smt.setString(1, modelo.getUsuario());
             smt.setString(2, modelo.getNombre());
-            smt.setString(3, modelo.getPassword());
+            smt.setString(3, encript.encriptar(modelo.getPassword()));
             smt.setString(4, modelo.getRol());
             smt.setString(5, modelo.getId());
             
@@ -163,6 +165,7 @@ public class UsuarioCtrl {
         Connection conn;
         Conexion conex = new Conexion();
         conn = conex.connect();
+        Encriptacion encript = new Encriptacion();
         ResultSet result = null;
         List<UsuarioMod> lista = new ArrayList<UsuarioMod>();
 
@@ -185,7 +188,7 @@ public class UsuarioCtrl {
                 modeloBuscar.setId(result.getString(1));
                 modeloBuscar.setUsuario(result.getString(2));
                 modeloBuscar.setNombre(result.getString(3));
-                modeloBuscar.setPassword(result.getString(4));
+                modeloBuscar.setPassword(encript.desencriptar(result.getString(4)));
                 modeloBuscar.setRol(result.getString(5));
                 modeloBuscar.setEstado(result.getString(6));
                 
@@ -214,6 +217,7 @@ public class UsuarioCtrl {
         Connection conn;
         Conexion conex = new Conexion();
         conn = conex.connect();
+        Encriptacion encript = new Encriptacion();
         ResultSet result = null;
         List<UsuarioMod> lista = new ArrayList<UsuarioMod>();
 
@@ -236,7 +240,7 @@ public class UsuarioCtrl {
                 modeloBuscar.setId(result.getString(1));
                 modeloBuscar.setUsuario(result.getString(2));
                 modeloBuscar.setNombre(result.getString(3));
-                modeloBuscar.setPassword(result.getString(4));
+                modeloBuscar.setPassword(encript.desencriptar(result.getString(4)));
                 modeloBuscar.setRol(result.getString(5));
                 modeloBuscar.setEstado(result.getString(6));
                 
@@ -259,12 +263,64 @@ public class UsuarioCtrl {
         return lista;
     }
     
+    /**
+     * Método que cuenta los usuarios activos que tengan el rol 'admin' o 'medico'
+     * @param opcion 1: Contar administradores. 2: Contar personal médico.
+     * @return Número total de usuarios. -1 si se obtuvo una opción no válida.
+     * @throws SQLException
+     * @throws ConnectException 
+     */
+    public int contarUsuarios(int opcion) throws SQLException, ConnectException{
+        int usuarios = 0;
+        String sql = "";
+        switch (opcion){
+            case 1:
+                sql = "SELECT COUNT(*) FROM USUARIO WHERE USR_ROL = 'admin' AND USR_ESTADO = 1";
+                break;
+            case 2:
+                sql = "SELECT COUNT(*) FROM USUARIO WHERE USR_ROL = 'medico' AND USR_ESTADO = 1";
+                break;
+            default:
+                return -1;
+        }
+        PreparedStatement smt = null;
+        Connection conn;
+        Conexion conex = new Conexion();
+        conn = conex.connect();
+        Encriptacion encript = new Encriptacion();
+        ResultSet result = null;
+        try {
+            smt = conn.prepareStatement(sql);
+
+            result = smt.executeQuery();
+
+            while (result.next()) {
+                usuarios = result.getInt(1);
+            }
+        } catch (Exception e) {
+        } finally {
+            if (smt != null) {
+                smt.close();
+            }
+            if (result != null) {
+                smt.close();
+            }
+            if (conn != null) {
+                conex.disconnect(conn);
+                conn.close();
+                conn = null;
+            }
+        }
+        return usuarios;
+    }
+    
     public UsuarioMod buscarFila(String id) throws SQLException, ConnectException {
         
         PreparedStatement smt = null;
         Connection conn;
         Conexion conex = new Conexion();
         conn = conex.connect();
+        Encriptacion encript = new Encriptacion();
         ResultSet result = null;
 
         UsuarioMod modeloBuscar = null;
@@ -285,7 +341,7 @@ public class UsuarioCtrl {
                 modeloBuscar.setId(result.getString(1));
                 modeloBuscar.setUsuario(result.getString(2));
                 modeloBuscar.setNombre(result.getString(3));
-                modeloBuscar.setPassword(result.getString(4));
+                modeloBuscar.setPassword(encript.desencriptar(result.getString(4)));
                 modeloBuscar.setRol(result.getString(5));
                 modeloBuscar.setEstado(result.getString(6));
             }

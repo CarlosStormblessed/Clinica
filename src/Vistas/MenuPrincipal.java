@@ -71,6 +71,8 @@ public class MenuPrincipal extends javax.swing.JFrame {
         txt_FichaAccidente = new javax.swing.JLabel();
         btn_VidaSaludable = new javax.swing.JPanel();
         txt_VidaSaludable = new javax.swing.JLabel();
+        btn_Empleado = new javax.swing.JPanel();
+        lbl_btnEmpleado = new javax.swing.JLabel();
         contenido = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -177,8 +179,10 @@ public class MenuPrincipal extends javax.swing.JFrame {
 
         btn_Preempleo.setBackground(new java.awt.Color(195, 200, 230));
         btn_Preempleo.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        btn_Preempleo.setPreferredSize(new java.awt.Dimension(200, 85));
-        btn_Preempleo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        btn_Preempleo.setMaximumSize(new java.awt.Dimension(200, 73));
+        btn_Preempleo.setMinimumSize(new java.awt.Dimension(200, 73));
+        btn_Preempleo.setPreferredSize(new java.awt.Dimension(200, 73));
+        btn_Preempleo.setLayout(new java.awt.BorderLayout());
 
         txt_Preempleo.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txt_Preempleo.setText("Preempleo");
@@ -198,14 +202,16 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 txt_PreempleoMouseExited(evt);
             }
         });
-        btn_Preempleo.add(txt_Preempleo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 85));
+        btn_Preempleo.add(txt_Preempleo, java.awt.BorderLayout.CENTER);
 
         barraOpciones.add(btn_Preempleo);
 
         btn_FichaClinica.setBackground(new java.awt.Color(172, 180, 227));
         btn_FichaClinica.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        btn_FichaClinica.setPreferredSize(new java.awt.Dimension(200, 85));
-        btn_FichaClinica.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        btn_FichaClinica.setMaximumSize(new java.awt.Dimension(200, 73));
+        btn_FichaClinica.setMinimumSize(new java.awt.Dimension(200, 73));
+        btn_FichaClinica.setPreferredSize(new java.awt.Dimension(200, 73));
+        btn_FichaClinica.setLayout(new java.awt.BorderLayout());
 
         txt_FichaClinica.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txt_FichaClinica.setText("Ficha Clínica");
@@ -225,14 +231,16 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 txt_FichaClinicaMouseExited(evt);
             }
         });
-        btn_FichaClinica.add(txt_FichaClinica, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 85));
+        btn_FichaClinica.add(txt_FichaClinica, java.awt.BorderLayout.CENTER);
 
         barraOpciones.add(btn_FichaClinica);
 
         btn_EvaluacionPeriodica.setBackground(new java.awt.Color(195, 200, 230));
         btn_EvaluacionPeriodica.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        btn_EvaluacionPeriodica.setPreferredSize(new java.awt.Dimension(200, 85));
-        btn_EvaluacionPeriodica.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        btn_EvaluacionPeriodica.setMaximumSize(new java.awt.Dimension(200, 73));
+        btn_EvaluacionPeriodica.setMinimumSize(new java.awt.Dimension(200, 73));
+        btn_EvaluacionPeriodica.setPreferredSize(new java.awt.Dimension(200, 73));
+        btn_EvaluacionPeriodica.setLayout(new java.awt.BorderLayout());
 
         txt_EvaluacionPeriodica.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txt_EvaluacionPeriodica.setText("Evaluación Periódica");
@@ -252,14 +260,16 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 txt_EvaluacionPeriodicaMouseExited(evt);
             }
         });
-        btn_EvaluacionPeriodica.add(txt_EvaluacionPeriodica, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 85));
+        btn_EvaluacionPeriodica.add(txt_EvaluacionPeriodica, java.awt.BorderLayout.CENTER);
 
         barraOpciones.add(btn_EvaluacionPeriodica);
 
         btn_PacienteCronico.setBackground(new java.awt.Color(172, 180, 227));
         btn_PacienteCronico.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        btn_PacienteCronico.setPreferredSize(new java.awt.Dimension(200, 85));
-        btn_PacienteCronico.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        btn_PacienteCronico.setMaximumSize(new java.awt.Dimension(200, 73));
+        btn_PacienteCronico.setMinimumSize(new java.awt.Dimension(200, 73));
+        btn_PacienteCronico.setPreferredSize(new java.awt.Dimension(200, 73));
+        btn_PacienteCronico.setLayout(new java.awt.BorderLayout());
 
         txt_PacienteCronico.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txt_PacienteCronico.setText("Seguimiento Pacientes Crónicos");
@@ -279,14 +289,16 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 txt_PacienteCronicoMouseExited(evt);
             }
         });
-        btn_PacienteCronico.add(txt_PacienteCronico, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 85));
+        btn_PacienteCronico.add(txt_PacienteCronico, java.awt.BorderLayout.CENTER);
 
         barraOpciones.add(btn_PacienteCronico);
 
         btn_FichaAccidente.setBackground(new java.awt.Color(195, 200, 230));
         btn_FichaAccidente.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        btn_FichaAccidente.setPreferredSize(new java.awt.Dimension(200, 85));
-        btn_FichaAccidente.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        btn_FichaAccidente.setMaximumSize(new java.awt.Dimension(200, 73));
+        btn_FichaAccidente.setMinimumSize(new java.awt.Dimension(200, 73));
+        btn_FichaAccidente.setPreferredSize(new java.awt.Dimension(200, 73));
+        btn_FichaAccidente.setLayout(new java.awt.BorderLayout());
 
         txt_FichaAccidente.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txt_FichaAccidente.setText("Ficha Accidente");
@@ -306,13 +318,16 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 txt_FichaAccidenteMouseExited(evt);
             }
         });
-        btn_FichaAccidente.add(txt_FichaAccidente, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 85));
+        btn_FichaAccidente.add(txt_FichaAccidente, java.awt.BorderLayout.CENTER);
 
         barraOpciones.add(btn_FichaAccidente);
 
         btn_VidaSaludable.setBackground(new java.awt.Color(172, 180, 227));
-        btn_VidaSaludable.setPreferredSize(new java.awt.Dimension(200, 85));
-        btn_VidaSaludable.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        btn_VidaSaludable.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        btn_VidaSaludable.setMaximumSize(new java.awt.Dimension(200, 73));
+        btn_VidaSaludable.setMinimumSize(new java.awt.Dimension(200, 73));
+        btn_VidaSaludable.setPreferredSize(new java.awt.Dimension(200, 73));
+        btn_VidaSaludable.setLayout(new java.awt.BorderLayout());
 
         txt_VidaSaludable.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txt_VidaSaludable.setText("Seguimiento Vida Saludable");
@@ -327,9 +342,33 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 txt_VidaSaludableMouseExited(evt);
             }
         });
-        btn_VidaSaludable.add(txt_VidaSaludable, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 85));
+        btn_VidaSaludable.add(txt_VidaSaludable, java.awt.BorderLayout.CENTER);
 
         barraOpciones.add(btn_VidaSaludable);
+
+        btn_Empleado.setBackground(new java.awt.Color(195, 200, 230));
+        btn_Empleado.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        btn_Empleado.setMaximumSize(new java.awt.Dimension(200, 73));
+        btn_Empleado.setMinimumSize(new java.awt.Dimension(200, 73));
+        btn_Empleado.setPreferredSize(new java.awt.Dimension(200, 73));
+        btn_Empleado.setLayout(new java.awt.BorderLayout());
+
+        lbl_btnEmpleado.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        lbl_btnEmpleado.setText("Gestión de Empleados");
+        lbl_btnEmpleado.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbl_btnEmpleadoMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lbl_btnEmpleadoMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lbl_btnEmpleadoMouseExited(evt);
+            }
+        });
+        btn_Empleado.add(lbl_btnEmpleado, java.awt.BorderLayout.CENTER);
+
+        barraOpciones.add(btn_Empleado);
 
         jPanel1.add(barraOpciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, 200, 600));
 
@@ -560,10 +599,32 @@ public class MenuPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txt_VidaSaludableMouseClicked
 
+    private void lbl_btnEmpleadoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btnEmpleadoMouseEntered
+        btn_Empleado.setBackground(util.colorCursorEntra(btn_Empleado.getBackground()));
+    }//GEN-LAST:event_lbl_btnEmpleadoMouseEntered
+
+    private void lbl_btnEmpleadoMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btnEmpleadoMouseExited
+        btn_Empleado.setBackground(util.colorCursorSale(btn_Empleado.getBackground()));
+    }//GEN-LAST:event_lbl_btnEmpleadoMouseExited
+
+    private void lbl_btnEmpleadoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_btnEmpleadoMouseClicked
+        try{
+            Empleado vidaSaludable = new Empleado();
+            if (!vidaSaludable.nombreContenido.equals(contenidoActual)){
+                nuevoContenido = vidaSaludable.getContenido();
+                cambioContenido(nuevoContenido, vidaSaludable.nombreContenido);
+            }
+        }catch (Exception ex) {
+            Logger.getLogger(MenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
+        }
+    }//GEN-LAST:event_lbl_btnEmpleadoMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel barra;
     private javax.swing.JPanel barraOpciones;
+    private javax.swing.JPanel btn_Empleado;
     private javax.swing.JPanel btn_EvaluacionPeriodica;
     private javax.swing.JPanel btn_FichaAccidente;
     private javax.swing.JPanel btn_FichaClinica;
@@ -574,6 +635,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JPanel contenido;
     private javax.swing.JPanel exit;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel lbl_btnEmpleado;
     private javax.swing.JLabel txtExit;
     private javax.swing.JLabel txt_EvaluacionPeriodica;
     private javax.swing.JLabel txt_FichaAccidente;

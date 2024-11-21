@@ -26,6 +26,10 @@ public class VidaSaludableMod {
     private String revisionSistemasId;
     private String responsable;
     private String estado;
+    
+    private final String nombreTabla = "VIDA_SALUDABLE";
+    private final String prefijo = "VIDSAL_";
+    private final String llavePrimaria = prefijo+"ID";
 
     public String getId() {
         return id;
@@ -225,5 +229,17 @@ public class VidaSaludableMod {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public String getNombreTabla() {
+        return nombreTabla;
+    }
+
+    public String getPrefijo() {
+        return prefijo;
+    }
+
+    public String getLlavePrimaria() {
+        return llavePrimaria;
     }
 }
